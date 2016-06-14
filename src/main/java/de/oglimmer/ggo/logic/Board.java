@@ -19,7 +19,7 @@ public class Board {
 	private void init(List<Player> players) {
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 10; y++) {
-				Field newField = new Field(x, y);
+				Field newField = new Field(players.get(0).getGame(), x, y);
 				fields.add(newField);
 			}
 		}

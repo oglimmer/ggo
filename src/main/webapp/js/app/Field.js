@@ -8,15 +8,18 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 	 * @parameter color to use
 	 * @parameter pos on x,y objects
 	 */
-	function Field(id, color, pos, selectable) {
-		this.id = id;
-		this.color = color;
-		this.x = pos.x;
-		this.y = pos.y;
+	function Field() {
+		//IMMUTABLE
+		this.id = null; //id;
+		this.x = null; //pos.x;
+		this.y = null; //pos.y;
+		// changeable, remote attributes
+		this.selectable = false;
+		this.highlight = false;
+		
+		// local attributes
 		this.width = Constants.size.width;
 		this.height = Constants.size.height;
-		this.selectable = selectable;
-		this.highlight = false;
 	}
 
 	/*
@@ -41,11 +44,11 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		if (this.highlight) {
 			ctx.fillStyle = "#889988";
 		} else {
-			ctx.fillStyle = this.color;
+			ctx.fillStyle = "#3366cc";
 		}
 		ctx.fill();
 
-		if (this.selectable) {
+		if (true) {
 			ctx.strokeStyle = "#eeeeee";
 			ctx.lineWidth = 1;
 			ctx.stroke();
@@ -58,7 +61,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 	};
 	
 	Field.prototype.onSelect = function() {
-		if(globalData.active.selectDeployTarget) {
+		if(this.selectable) {
 			communication.send({
 				pid: globalData.playerId,
 				cmd: 'selectTargetField',

@@ -29,8 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AtmosphereHandler {
 
 	/**
-	 * Later broadcast methods need a AtmosphereResourceImpl. As the DPI only inserts Proxy object, we need to safe the
-	 * AtmosphereResourceImpl in the onReady event.
+	 * Later broadcast methods need a AtmosphereResourceImpl. As the DPI only inserts Proxy object, we need to safe the AtmosphereResourceImpl in the
+	 * onReady event.
 	 */
 	private static WeakHashMap<String, AtmosphereResource> atmosphereResourceStore = new WeakHashMap<>();
 
@@ -66,7 +66,10 @@ public class AtmosphereHandler {
 	}
 
 	@Disconnect
-	public void onDisconnect(/* If you don't want to use injection AtmosphereResourceEvent event */) {
+	public void onDisconnect(/*
+								 * If you don't want to use injection
+								 * AtmosphereResourceEvent event
+								 */) {
 		if (event.isCancelled()) {
 			log.debug("Browser {} unexpectedly disconnected", event.getResource().uuid());
 		} else if (event.isClosedByClient()) {
@@ -92,6 +95,7 @@ public class AtmosphereHandler {
 		game.getCurrentPhase().getMessages().clearMessages();
 		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam());
 		game.getCurrentPhase().updateUI(player);
+		game.getCurrentPhase().diffUIState(game);
 		game.getCurrentPhase().getMessages().sendMessages();
 	}
 

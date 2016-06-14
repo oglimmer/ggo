@@ -7,7 +7,6 @@ define(['jquery', './Constants'], function($, Constants) {
 		var canvasBoard = document.getElementById(elementId);
 		this.ctxBoard = canvasBoard.getContext('2d');
 		// FIELDS
-		this.idToFields = {}; // map<id,field-object>
 		this.corToFields = {}; // map<"xCor:yCor" as string, field-object>
 		// UNITS (on board)
 		this.idToUnits = {}; // map<id,unit-object>
@@ -43,15 +42,15 @@ define(['jquery', './Constants'], function($, Constants) {
 					};
 				}
 				
-				var relMousePos = getRelativeMousePos(evt, canvasBoard);			
+				var relMousePos = getRelativeMousePos(evt, canvasBoard);
 				var selectedHex = thiz.getFieldByPos(relMousePos);
 				if (selectedHex != null) {
 
-					if (selectedHex.selectable) {
+					//if (selectedHex.selectable) {
 						if (typeof selectedHex.onSelect !== 'undefined') {
 							selectedHex.onSelect();
 						}					
-					}
+					//}
 
 					for ( var unitProp in board.idToUnits) {
 						var unit = board.idToUnits[unitProp];
@@ -85,7 +84,6 @@ define(['jquery', './Constants'], function($, Constants) {
 		}
 	};
 	Board.prototype.addField = function(field) {
-		this.idToFields[field.id] = field;
 		this.corToFields[field.x + ":" + field.y] = field;
 	};
 
@@ -115,9 +113,9 @@ define(['jquery', './Constants'], function($, Constants) {
 	 */
 	Board.prototype.draw = function() {
 		this.ctxBoard.clearRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
-		// board
-		for ( var f in this.idToFields) {
-			this.idToFields[f].draw(this.ctxBoard);
+		// board		
+		for ( var f in this.corToFields) {
+			this.corToFields[f].draw(this.ctxBoard);
 		}
 		for ( var f in this.idToUnits) {
 			var unitToDraw = this.idToUnits[f];

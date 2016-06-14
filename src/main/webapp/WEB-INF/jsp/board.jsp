@@ -9,7 +9,8 @@
 
 		<div class="row">
 			<div class="col-md-10 col-md-offset-2">
-				<div id="message">waiting for server message ...</div>
+				<div id="messageTitle">waiting for server message ...</div>
+				<div id="messageError"></div>
 			</div>
 		</div>
 		<div class="row">

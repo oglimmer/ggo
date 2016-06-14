@@ -8,8 +8,11 @@ import java.util.Map;
 import org.atmosphere.cpr.AtmosphereResource;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import de.oglimmer.ggo.ui.UIBoard;
+import de.oglimmer.ggo.ui.UIMessages;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -17,20 +20,20 @@ public class MessageQueue {
 
 	private ThreadLocal<Map<Player, ObjectNode>> messages = new ThreadLocal<>();
 
-	protected void addMessage(Player target, String name, JsonNode msg) {
+	public void addMessage(Player target, String name, JsonNode msg) {
 		ObjectNode root = getMap().getOrDefault(target, instance.objectNode());
 		assert !root.has(name);
 		root.set(name, msg);
 		getMap().put(target, root);
 	}
 
-	protected void addMessage(Game game, String name, JsonNode msg) {
-		game.getPlayers().forEach(p -> {
-			ObjectNode root = getMap().getOrDefault(p, instance.objectNode());
-			root.set(name, msg);
-			getMap().put(p, root);
-		});
-	}
+//	public void addMessage(Game game, String name, JsonNode msg) {
+//		game.getPlayers().forEach(p -> {
+//			ObjectNode root = getMap().getOrDefault(p, instance.objectNode());
+//			root.set(name, msg);
+//			getMap().put(p, root);
+//		});
+//	}
 
 	public void clearMessages() {
 		getMap().clear();
@@ -54,6 +57,18 @@ public class MessageQueue {
 			messages.set(map);
 		}
 		return map;
+	}
+
+	public void addMessage(Player player, UIBoard uiUpdate, UIMessages uiMessages) {
+		ObjectMapper mapper = new ObjectMapper();
+		if (uiUpdate.hasChange()) {
+			JsonNode boardJsonObject = mapper.valueToTree(uiUpdate);
+			addMessage(player, Constants.RESP_BOARD, boardJsonObject);
+		}
+		if(uiMessages.hasChange()) {
+			JsonNode messageJsonObject = mapper.valueToTree(uiMessages);
+			addMessage(player, Constants.RESP_MESSAGE, messageJsonObject);
+		}
 	}
 
 }

@@ -8,15 +8,20 @@ define(['./Constants'], function(Constants) {
 	 * @parameter color to use
 	 * @parameter pos on x,y objects
 	 */
-	function Unit(id, color, type, pos, selectable) {
-		this.id = id;
-		this.color = color;
-		this.type = type;
-		this.x = pos.x;
-		this.y = pos.y;
+	function Unit() {
+		// immutable
+		this.id = null; //id;
+		this.color = null; //color;
+		this.type = null; //type;
+		
+		// changeable, remote
+		this.x = null; //pos.x;
+		this.y = null; //pos.y;
+		this.selectable = false; //selectable;
+		
+		// local
 		this.width = Constants.size.width;
 		this.height = Constants.size.height;
-		this.selectable = selectable;
 	}
 
 	/*

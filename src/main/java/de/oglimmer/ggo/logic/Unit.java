@@ -41,4 +41,19 @@ public class Unit {
 		return jsonUnitObject;
 	}
 
+	public boolean isSelected(Player forPlayer) {
+		return forPlayer.getGame().getCurrentPhase().isSelected(this, forPlayer);
+	}
+
+	public boolean isSelectable(Player forPlayer) {
+		return forPlayer.getGame().getCurrentPhase().isSelectable(this, forPlayer);
+	}
+
+	@Override
+	public String toString() {
+		return "Unit [id=" + id + ", player=" + player.getSide() + ", type=" + type + ", deployedOn="
+				+ (deployedOn != null ? deployedOn.getId() : null) + ", selected=" + isSelected(player)
+				+ ", selectable=" + isSelectable(player) + "]";
+	}
+
 }
