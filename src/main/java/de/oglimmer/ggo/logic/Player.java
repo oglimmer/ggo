@@ -1,10 +1,12 @@
 package de.oglimmer.ggo.logic;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.oglimmer.ggo.ui.UIBoard;
 import de.oglimmer.ggo.ui.UIField;
@@ -54,7 +56,18 @@ public class Player {
 	}
 
 	public Set<Field> getValidTargetFields() {
-		return game.getBoard().getFields();
+		Set<Field> validFields = new HashSet<>();
+		if (side == Side.GREEN) {
+			validFields.addAll(game.getBoard().getFields().stream().filter(f -> f.getPos().getX() <= 4)
+					.collect(Collectors.toSet()));
+		} else {
+			validFields.addAll(game.getBoard().getFields().stream().filter(f -> f.getPos().getX() >= 5)
+					.collect(Collectors.toSet()));
+		}
+		validFields.addAll(game.getBoard().getFields().stream().filter(f -> f.getUnit() != null)
+				.filter(f -> f.getUnit().getPlayer() == this).flatMap(f -> f.getNeighbords().stream())
+				.collect(Collectors.toSet()));
+		return validFields;
 	}
 
 	public void resetUiState() {

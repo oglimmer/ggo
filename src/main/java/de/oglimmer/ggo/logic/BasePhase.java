@@ -29,10 +29,27 @@ abstract public class BasePhase {
 	}
 
 	protected void switchPlayer(Player player) {
+		boolean nextPhase = false;
 		activePlayer.getClientMessages().clearError();
-		activePlayer = GameUtil.getOtherPlayer(player.getGame(), activePlayer);
-		updateUI(activePlayer);
+		Player nextPlayer = GameUtil.getOtherPlayer(player.getGame(), activePlayer);
+		if (!hasMoreMoves(nextPlayer)) {
+			if (hasMoreMoves(activePlayer)) {
+				nextPlayer = activePlayer;
+			} else {
+				nextPhase = true;
+			}
+		}
+		if (nextPhase) {
+			nextPhase(nextPlayer);
+		} else {
+			activePlayer = nextPlayer;
+			updateUI(activePlayer);
+		}
 	}
+
+	abstract protected boolean hasMoreMoves(Player p);
+
+	abstract protected void nextPhase(Player firstPlayer);
 
 	/**
 	 * Must be idempotent

@@ -75,14 +75,16 @@ public class DeployPhase extends BasePhase {
 		}
 		Field target = player.getGame().getBoard().getField(param);
 		if (target.getUnit() != null) {
-			player.getClientMessages().setError("You cannot put a unit where another unit is already there.");
-		} else {
-			target.setUnit(selectedUnit);
-			selectedUnit.setDeployedOn(target);
-			player.getUnitInHand().remove(selectedUnit);
-			selectedUnit = null;
-			switchPlayer(player);
+			log.error("execSelectTargetField but already occupied field was seleted");
+			return;
 		}
+		target.setUnit(selectedUnit);
+		selectedUnit.setDeployedOn(target);
+		player.getUnitInHand().remove(selectedUnit);
+		this.validTargetFields.values().forEach(s -> s.remove(target));
+		selectedUnit = null;
+		switchPlayer(player);
+
 	}
 
 	@Override
@@ -96,6 +98,16 @@ public class DeployPhase extends BasePhase {
 		} else {
 			player.getClientMessages().setTitle("waiting for other player's action");
 		}
+	}
+
+	@Override
+	protected void nextPhase(Player firstPlayer) {
+		firstPlayer.getGame().setCurrentPhase(new CombatPhase(firstPlayer));
+	}
+
+	@Override
+	protected boolean hasMoreMoves(Player p) {
+		return !p.getUnitInHand().isEmpty();
 	}
 
 }

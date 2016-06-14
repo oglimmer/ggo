@@ -36,4 +36,8 @@ public class Game {
 		return players.get(0).getId().equals(pid) ? players.get(0) : players.get(1);
 	}
 
+	public void setCurrentPhase(BasePhase nextPhase) {
+		currentPhase = nextPhase;
+	}
+
 }
