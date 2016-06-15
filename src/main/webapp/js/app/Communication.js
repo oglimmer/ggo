@@ -1,6 +1,6 @@
-define(['jquery', './Constants', 'atmosphere'], function($, Constants) {
+define(['jquery', './Constants', 'atmosphere'], function($, Constants, atmosphere) {
 	
-	var socket = $.atmosphere;
+	var socket = atmosphere;
 	var subSocket;
 	var transport = 'websocket';
 	var callbacks = {};
@@ -10,11 +10,11 @@ define(['jquery', './Constants', 'atmosphere'], function($, Constants) {
 		url : '/grid/srvcom',
 		contentType : "application/json",
 //		logLevel : 'debug',
-		trackMessageLength : true,
-		shared : true,
+		trackMessageLength : false,
+		shared : false,
 		transport : transport,
-		fallbackTransport : 'long-polling',
-		reconnectInterval : 5000
+		fallbackTransport : 'long-polling'
+//		reconnectInterval : 5000
 	};
 	
 	request.onOpen = function(response) {
@@ -28,7 +28,7 @@ define(['jquery', './Constants', 'atmosphere'], function($, Constants) {
 	};
 
 	request.onTransportFailure = function(errorMsg, request) {
-		$.atmosphere.util.info(errorMsg);
+		atmosphere.util.info(errorMsg);
 		if (window.EventSource) {
 			request.fallbackTransport = "sse";
 			transport = "see";
@@ -79,7 +79,7 @@ define(['jquery', './Constants', 'atmosphere'], function($, Constants) {
 			callbacks.onMessage = onMessageCallback;
 			subSocket = socket.subscribe(request);
 			$(window).unload(function() {
-				$.atmosphere.unsubscribe();
+				atmosphere.unsubscribe();
 			});
 		},
 		

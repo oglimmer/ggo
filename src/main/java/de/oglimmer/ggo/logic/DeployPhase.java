@@ -36,7 +36,7 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	public boolean isSelectable(Unit unit, Player forPlayer) {
-		return forPlayer == getActivePlayer() && selectedUnit == null;
+		return forPlayer == getActivePlayer() && (selectedUnit == null || selectedUnit == unit);
 	}
 
 	@Override
@@ -57,11 +57,16 @@ public class DeployPhase extends BasePhase {
 			log.error("got cmd selectHandCard from not active player");
 			return;
 		}
-		if (selectedUnit != null) {
+		Unit paramSelectedUnit = player.getUnitInHand().stream().filter(u -> u.getId().equals(param)).findFirst().get();
+		if (selectedUnit != null && selectedUnit != paramSelectedUnit) {
 			log.error("execSelectHandCard but selectedUnit was " + selectedUnit.getType());
 			return;
 		}
-		selectedUnit = player.getUnitInHand().stream().filter(u -> u.getId().equals(param)).findFirst().get();
+		if (selectedUnit == paramSelectedUnit) {
+			selectedUnit = null;
+		} else {
+			selectedUnit = paramSelectedUnit;
+		}
 	}
 
 	private void execSelectTargetField(Player player, String param) {
@@ -91,12 +96,13 @@ public class DeployPhase extends BasePhase {
 	public void updateUI(Player player) {
 		if (player == getActivePlayer()) {
 			if (selectedUnit != null) {
-				player.getClientMessages().setTitle("Select an empty field in your controlled area to deploy unit");
+				player.getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getType()
+						+ " or click the unit again to de-select it");
 			} else {
 				player.getClientMessages().setTitle("Select a unit from your hand to deploy it");
 			}
 		} else {
-			player.getClientMessages().setTitle("waiting for other player's action");
+			player.getClientMessages().setTitle("waiting for other player's deployment");
 		}
 	}
 

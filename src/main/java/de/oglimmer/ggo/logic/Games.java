@@ -1,7 +1,5 @@
 package de.oglimmer.ggo.logic;
 
-import org.atmosphere.cpr.AtmosphereResource;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -16,10 +14,6 @@ public enum Games {
 
 	public Game getGameByPlayerId(String playerId) {
 		return FAKE;
-	}
-
-	public void removeAtmosphereResource(AtmosphereResource r) {
-		FAKE.getChannelRegistry().remove(r);
 	}
 
 }

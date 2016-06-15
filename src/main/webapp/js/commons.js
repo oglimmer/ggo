@@ -12,7 +12,7 @@ requirejs.config({
         // the HTML page.
         jquery: 'jquery/2.2.4/jquery.min',
         bootstrap: 'bootstrap/3.3.6/js/bootstrap.min',
-        atmosphere: '../jquery/jquery.atmosphere',
+        atmosphere: '../javascript/atmosphere-min',
         //except, if the module ID starts with "app",
         //load it from the js/app directory. paths
         //config is relative to the baseUrl, and

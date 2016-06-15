@@ -3,7 +3,6 @@ package de.oglimmer.ggo.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.oglimmer.ggo.com.ChannelRegistry;
 import lombok.Getter;
 
 public class Game {
@@ -19,9 +18,6 @@ public class Game {
 
 	@Getter
 	private Board board;
-
-	@Getter
-	private ChannelRegistry channelRegistry = new ChannelRegistry();
 
 	public Game() {
 		Player player1 = new Player("p1", Side.GREEN, this);
