@@ -1,11 +1,18 @@
 package de.oglimmer.ggo.logic;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class CombatPhase extends BasePhase {
 
 	private int round = 0;
 
-	public CombatPhase(Player firstActivePlayer) {
-		super(firstActivePlayer);
+	private Map<Player, Unit> selectedUnits = new HashMap<>();
+
+	public CombatPhase() {
 	}
 
 	@Override
@@ -20,12 +27,12 @@ public class CombatPhase extends BasePhase {
 
 	@Override
 	public boolean isSelected(Unit unit, Player forPlayer) {
-		return false;
+		return selectedUnits.get(forPlayer) == unit && unit.getPlayer() == forPlayer;
 	}
 
 	@Override
 	public boolean isSelectable(Unit unit, Player forPlayer) {
-		return forPlayer == getActivePlayer() && unit.getPlayer() == forPlayer && unitOnBoard(unit);
+		return unit.getPlayer() == forPlayer && unitOnBoard(unit);
 	}
 
 	private boolean unitOnBoard(Unit unit) {
@@ -34,21 +41,38 @@ public class CombatPhase extends BasePhase {
 
 	@Override
 	public void execCmd(Player player, String cmd, String param) {
+		super.execCmd(player, cmd, param);
+		switch (cmd) {
+		case "selectUnit":
+			execselectUnit(player, param);
+			break;
+		}
+	}
+
+	private void execselectUnit(Player player, String param) {
+		Unit unit = player.getUnitById(param);
+		Unit currentlySelected = selectedUnits.get(player);
+		if (currentlySelected != null && currentlySelected != unit) {
+			log.error("Player {} has unit selected", player.getSide());
+			return;
+		}
+		if (currentlySelected == unit) {
+			selectedUnits.remove(player);
+		} else {
+			selectedUnits.put(player, unit);
+		}
 	}
 
 	@Override
-	public void updateUI(Player player) {
-
+	public void updateUI(Game game) {
+		game.getPlayers().forEach(player -> {
+			player.getClientMessages().setTitle("XXXX");
+		});
 	}
 
 	@Override
 	protected void nextPhase(Player firstPlayer) {
 		firstPlayer.getGame().setCurrentPhase(new DeployPhase(firstPlayer));
-	}
-
-	@Override
-	protected boolean hasMoreMoves(Player p) {
-		return round < 5;
 	}
 
 }

@@ -3,6 +3,7 @@ package de.oglimmer.ggo.ui;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Structure;
 import de.oglimmer.ggo.logic.Unit;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class UIUnit {
 	@Getter
 	@Setter
 	private Boolean selectable;
+	@Getter
+	@Setter
+	private Boolean selected;
 
 	public void copy(Structure structure, String color, int x, int y) {
 		this.id = structure.getId();
@@ -42,16 +46,17 @@ public class UIUnit {
 		this.selectable = false;
 	}
 
-	public void copy(Unit unit, String color, int x, int y) {
+	public void copy(Unit unit, int x, int y, Player forPlayer) {
 		this.id = unit.getId();
-		this.color = color;
+		this.color = unit.getPlayer().getSide().toString();
 		this.type = unit.getType().toString();
 		this.x = x;
 		this.y = y;
-		this.selectable = false;
+		this.selected = unit.isSelected(forPlayer);
+		this.selectable = unit.isSelectable(forPlayer);
 	}
 
-	public UIUnit diffAndUpdate(int latestX, int latestY) {
+	public UIUnit diffAndUpdate(Unit u, int latestX, int latestY, Player forPlayer) {
 		UIUnit diff = new UIUnit();
 		boolean changed = false;
 
@@ -70,7 +75,18 @@ public class UIUnit {
 			changed = true;
 		}
 
-		this.selectable = false;
+		boolean latestSelected = u.isSelected(forPlayer);
+		if (this.selected != latestSelected) {
+			diff.setSelected(latestSelected);
+			this.selected = latestSelected;
+			changed = true;
+		}
+		boolean latestSelectable = u.isSelectable(forPlayer);
+		if (this.selectable != latestSelectable) {
+			diff.setSelectable(latestSelectable);
+			this.selectable = latestSelectable;
+			changed = true;
+		}
 
 		return changed ? diff : null;
 	}

@@ -2,7 +2,6 @@ package de.oglimmer.ggo.logic;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
 
-import de.oglimmer.ggo.logic.util.GameUtil;
 import de.oglimmer.ggo.ui.UIBoard;
 import de.oglimmer.ggo.ui.UIMessages;
 import lombok.Getter;
@@ -10,14 +9,7 @@ import lombok.Getter;
 abstract public class BasePhase {
 
 	@Getter
-	private Player activePlayer;
-
-	@Getter
 	private MessageQueue messages = new MessageQueue();
-
-	public BasePhase(Player firstActivePlayer) {
-		this.activePlayer = firstActivePlayer;
-	}
 
 	public void execCmd(Player player, String cmd, String param) {
 		switch (cmd) {
@@ -28,37 +20,12 @@ abstract public class BasePhase {
 		}
 	}
 
-	protected void switchPlayer(Player player) {
-		boolean nextPhase = false;
-		activePlayer.getClientMessages().clearError();
-		Player nextPlayer = GameUtil.getOtherPlayer(player.getGame(), activePlayer);
-		if (!hasMoreMoves(nextPlayer)) {
-			if (hasMoreMoves(activePlayer)) {
-				nextPlayer = activePlayer;
-			} else {
-				nextPhase = true;
-			}
-		}
-		if (nextPhase) {
-			nextPhase(nextPlayer);
-		} else {
-			activePlayer = nextPlayer;
-			updateUI(activePlayer);
-		}
-	}
-
-	abstract protected boolean hasMoreMoves(Player p);
-
 	abstract protected void nextPhase(Player firstPlayer);
 
 	/**
 	 * Must be idempotent
-	 * 
-	 * @param player
-	 *            for whom the UI should be updated
 	 */
-	public void updateUI(Player player) {
-	}
+	abstract public void updateUI(Game game);
 
 	final public void diffUIState(Game game) {
 		game.getPlayers().forEach(p -> {

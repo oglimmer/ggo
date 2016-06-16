@@ -4,24 +4,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import de.oglimmer.ggo.logic.util.GameUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DeployPhase extends BasePhase {
+
+	private Player activePlayer;
 
 	private Unit selectedUnit;
 
 	private Map<Player, Set<Field>> validTargetFields = new HashMap<>();
 
 	public DeployPhase(Player firstActivePlayer) {
-		super(firstActivePlayer);
+		this.activePlayer = firstActivePlayer;
 		firstActivePlayer.getGame().getPlayers().forEach(p -> validTargetFields.put(p, p.getValidTargetFields()));
 	}
 
 	@Override
 	public boolean isHighlighted(Field field, Player forPlayer) {
-		return forPlayer == getActivePlayer() && selectedUnit != null
-				&& validTargetFields.get(forPlayer).contains(field);
+		return forPlayer == activePlayer && selectedUnit != null && validTargetFields.get(forPlayer).contains(field);
 	}
 
 	@Override
@@ -31,12 +33,12 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	public boolean isSelected(Unit unit, Player forPlayer) {
-		return forPlayer == getActivePlayer() && selectedUnit == unit;
+		return forPlayer == activePlayer && selectedUnit == unit;
 	}
 
 	@Override
 	public boolean isSelectable(Unit unit, Player forPlayer) {
-		return forPlayer == getActivePlayer() && forPlayer.getUnitInHand().contains(unit)
+		return forPlayer == activePlayer && forPlayer.getUnitInHand().contains(unit)
 				&& (selectedUnit == null || selectedUnit == unit);
 	}
 
@@ -54,7 +56,7 @@ public class DeployPhase extends BasePhase {
 	}
 
 	private void execSelectHandCard(Player player, String param) {
-		if (player != getActivePlayer()) {
+		if (player != activePlayer) {
 			log.error("got cmd selectHandCard from not active player");
 			return;
 		}
@@ -71,7 +73,7 @@ public class DeployPhase extends BasePhase {
 	}
 
 	private void execSelectTargetField(Player player, String param) {
-		if (player != getActivePlayer()) {
+		if (player != activePlayer) {
 			log.error("got cmd selectHandCard from not active player");
 			return;
 		}
@@ -93,27 +95,47 @@ public class DeployPhase extends BasePhase {
 
 	}
 
-	@Override
-	public void updateUI(Player player) {
-		if (player == getActivePlayer()) {
-			if (selectedUnit != null) {
-				player.getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getType()
-						+ " or click the unit again to de-select it");
+	protected void switchPlayer(Player player) {
+		boolean nextPhase = false;
+		activePlayer.getClientMessages().clearError();
+		Player nextPlayer = GameUtil.getOtherPlayer(player.getGame(), activePlayer);
+		if (!hasMoreMoves(nextPlayer)) {
+			if (hasMoreMoves(activePlayer)) {
+				nextPlayer = activePlayer;
 			} else {
-				player.getClientMessages().setTitle("Select a unit from your hand to deploy it");
+				nextPhase = true;
 			}
+		}
+		if (nextPhase) {
+			nextPhase(nextPlayer);
 		} else {
-			player.getClientMessages().setTitle("waiting for other player's deployment");
+			activePlayer = nextPlayer;
+			updateUI(activePlayer.getGame());
 		}
 	}
 
 	@Override
-	protected void nextPhase(Player firstPlayer) {
-		firstPlayer.getGame().setCurrentPhase(new CombatPhase(firstPlayer));
+	public void updateUI(Game game) {
+		game.getPlayers().forEach(player -> {
+			if (player == activePlayer) {
+				if (selectedUnit != null) {
+					player.getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getType()
+							+ " or click the unit again to de-select it");
+				} else {
+					player.getClientMessages().setTitle("Select a unit from your hand to deploy it");
+				}
+			} else {
+				player.getClientMessages().setTitle("waiting for other player's deployment");
+			}
+		});
 	}
 
 	@Override
-	protected boolean hasMoreMoves(Player p) {
+	protected void nextPhase(Player firstPlayer) {
+		firstPlayer.getGame().setCurrentPhase(new CombatPhase());
+	}
+
+	private boolean hasMoreMoves(Player p) {
 		return !p.getUnitInHand().isEmpty();
 	}
 

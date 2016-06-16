@@ -64,7 +64,7 @@ public class AtmosphereHandler {
 		}
 		game.getCurrentPhase().getMessages().clearMessages();
 		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam());
-		game.getCurrentPhase().updateUI(player);
+		game.getCurrentPhase().updateUI(game);
 		game.getCurrentPhase().diffUIState(game);
 		game.getCurrentPhase().getMessages().sendMessages();
 	}

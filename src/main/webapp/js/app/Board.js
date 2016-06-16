@@ -46,16 +46,14 @@ define(['jquery', './Constants'], function($, Constants) {
 				var selectedHex = thiz.getFieldByPos(relMousePos);
 				if (selectedHex != null) {
 
-					//if (selectedHex.selectable) {
-						if (typeof selectedHex.onSelect !== 'undefined') {
-							selectedHex.onSelect();
-						}					
-					//}
+					if (typeof selectedHex.onSelect !== 'undefined') {
+						selectedHex.onSelect();
+					}					
 
-					for ( var unitProp in board.idToUnits) {
-						var unit = board.idToUnits[unitProp];
-						if (unit.selectable && unit.x == selectedHex.x && unit.y == selectedHex.y) {
-							if (unit.hasOwnProperty("onSelect")) {
+					for ( var unitProp in thiz.idToUnits) {
+						var unit = thiz.idToUnits[unitProp];
+						if (unit.x == selectedHex.x && unit.y == selectedHex.y) {
+							if (typeof unit.onSelect !== 'undefined') {
 								unit.onSelect();
 							}					
 						}

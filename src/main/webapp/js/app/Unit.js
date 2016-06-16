@@ -1,4 +1,4 @@
-define(['./Constants'], function(Constants) {
+define(['./Constants', './Communication', './GlobalData'], function(Constants, communication, globalData) {
 
 
 	/**
@@ -17,6 +17,7 @@ define(['./Constants'], function(Constants) {
 		// changeable, remote
 		this.x = null; //pos.x;
 		this.y = null; //pos.y;
+		this.selected = false;
 		this.selectable = false; //selectable;
 		
 		// local
@@ -34,6 +35,23 @@ define(['./Constants'], function(Constants) {
 		var height = this.height;
 		var cx = width + x * width - (y + 1) % 2 * width / 2;
 		var cy = 0.5 * height + y * (3 / 4 * height);
+		
+		
+		if(this.selected) {
+			ctx.beginPath();
+			ctx.moveTo(cx, cy - height / 2);
+			ctx.lineTo(cx + width / 2, cy - height / 4);
+			ctx.lineTo(cx + width / 2, cy + height / 4);
+			ctx.lineTo(cx, cy + height / 2);
+			ctx.lineTo(cx - width / 2, cy + height / 4);
+			ctx.lineTo(cx - width / 2, cy - height / 4);
+			ctx.lineTo(cx, cy - height / 2);
+			ctx.fillStyle = "black";
+			ctx.fill();
+			ctx.strokeStyle = "white";
+			ctx.lineWidth = 1;
+			ctx.stroke();
+		}
 		
 		switch(this.type) {
 			case Constants.UNIT_TYPE_INFANTRY:
@@ -62,6 +80,16 @@ define(['./Constants'], function(Constants) {
 				break;
 		}
 	};
+	
+	Unit.prototype.onSelect = function() {
+		if(this.selectable){
+			communication.send({
+				pid: globalData.playerId,
+				cmd: 'selectUnit',
+				param: this.id
+			});
+		}
+	}
 	
 	return Unit;
 

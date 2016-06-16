@@ -17,6 +17,9 @@
 	     		<stripes:param name="playerId">p2</stripes:param>
 	     		Join Game
 	     	</stripes:link>
+	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.LandingActionBean" event="resetGame">
+	     		RESET Game
+	     	</stripes:link>
 	     </p>
 	   </div>
 	 </div>

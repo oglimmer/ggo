@@ -46,13 +46,13 @@ public class Player {
 		this.side = side;
 		this.game = game;
 		unitInHand.add(new Unit(this, UnitType.INFANTERY));
-		unitInHand.add(new Unit(this, UnitType.INFANTERY));
-		unitInHand.add(new Unit(this, UnitType.INFANTERY));
-		unitInHand.add(new Unit(this, UnitType.TANK));
-		unitInHand.add(new Unit(this, UnitType.AIRBORNE));
-		unitInHand.add(new Unit(this, UnitType.AIRBORNE));
-		unitInHand.add(new Unit(this, UnitType.HELICOPTER));
-		unitInHand.add(new Unit(this, UnitType.ARTILLERY));
+		// unitInHand.add(new Unit(this, UnitType.INFANTERY));
+		// unitInHand.add(new Unit(this, UnitType.INFANTERY));
+		// unitInHand.add(new Unit(this, UnitType.TANK));
+		// unitInHand.add(new Unit(this, UnitType.AIRBORNE));
+		// unitInHand.add(new Unit(this, UnitType.AIRBORNE));
+		// unitInHand.add(new Unit(this, UnitType.HELICOPTER));
+		// unitInHand.add(new Unit(this, UnitType.ARTILLERY));
 	}
 
 	public Set<Field> getValidTargetFields() {
@@ -177,12 +177,11 @@ public class Player {
 			UIUnit uiUnit = clientUIState.getIdToUnits().get(unitId);
 			if (uiUnit == null) {
 				uiUnit = new UIUnit();
-				uiUnit.copy(unit, unit.getPlayer().getSide().toString(), (int) f.getPos().getX(),
-						(int) f.getPos().getY());
+				uiUnit.copy(unit, (int) f.getPos().getX(), (int) f.getPos().getY(), this);
 				clientUIState.getIdToUnits().put(unitId, uiUnit);
 				transferStates.getIdToUnits().put(unitId, uiUnit);
 			} else {
-				UIUnit diff = uiUnit.diffAndUpdate((int) f.getPos().getX(), (int) f.getPos().getY());
+				UIUnit diff = uiUnit.diffAndUpdate(unit, (int) f.getPos().getX(), (int) f.getPos().getY(), this);
 				if (diff != null) {
 					transferStates.getIdToUnits().put(unitId, diff);
 				}
@@ -222,6 +221,11 @@ public class Player {
 				transferStates.getCorToFields().put(id, diff);
 			}
 		}
+	}
+
+	public Unit getUnitById(String unitId) {
+		return game.getBoard().getFields().stream().filter(f -> f.getUnit() != null)
+				.filter(f -> f.getUnit().getId().equals(unitId)).map(f -> f.getUnit()).findFirst().get();
 	}
 
 }

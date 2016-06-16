@@ -16,4 +16,8 @@ public enum Games {
 		return FAKE;
 	}
 
+	public void reset() {
+		FAKE = new Game();		
+	}
+
 }
