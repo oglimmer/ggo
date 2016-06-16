@@ -17,7 +17,6 @@ public class ObjectMapperInjectable implements Injectable<ObjectMapper> {
 	}
 
 	@Override
-
 	public ObjectMapper injectable(AtmosphereConfig config) {
 		return mapper;
 	}

@@ -30,6 +30,8 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		this.x = x;
 		this.y = y;
 		
+		ctx.beginPath();
+		
 		if(this.selected) {
 			ctx.fillStyle = "black";
 			ctx.fillRect(this.x,this.y,this.width,this.height);

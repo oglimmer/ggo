@@ -5,7 +5,7 @@ define(['jquery', './Constants', 'atmosphere'], function($, Constants, atmospher
 	var transport = 'websocket';
 	var callbacks = {};
 
-	// We are now ready to cut the request
+	// https://github.com/Atmosphere/atmosphere/wiki/atmosphere.js-atmosphere.js-API
 	var request = {
 		url : '/grid/srvcom',
 		contentType : "application/json",

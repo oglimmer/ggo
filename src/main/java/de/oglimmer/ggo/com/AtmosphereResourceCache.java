@@ -24,12 +24,16 @@ public enum AtmosphereResourceCache {
 	@RequiredArgsConstructor
 	@Data
 	class Item {
+
 		@NonNull
-		String uuid;
+		private String uuid;
+
 		@NonNull
-		WeakReference<AtmosphereResourceImpl> ar;
-		Player player;
-		boolean disconnected;
+		private WeakReference<AtmosphereResourceImpl> ar;
+
+		private Player player;
+
+		private boolean disconnected;
 	}
 
 	/**

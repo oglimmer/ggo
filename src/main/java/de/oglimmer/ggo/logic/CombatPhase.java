@@ -9,6 +9,30 @@ public class CombatPhase extends BasePhase {
 	}
 
 	@Override
+	public boolean isHighlighted(Field field, Player forPlayer) {
+		return false;
+	}
+
+	@Override
+	public boolean isSelectable(Field field, Player forPlayer) {
+		return false;
+	}
+
+	@Override
+	public boolean isSelected(Unit unit, Player forPlayer) {
+		return false;
+	}
+
+	@Override
+	public boolean isSelectable(Unit unit, Player forPlayer) {
+		return forPlayer == getActivePlayer() && unit.getPlayer() == forPlayer && unitOnBoard(unit);
+	}
+
+	private boolean unitOnBoard(Unit unit) {
+		return unit.getPlayer().getGame().getBoard().getFields().stream().anyMatch(f -> f.getUnit() == unit);
+	}
+
+	@Override
 	public void execCmd(Player player, String cmd, String param) {
 	}
 

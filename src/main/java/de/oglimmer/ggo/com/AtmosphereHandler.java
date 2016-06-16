@@ -5,7 +5,6 @@ import static org.atmosphere.cpr.ApplicationConfig.MAX_INACTIVE;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.atmosphere.config.service.Disconnect;
 import org.atmosphere.config.service.Get;
@@ -16,8 +15,6 @@ import org.atmosphere.config.service.Ready;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.AtmosphereResourceEvent;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
-import org.atmosphere.cpr.Broadcaster;
-import org.atmosphere.cpr.BroadcasterFactory;
 
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Games;
@@ -29,17 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AtmosphereHandler {
 
 	@Inject
-	private BroadcasterFactory factory;
-
-	@Inject
-	@Named("/srvcom")
-	private Broadcaster broadcaster;
-
-	@Inject
 	private AtmosphereResource r;
-
-	@Inject
-	private AtmosphereResourceEvent event;
 
 	@Get
 	public void init(AtmosphereResource r) {
@@ -54,21 +41,15 @@ public class AtmosphereHandler {
 	@Ready
 	public void onReady(AtmosphereResource r) {
 		log.debug("Browser {} connected", r.uuid());
-		log.debug("BroadcasterFactory used {}", factory.getClass().getName());
-		log.debug("Broadcaster injected {}", broadcaster.getID());
 		AtmosphereResourceCache.INSTANCE.connect((AtmosphereResourceImpl) r);
 	}
 
-	@Disconnect
 	/*
 	 * If you don't want to use injection AtmosphereResourceEvent event
 	 */
+	@Disconnect
 	public void onDisconnect() {
-		if (event.isCancelled()) {
-			log.debug("Browser {} unexpectedly disconnected", event.getResource().uuid());
-		} else if (event.isClosedByClient()) {
-			log.debug("Browser {} closed the connection", event.getResource().uuid());
-		}
+		log.debug("Browser {} disconnect", r.uuid());
 		AtmosphereResourceCache.INSTANCE.disconnect(r.uuid());
 	}
 

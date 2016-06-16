@@ -36,7 +36,8 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	public boolean isSelectable(Unit unit, Player forPlayer) {
-		return forPlayer == getActivePlayer() && (selectedUnit == null || selectedUnit == unit);
+		return forPlayer == getActivePlayer() && forPlayer.getUnitInHand().contains(unit)
+				&& (selectedUnit == null || selectedUnit == unit);
 	}
 
 	@Override
