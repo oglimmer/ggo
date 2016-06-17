@@ -1,5 +1,5 @@
-define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalData'], 
-		function ($, Field, Unit, Constants, HandItem, globalData) {
+define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalData', './Button'], 
+		function ($, Field, Unit, Constants, HandItem, globalData, Button) {
 
 	function copy(source, target) {
 		for(var att in source) {
@@ -49,6 +49,16 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 				});
 				$.each(jsonObj.board.handitemsToRemove, function(index, handitemId) {
 					delete globalData.board.idToHanditems[handitemId];
+				});
+				$.each(jsonObj.board.idToButtons, function(buttonId, button) {
+					var existingButton = globalData.board.idToButtons[buttonId];
+					if( typeof existingButton === 'undefined' ) {
+						var newButton = new Button();
+						copy(button, newButton);
+						globalData.board.addButton(newButton);	
+					} else {
+						copy(button, existingButton);
+					}					
 				});
 			}
 			/* RESP_MYCOLOR */

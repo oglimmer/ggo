@@ -62,7 +62,7 @@ public class DeployPhase extends BasePhase {
 		}
 		Unit paramSelectedUnit = player.getUnitInHand().stream().filter(u -> u.getId().equals(param)).findFirst().get();
 		if (selectedUnit != null && selectedUnit != paramSelectedUnit) {
-			log.error("execSelectHandCard but selectedUnit was " + selectedUnit.getType());
+			log.error("execSelectHandCard but selectedUnit was " + selectedUnit.getUnitType());
 			return;
 		}
 		if (selectedUnit == paramSelectedUnit) {
@@ -119,7 +119,7 @@ public class DeployPhase extends BasePhase {
 		game.getPlayers().forEach(player -> {
 			if (player == activePlayer) {
 				if (selectedUnit != null) {
-					player.getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getType()
+					player.getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getUnitType()
 							+ " or click the unit again to de-select it");
 				} else {
 					player.getClientMessages().setTitle("Select a unit from your hand to deploy it");
@@ -132,7 +132,7 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase(Player firstPlayer) {
-		firstPlayer.getGame().setCurrentPhase(new CombatPhase());
+		firstPlayer.getGame().setCurrentPhase(new CombatPhase(firstPlayer.getGame()));
 	}
 
 	private boolean hasMoreMoves(Player p) {

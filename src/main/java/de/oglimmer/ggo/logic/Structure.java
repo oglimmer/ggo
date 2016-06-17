@@ -9,14 +9,13 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @ToString(exclude = { "player" })
 public class Structure {
-	public static final String CITY = "city";
 
 	@Getter
 	private String id = RandomString.getRandomStringHex(8);
 
 	@Getter
 	@NonNull
-	private String type;
+	private StructureType type;
 
 	@Getter
 	@NonNull

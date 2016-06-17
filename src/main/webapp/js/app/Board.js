@@ -1,4 +1,4 @@
-define(['jquery', './Constants'], function($, Constants) {
+define(['jquery', './Constants', './Communication', './GlobalData'], function($, Constants, communication, globalData) {	
 	
 	/**
 	 * CLASS Board
@@ -12,10 +12,8 @@ define(['jquery', './Constants'], function($, Constants) {
 		this.idToUnits = {}; // map<id,unit-object>
 		// HANDITEMS (in hand)
 		this.idToHanditems = {}; // map<id,handItem-object>
-		/*this.currentActiveCor = {
-			x : -1,
-			y : -1
-		};*/ 
+		// BUTTON
+		this.idToButtons = {}; // map<id,button-object>
 
 		var thiz = this;
 		$(document).ready(function() {
@@ -68,7 +66,14 @@ define(['jquery', './Constants'], function($, Constants) {
 							}	
 						}
 					})
-					
+					$.each(thiz.idToButtons, function(index, buttonIten) {
+						if(buttonIten.x <= relMousePos.x && buttonIten.y <= relMousePos.y 
+								&& buttonIten.x+buttonIten.width >= relMousePos.x && buttonIten.y+buttonIten.height >= relMousePos.y) {
+							if (typeof buttonIten.onSelect !== 'undefined' ) {
+								buttonIten.onSelect();
+							}	
+						}
+					})
 				}
 				
 			});
@@ -105,6 +110,17 @@ define(['jquery', './Constants'], function($, Constants) {
 	Board.prototype.removeHandItem = function(handitemId) {
 		delete this.idToHanditems[handitemId];
 	};
+	Board.prototype.addButtons = function(buttons) {
+		for ( var i = 0; i < buttons.length; i++) {
+			this.addButton(buttons[i]);
+		}
+	};
+	Board.prototype.addButton = function(button) {
+		this.idToButtons[button.id] = button;
+	};
+	Board.prototype.removeButton = function(buttonId) {
+		delete this.idToButtons[buttonId];
+	};
 
 	/**
 	 * draw the board
@@ -120,14 +136,25 @@ define(['jquery', './Constants'], function($, Constants) {
 			unitToDraw.draw(this.ctxBoard);
 		}
 		// hand
+		this.ctxBoard.beginPath();
 		this.ctxBoard.fillStyle = "#dddddd";
-		this.ctxBoard.fillRect(0, 470, this.ctxBoard.canvas.width-10, 520);
+		this.ctxBoard.fillRect(0, 470, this.ctxBoard.canvas.width-10, 57);
 		var x = 3;
 		var y = 475;
 		for ( var f in this.idToHanditems) {
 			var handitemToDraw = this.idToHanditems[f];
 			handitemToDraw.draw(this.ctxBoard, x, y);
 			x += Constants.size.width*.8+4;
+		}
+		// buttons
+		var x = 3;
+		var y = 535;
+		for ( var f in this.idToButtons) {
+			var buttonToDraw = this.idToButtons[f];
+			if(!buttonToDraw.hidden) {
+				buttonToDraw.draw(this.ctxBoard, x, y);
+				x += buttonToDraw.width+4;
+			}
 		}
 	};
 
@@ -199,29 +226,6 @@ define(['jquery', './Constants'], function($, Constants) {
 		}
 		return null;
 	};
-
-	/*
-	 * Selects the Field field
-	 */
-	//Board.prototype.select = function(field, ctx) {
-//		if (field == null) {
-//			return;
-//		}
-//		var selX = field.x;
-//		var selY = field.y;
-//		if (selX >= 0 && selY >= 0) {
-//			if (selX != this.currentActiveCor.x || selY != this.currentActiveCor.y) {
-//				if (this.currentActiveCor.x >= 0 && this.currentActiveCor.y >= 0) {
-//					this.corToFields[this.currentActiveCor.x + ":"
-//							+ this.currentActiveCor.y].color = baseColor;
-//				}
-//				this.corToFields[selX + ":" + selY].color = selectedColor;
-//				this.draw(ctx);
-//				this.currentActiveCor.x = selX;
-//				this.currentActiveCor.y = selY;
-//			}
-//		}
-	//};
 
 	return Board;
 	

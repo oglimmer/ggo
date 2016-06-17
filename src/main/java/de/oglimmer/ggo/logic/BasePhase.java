@@ -2,7 +2,12 @@ package de.oglimmer.ggo.logic;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIBoard;
+import de.oglimmer.ggo.ui.UIButton;
 import de.oglimmer.ggo.ui.UIMessages;
 import lombok.Getter;
 
@@ -29,8 +34,8 @@ abstract public class BasePhase {
 
 	final public void diffUIState(Game game) {
 		game.getPlayers().forEach(p -> {
-			UIBoard uiUpdate = p.calcDiff();
-			UIMessages uiMessages = p.calcDiffMessages();
+			UIBoard uiUpdate = p.getClientUIState().calcDiff(p);
+			UIMessages uiMessages = p.getClientMessages().calcDiffMessages();
 			messages.addMessage(p, uiUpdate, uiMessages);
 		});
 	}
@@ -49,5 +54,11 @@ abstract public class BasePhase {
 
 	public boolean isSelectable(Unit unit, Player forPlayer) {
 		return false;
+	}
+
+	public Collection<UIButton> getButtons(Player forPlayer) {
+		Collection<UIButton> buttons = new ArrayList<>();
+		buttons.add(new UIButton("doneButton", "Done", DiffableBoolean.create(true)));
+		return buttons;
 	}
 }

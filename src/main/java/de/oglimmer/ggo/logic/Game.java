@@ -32,6 +32,11 @@ public class Game {
 		return players.get(0).getId().equals(pid) ? players.get(0) : players.get(1);
 	}
 
+	public Unit getUnitById(String unitId) {
+		return board.getFields().stream().filter(f -> f.getUnit() != null)
+				.filter(f -> f.getUnit().getId().equals(unitId)).map(f -> f.getUnit()).findFirst().get();
+	}
+
 	public void setCurrentPhase(BasePhase nextPhase) {
 		currentPhase = nextPhase;
 	}

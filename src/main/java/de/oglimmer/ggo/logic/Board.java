@@ -19,17 +19,19 @@ public class Board {
 	private void init(List<Player> players) {
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 10; y++) {
-				Field newField = new Field(players.get(0).getGame(), x, y);
+				Field newField = new Field(x, y);
 				fields.add(newField);
 			}
 		}
 		fields.stream().forEach(f -> f.calcNeighbors(fields));
-		getField(0, 0).setStructure(new Structure(Structure.CITY, players.get(0)));
-		getField(0, 4).setStructure(new Structure(Structure.CITY, players.get(0)));
-		getField(0, 8).setStructure(new Structure(Structure.CITY, players.get(0)));
-		getField(9, 1).setStructure(new Structure(Structure.CITY, players.get(1)));
-		getField(9, 5).setStructure(new Structure(Structure.CITY, players.get(1)));
-		getField(9, 9).setStructure(new Structure(Structure.CITY, players.get(1)));
+		if (players.size() > 0) {
+			getField(0, 0).setStructure(new Structure(StructureType.CITY, players.get(0)));
+			getField(0, 4).setStructure(new Structure(StructureType.CITY, players.get(0)));
+			getField(0, 8).setStructure(new Structure(StructureType.CITY, players.get(0)));
+			getField(9, 1).setStructure(new Structure(StructureType.CITY, players.get(1)));
+			getField(9, 5).setStructure(new Structure(StructureType.CITY, players.get(1)));
+			getField(9, 9).setStructure(new Structure(StructureType.CITY, players.get(1)));
+		}
 	}
 
 	private Field getField(int x, int y) {

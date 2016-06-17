@@ -13,46 +13,36 @@ import lombok.ToString;
 @ToString
 public class UIHandItem {
 
+	// IMMUTABLE
+
 	@Getter
 	@Setter
 	private String id;
 	@Getter
 	@Setter
 	private String unitType;
+
+	// CHANGABLE
+
 	@Getter
 	@Setter
-	private Boolean selected;
+	private DiffableBoolean selectable;
 	@Getter
 	@Setter
-	private Boolean selectable;
+	private DiffableBoolean selected;
 
 	public void copy(Unit u, Player player) {
 		this.id = u.getId();
-		this.unitType = u.getType().toString();
-		this.selected = u.isSelected(player);
-		this.selectable = u.isSelectable(player);
+		this.unitType = u.getUnitType().toString();
+		this.selected = DiffableBoolean.create(u.isSelected(player));
+		this.selectable = DiffableBoolean.create(u.isSelectable(player));
 	}
 
 	public UIHandItem diffAndUpdate(Unit u, Player player) {
 		UIHandItem diff = new UIHandItem();
 		boolean changed = false;
-
-		// this.id == IMMUTABLE
-		// this.unitType == IMMUTABLE
-
-		boolean latestSelected = u.isSelected(player);
-		if (this.selected != latestSelected) {
-			diff.setSelected(latestSelected);
-			this.selected = latestSelected;
-			changed = true;
-		}
-		boolean latestSelectable = u.isSelectable(player);
-		if (this.selectable != latestSelectable) {
-			diff.setSelectable(latestSelectable);
-			this.selectable = latestSelectable;
-			changed = true;
-		}
-
+		changed |= selected.diffAndUpdate(u.isSelected(player), diff::setSelected);
+		changed |= selectable.diffAndUpdate(u.isSelectable(player), diff::setSelectable);
 		return changed ? diff : null;
 	}
 }

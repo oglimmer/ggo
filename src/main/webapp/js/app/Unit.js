@@ -12,7 +12,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		// immutable
 		this.id = null; //id;
 		this.color = null; //color;
-		this.type = null; //type;
+		this.unitType = null; //unitType;
 		
 		// changeable, remote
 		this.x = null; //pos.x;
@@ -53,7 +53,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 			ctx.stroke();
 		}
 		
-		switch(this.type) {
+		switch(this.unitType) {
 			case Constants.UNIT_TYPE_INFANTRY:
 				var img=document.getElementById("inf_"+this.color);
 				ctx.drawImage(img,cx-width/4+7,cy - height/2+5);

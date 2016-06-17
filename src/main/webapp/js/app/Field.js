@@ -54,9 +54,9 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 			ctx.stroke();
 		}
 		
-		//ctx.fillStyle = "red";
-		//ctx.font = "8px Arial";
-		//ctx.fillText(this.x+":"+this.y,cx,cy);
+		// ctx.fillStyle = "red";
+		// ctx.font = "8px Arial";
+		// ctx.fillText(this.x+":"+this.y,cx,cy);
 
 	};
 	

@@ -15,7 +15,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-2">
-				<canvas id="board" width="650" height="530"></canvas>
+				<canvas id="board" width="650" height="565"></canvas>
 			</div>
 		</div>
 
