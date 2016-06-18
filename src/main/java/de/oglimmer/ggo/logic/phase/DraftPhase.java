@@ -1,10 +1,14 @@
-package de.oglimmer.ggo.logic;
+package de.oglimmer.ggo.logic.phase;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.oglimmer.ggo.logic.Game;
+import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.logic.Unit;
+import de.oglimmer.ggo.logic.UnitType;
 import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIButton;
 

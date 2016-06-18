@@ -2,9 +2,9 @@ package de.oglimmer.ggo.ui;
 
 import java.util.function.Consumer;
 
-import de.oglimmer.ggo.logic.CombatPhase;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
+import de.oglimmer.ggo.logic.phase.CombatPhase;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

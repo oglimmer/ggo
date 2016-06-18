@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.logic;
+package de.oglimmer.ggo.logic.phase;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import de.oglimmer.ggo.logic.CombatPhase.CommandCenter;
-import de.oglimmer.ggo.logic.CombatPhase.CommandType;
+import de.oglimmer.ggo.logic.Field;
+import de.oglimmer.ggo.logic.Unit;
+import de.oglimmer.ggo.logic.phase.CombatPhase.CommandCenter;
+import de.oglimmer.ggo.logic.phase.CombatPhase.CommandType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

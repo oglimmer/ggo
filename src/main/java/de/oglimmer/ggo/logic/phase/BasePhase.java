@@ -1,10 +1,16 @@
-package de.oglimmer.ggo.logic;
+package de.oglimmer.ggo.logic.phase;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.oglimmer.ggo.logic.Constants;
+import de.oglimmer.ggo.logic.Field;
+import de.oglimmer.ggo.logic.Game;
+import de.oglimmer.ggo.logic.MessageQueue;
+import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIBoard;
 import de.oglimmer.ggo.ui.UIButton;

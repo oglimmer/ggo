@@ -3,6 +3,8 @@ package de.oglimmer.ggo.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.oglimmer.ggo.logic.phase.BasePhase;
+import de.oglimmer.ggo.logic.phase.DraftPhase;
 import lombok.Getter;
 
 public class Game {

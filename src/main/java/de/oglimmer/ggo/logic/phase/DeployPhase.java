@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.logic;
+package de.oglimmer.ggo.logic.phase;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +7,11 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import de.oglimmer.ggo.logic.Field;
+import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.logic.Side;
+import de.oglimmer.ggo.logic.Unit;
+import de.oglimmer.ggo.logic.UnitType;
 import de.oglimmer.ggo.logic.util.GameUtil;
 import lombok.extern.slf4j.Slf4j;
 
