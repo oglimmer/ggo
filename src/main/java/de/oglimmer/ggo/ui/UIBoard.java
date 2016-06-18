@@ -60,7 +60,7 @@ public class UIBoard {
 			uiUpdateForPlayer.getGame().getCurrentPhase().getButtons(uiUpdateForPlayer).forEach(b -> {
 				UIButton state = uiUpdateForPlayer.getButtons().get(b.getId());
 				if (state == null) {
-					state = new UIButton(b.getId(), b.getText(), b.getHidden());
+					state = new UIButton(b.getId(), b.getText(), null, 30, 20, b.getHidden());
 					state.copy(b);
 					uiUpdateForPlayer.getButtons().put(b.getId(), state);
 					transferStates.getIdToButtons().put(b.getId(), state);

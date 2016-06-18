@@ -26,6 +26,9 @@ public class Player {
 	private Game game;
 
 	@Getter
+	private int credits;
+
+	@Getter
 	@NonNull
 	// never accessed to set client ui states. this just hold the last transfered
 	// ui states retrieved from game.board
@@ -47,24 +50,20 @@ public class Player {
 		this.id = id;
 		this.side = side;
 		this.game = game;
-		addUnits();
-	}
-
-	public void addUnits() {
-		unitInHand.add(new Unit(this, UnitType.INFANTERY));
-//		unitInHand.add(new Unit(this, UnitType.TANK));
-//		unitInHand.add(new Unit(this, UnitType.AIRBORNE));
-		// unitInHand.add(new Unit(this, UnitType.INFANTERY));
-		// unitInHand.add(new Unit(this, UnitType.INFANTERY));
-		// unitInHand.add(new Unit(this, UnitType.AIRBORNE));
-		// unitInHand.add(new Unit(this, UnitType.HELICOPTER));
-		// unitInHand.add(new Unit(this, UnitType.ARTILLERY));
 	}
 
 	public void resetUiState() {
 		clientUIState = new UIBoard();
 		clientMessages = new UIMessages();
 		buttons = new HashMap<>();
+	}
+
+	public void spendCredits(int toSpend) {
+		credits -= toSpend;
+	}
+
+	public void incCredits(int additionalCredits) {
+		credits += additionalCredits;
 	}
 
 }

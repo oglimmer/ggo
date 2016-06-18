@@ -31,6 +31,7 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 		super(game);
 		inTurn.addAll(game.getPlayers());
 		cc.setAllToFortify();
+		getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
 	}
 
 	@Override
@@ -127,13 +128,14 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 
 	@Override
 	protected void nextPhase(Player firstPlayer) {
-		getGame().getPlayers().forEach(p -> p.addUnits());
-		getGame().setCurrentPhase(new DeployPhase(firstPlayer));
+		getGame().setCurrentPhase(new DraftPhase(getGame()));
 	}
 
+	@Override
 	public Collection<UIButton> getButtons(Player forPlayer) {
 		Collection<UIButton> buttons = new ArrayList<>();
-		buttons.add(new UIButton("doneButton", "Done", DiffableBoolean.create(!inTurn.contains(forPlayer))));
+		buttons.add(
+				new UIButton("doneButton", "Done", null, 30, 20, DiffableBoolean.create(!inTurn.contains(forPlayer))));
 		return buttons;
 	}
 

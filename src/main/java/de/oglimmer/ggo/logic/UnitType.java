@@ -4,8 +4,8 @@ import lombok.Getter;
 
 public enum UnitType {
 
-	INFANTERY("infantry", 1, true), TANK("tank", 2, true), AIRBORNE("airborne", 1, true), HELICOPTER("helicopter", 1,
-			true), ARTILLERY("artillery", 0, false);
+	INFANTERY("infantry", 1, true, 100), TANK("tank", 2, true, 250), AIRBORNE("airborne", 1, true,
+			200), HELICOPTER("helicopter", 1, true, 300), ARTILLERY("artillery", 0, false, 300);
 
 	private String name;
 
@@ -15,10 +15,14 @@ public enum UnitType {
 	@Getter
 	private boolean support;
 
-	private UnitType(String name, int strength, boolean support) {
+	@Getter
+	private int cost;
+
+	private UnitType(String name, int strength, boolean support, int cost) {
 		this.name = name;
 		this.strength = strength;
 		this.support = support;
+		this.cost = cost;
 	}
 
 	public String toString() {

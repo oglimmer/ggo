@@ -22,6 +22,7 @@ public class DeployPhase extends BasePhase {
 	public DeployPhase(Player firstActivePlayer) {
 		super(firstActivePlayer.getGame());
 		this.activePlayer = firstActivePlayer;
+		getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
 		getGame().getPlayers()
 				.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
 	}

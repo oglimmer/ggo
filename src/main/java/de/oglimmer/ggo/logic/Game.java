@@ -26,7 +26,7 @@ public class Game {
 		players.add(player2);
 		board = new Board();
 		board.addCities(players);
-		currentPhase = new DeployPhase(player1);
+		currentPhase = new DraftPhase(this);
 	}
 
 	public Player getPlayerById(String pid) {

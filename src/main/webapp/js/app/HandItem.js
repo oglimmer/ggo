@@ -39,7 +39,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		
 		switch(this.unitType) {
 			case Constants.UNIT_TYPE_INFANTRY:
-				var img=document.getElementById("inf_"+globalData.myColor);
+				var img=document.getElementById("infantry_"+globalData.myColor);
 				ctx.drawImage(img,this.x,this.y);
 				break;
 			case Constants.UNIT_TYPE_TANK:

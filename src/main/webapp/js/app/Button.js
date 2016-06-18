@@ -1,14 +1,13 @@
 define(['./Constants', './Communication', './GlobalData'], function(Constants, communication, globalData) {
 
 
-	/**
-	 * CLASS Button
-	 * 
-	 */
-	function Button(id, text) {
+	function Button() {
 		// immutable
-		this.id = id; //id;
-		this.text = text;
+		this.id;
+		this.text;
+		this.graphic;
+		this.width;
+		this.height;
 		
 		// remote, changeable
 		this.selectable = true;
@@ -17,13 +16,8 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		// local attributes - all are set during draw() method
 		this.x = null;
 		this.y = null;
-		this.width = 30;
-		this.height = 20;
 	}
 
-	/*
-	 * draws the Button
-	 */
 	Button.prototype.draw = function(ctx, x, y) {
 		this.x = x;
 		this.y = y;
@@ -32,10 +26,17 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "black";
 		ctx.fillStyle = "black";
-		ctx.rect(x, y, 30, 20);
-		ctx.font = "10px Arial";
-		ctx.fillText(this.text,x+2,y+12);
+		ctx.rect(x, y, this.width, this.height);
+		if(typeof this.text !== 'undefined' && this.text != null) {
+			ctx.font = "10px Arial";
+			ctx.fillText(this.text,x+2,y+12);
+		}
 		ctx.stroke();
+		
+		if(typeof this.graphic !== 'undefined' && this.graphic != null) {			
+			var img=document.getElementById(this.graphic+"_"+globalData.myColor);
+			ctx.drawImage(img,this.x,this.y);		
+		}
 	};
 	
 	Button.prototype.onSelect = function() {

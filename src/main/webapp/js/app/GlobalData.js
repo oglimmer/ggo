@@ -4,7 +4,7 @@ define(['./Board'],
 	
 	var globalDataObject = {
 			board : null,
-			active : {},
+			myColor : null,
 			playerId: ggoPlayerId
 	};
 	

@@ -21,6 +21,15 @@ public class UIButton {
 	@Getter
 	@Setter
 	private String text;
+	@Getter
+	@Setter
+	private String graphic;
+	@Getter
+	@Setter
+	private Integer width;
+	@Getter
+	@Setter
+	private Integer height;
 
 	// CHANGABLE
 
@@ -31,6 +40,9 @@ public class UIButton {
 	public void copy(UIButton b) {
 		this.id = b.getId();
 		this.text = b.getText();
+		this.graphic = b.getGraphic();
+		this.width = b.getWidth();
+		this.height = b.getHeight();
 		this.hidden = b.getHidden();
 	}
 

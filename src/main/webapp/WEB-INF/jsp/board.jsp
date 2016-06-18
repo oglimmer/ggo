@@ -16,13 +16,13 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-2">
-				<canvas id="board" width="650" height="565"></canvas>
+				<canvas id="board" width="650" height="590"></canvas>
 			</div>
 		</div>
 
 		<!-- resources -->
-		<img id="inf_red" src="images/inf_red.png" style="display: none" />
-		<img id="inf_green" src="images/inf_green.png" style="display: none" />
+		<img id="infantry_red" src="images/infantry_red.png" style="display: none" />
+		<img id="infantry_green" src="images/infantry_green.png" style="display: none" />
 		<img id="tank_green" src="images/tank_green.png" style="display: none" />
 		<img id="tank_red" src="images/tank_red.png" style="display: none" />
 		<img id="airborne_green" src="images/airborne_green.png" style="display: none" />

@@ -65,7 +65,7 @@ abstract public class BasePhase {
 
 	public Collection<UIButton> getButtons(Player forPlayer) {
 		Collection<UIButton> buttons = new ArrayList<>();
-		buttons.add(new UIButton("doneButton", "Done", DiffableBoolean.create(true)));
+		buttons.add(new UIButton("doneButton", "Done", null, 30, 20, DiffableBoolean.create(true)));
 		return buttons;
 	}
 }

@@ -1,5 +1,16 @@
 define(['jquery', './Constants', './Communication', './GlobalData'], function($, Constants, communication, globalData) {	
 	
+	function sort(source) {
+		var array = [];
+		for(var att in source) {
+			array.push(source[att]);
+		}
+		array.sort(function(a,b){
+			return a.id < b.id ? -1 : a.id == b.id ? 0 : 1;
+		});
+		return array;
+	}
+	
 	function Board(elementId) {
 		var canvasBoard = document.getElementById(elementId);
 		this.ctxBoard = canvasBoard.getContext('2d');
@@ -143,13 +154,13 @@ define(['jquery', './Constants', './Communication', './GlobalData'], function($,
 		// buttons
 		var x = 3;
 		var y = 535;
-		for ( var f in this.idToButtons) {
-			var buttonToDraw = this.idToButtons[f];
+		var thiz = this;
+		$.each(sort(this.idToButtons), function(buttonId, buttonToDraw) {
 			if(!buttonToDraw.hidden) {
-				buttonToDraw.draw(this.ctxBoard, x, y);
+				buttonToDraw.draw(thiz.ctxBoard, x, y);
 				x += buttonToDraw.width+4;
 			}
-		}
+		});
 	};
 
 	/**
