@@ -151,6 +151,12 @@ define(['jquery', './Constants', './Communication', './GlobalData'], function($,
 			handitemToDraw.draw(this.ctxBoard, x, y);
 			x += Constants.size.width*.8+4;
 		}
+		if(x == 3) {
+			this.ctxBoard.beginPath();
+			this.ctxBoard.font = "16px Arial";
+			this.ctxBoard.fillStyle = "black";
+			this.ctxBoard.fillText("No units in hand.",x,y+28);
+		}
 		// buttons
 		var x = 3;
 		var y = 535;

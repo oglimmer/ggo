@@ -43,11 +43,7 @@ public class DraftPhase extends BasePhase {
 	private void playerDone(Player player) {
 		inTurn.remove(player);
 		if (inTurn.isEmpty()) {
-			if (getGame().getBoard().getTotalUnits() == 0) {
-				nextPhase(getGame().getPlayers().get(0));
-			} else {
-				inTurn.addAll(getGame().getPlayers());
-			}
+			nextPhase(getGame().getPlayers().get(0));
 		}
 	}
 

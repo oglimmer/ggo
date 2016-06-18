@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 
+	private static final int MAX_ROUNDS = 3;
+
 	private int round = 0;
 
 	private Map<Player, Unit> selectedUnits = new HashMap<>();
@@ -79,7 +81,7 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 					BattleResolver br = new BattleResolver(cc);
 					br.calcBattles();
 					round++;
-					if (round == 2 || getGame().getBoard().getTotalUnits() == 0) {
+					if (round == MAX_ROUNDS || getGame().getBoard().getTotalUnits() == 0) {
 						nextPhase(getGame().getPlayers().get(0));
 					} else {
 						inTurn.addAll(getGame().getPlayers());
@@ -122,7 +124,8 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 	@Override
 	public void updateUI() {
 		getGame().getPlayers().forEach(player -> {
-			player.getClientMessages().setTitle("Command your units.");
+			player.getClientMessages().setTitle(
+					"Command your units. Press `done` when finished. Round " + (round + 1) + " of " + MAX_ROUNDS);
 		});
 	}
 
