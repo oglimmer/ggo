@@ -28,8 +28,8 @@ public class Field {
 	private Unit unit;
 
 	public Field(int x, int y) {
-		pos = new Point(x, y);
-		id = x + ":" + y;
+		this.pos = new Point(x, y);
+		this.id = x + ":" + y;
 	}
 
 	public boolean isHighlighted(Player p) {

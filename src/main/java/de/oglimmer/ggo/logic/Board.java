@@ -1,5 +1,6 @@
 package de.oglimmer.ggo.logic;
 
+import java.awt.Point;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -12,11 +13,11 @@ public class Board {
 	@Getter
 	private Set<Field> fields = new HashSet<>();
 
-	public Board(List<Player> players) {
-		init(players);
+	public Board() {
+		init();
 	}
 
-	private void init(List<Player> players) {
+	private void init() {
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 10; y++) {
 				Field newField = new Field(x, y);
@@ -24,6 +25,9 @@ public class Board {
 			}
 		}
 		fields.stream().forEach(f -> f.calcNeighbors(fields));
+	}
+
+	public void addCities(List<Player> players) {
 		if (players.size() > 0) {
 			getField(0, 0).setStructure(new Structure(StructureType.CITY, players.get(0)));
 			getField(0, 4).setStructure(new Structure(StructureType.CITY, players.get(0)));
@@ -42,6 +46,20 @@ public class Board {
 	public Field getField(String id) {
 		Optional<Field> opt = fields.stream().filter(f -> f.getId().equals(id)).findFirst();
 		return opt.isPresent() ? opt.get() : null;
+	}
+
+	public Field getField(Point pos) {
+		Optional<Field> opt = fields.stream().filter(f -> f.getPos().equals(pos)).findFirst();
+		return opt.isPresent() ? opt.get() : null;
+	}
+
+	public Unit getUnitById(String id) {
+		return fields.stream().filter(f -> f.getUnit() != null).filter(f -> f.getUnit().getId().equals(id))
+				.map(f -> f.getUnit()).findFirst().get();
+	}
+
+	public long getTotalUnits() {
+		return fields.stream().filter(f -> f.getUnit() != null).count();
 	}
 
 }

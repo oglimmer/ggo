@@ -55,7 +55,7 @@ public class AtmosphereHandler {
 
 	@Message(encoders = { JacksonEncoder.class }, decoders = { JacksonDecoder.class })
 	public void onMessage(CommandMessage message) throws IOException {
-		log.info("onMessage: {}", message);
+		log.debug("onMessage: {}", message);
 		Game game = Games.INSTANCE.getGameByPlayerId(message.getPid());
 		Player player = game.getPlayerById(message.getPid());
 		assert player != null;
@@ -64,8 +64,8 @@ public class AtmosphereHandler {
 		}
 		game.getCurrentPhase().getMessages().clearMessages();
 		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam());
-		game.getCurrentPhase().updateUI(game);
-		game.getCurrentPhase().diffUIState(game);
+		game.getCurrentPhase().updateUI();
+		game.getCurrentPhase().diffUIState();
 		game.getCurrentPhase().getMessages().sendMessages();
 	}
 

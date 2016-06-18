@@ -1,33 +1,57 @@
 define(['./Constants', './Communication', './GlobalData'], function(Constants, communication, globalData) {
 
+	function drawArrow(ctx, fromx, fromy, tox, toy){
+        //variables to be used when creating the arrow
+        var headlen = 4;
 
-	/**
-	 * CLASS Unit
-	 * 
-	 * @parameter id unique id
-	 * @parameter color to use
-	 * @parameter pos on x,y objects
-	 */
+        var angle = Math.atan2(toy-fromy,tox-fromx);
+
+        //starting path of the arrow from the start square to the end square and drawing the stroke
+        ctx.beginPath();
+        ctx.moveTo(fromx, fromy);
+        ctx.lineTo(tox, toy);
+        ctx.strokeStyle = "#cc0000";
+        ctx.lineWidth = 7;
+        ctx.stroke();
+
+        //starting a new path from the head of the arrow to one of the sides of the point
+        ctx.beginPath();
+        ctx.moveTo(tox, toy);
+        ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
+
+        //path from the side point of the arrow, to the other side point
+        ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/7),toy-headlen*Math.sin(angle+Math.PI/7));
+
+        //path from the side point back to the tip of the arrow, and then again to the opposite side point
+        ctx.lineTo(tox, toy);
+        ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
+
+        //draws the paths created above
+        ctx.strokeStyle = "#cc0000";
+        ctx.lineWidth = 7;
+        ctx.stroke();
+        ctx.fillStyle = "#cc0000";
+        ctx.fill();
+    }
+
 	function Unit() {
 		// immutable
-		this.id = null; //id;
-		this.color = null; //color;
-		this.unitType = null; //unitType;
+		this.id = null;
+		this.color = null;
+		this.unitType = null;
 		
 		// changeable, remote
-		this.x = null; //pos.x;
-		this.y = null; //pos.y;
+		this.x = null;
+		this.y = null;
 		this.selected = false;
-		this.selectable = false; //selectable;
+		this.selectable = false;
+		this.command = null; // { commandType:string, x:int, y:int }
 		
 		// local
 		this.width = Constants.size.width;
 		this.height = Constants.size.height;
 	}
 
-	/*
-	 * draws the field
-	 */
 	Unit.prototype.draw = function(ctx) {
 		var x = this.x;
 		var y = this.y;
@@ -79,6 +103,22 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 				ctx.drawImage(img,cx-width/4-10,cy - height/2+5);
 				break;
 		}
+		
+		if(this.command != null) {
+			if(this.command.commandType == "F") {
+				ctx.beginPath();
+				ctx.fillStyle = "white";
+				ctx.font = "400 20px Arial";
+				ctx.lineWidth = 3;
+				ctx.strokeStyle = 'black';
+				ctx.strokeText(this.command.commandType,cx-2,cy+6);
+			} else {
+				var targetFieldId = this.command.x+":"+this.command.y;
+				var field = globalData.board.corToFields[targetFieldId];
+				drawArrow(ctx, cx, cy, field.realX(), field.realY());
+			}
+		}
+		
 	};
 	
 	Unit.prototype.onSelect = function() {

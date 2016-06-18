@@ -21,6 +21,13 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		this.width = Constants.size.width;
 		this.height = Constants.size.height;
 	}
+	
+	Field.prototype.realX = function() {
+		return this.width + this.x * this.width - (this.y + 1) % 2 * this.width / 2;
+	}
+	Field.prototype.realY = function() {
+		return 0.5 * this.height + this.y * (3 / 4 * this.height);
+	}
 
 	/*
 	 * draws the field
@@ -44,7 +51,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		if (this.highlight) {
 			ctx.fillStyle = "#889988";
 		} else {
-			ctx.fillStyle = "#3366cc";
+			ctx.fillStyle = "#886688";
 		}
 		ctx.fill();
 

@@ -11,11 +11,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import de.oglimmer.ggo.ui.DiffableInteger.DiffableIntegerSerializer;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @AllArgsConstructor
 @JsonSerialize(using = DiffableIntegerSerializer.class)
 @ToString
+@EqualsAndHashCode
 public class DiffableInteger {
 
 	private Integer val;

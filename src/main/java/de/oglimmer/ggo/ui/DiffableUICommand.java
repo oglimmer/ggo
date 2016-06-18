@@ -1,0 +1,58 @@
+package de.oglimmer.ggo.ui;
+
+import java.util.function.Consumer;
+
+import de.oglimmer.ggo.logic.CombatPhase;
+import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.logic.Unit;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@ToString
+@EqualsAndHashCode
+public class DiffableUICommand {
+
+	@Getter
+	@Setter
+	private String commandType;
+	@Getter
+	@Setter
+	private DiffableInteger x;
+	@Getter
+	@Setter
+	private DiffableInteger y;
+
+	public DiffableUICommand(String commandType, int x, int y) {
+		this.commandType = commandType;
+		this.x = DiffableInteger.create(x);
+		this.y = DiffableInteger.create(y);
+	}
+
+	public static DiffableUICommand create(Player forPlayer, Unit unit) {
+		if (forPlayer.getGame().getCurrentPhase() instanceof UnitCommandablePhase) {
+			UnitCommandablePhase ucp = (UnitCommandablePhase) forPlayer.getGame().getCurrentPhase();
+			if (ucp.hasCommandFor(unit, forPlayer)) {
+				CombatPhase.Command cPCommand = ucp.getCommand(unit);
+				return new DiffableUICommand(cPCommand.getCommandType().toString(),
+						(int) cPCommand.getTargetField().getPos().getX(),
+						(int) cPCommand.getTargetField().getPos().getY());
+			}
+		}
+		return null;
+	}
+
+	public static boolean diffAndUpdate(DiffableUICommand thiz, Player forPlayer, Unit unit,
+			Consumer<DiffableUICommand> diffTarget, Consumer<DiffableUICommand> thizHolder) {
+
+		DiffableUICommand latest = create(forPlayer, unit);
+		if ((thiz == null && latest == null) || (thiz != null && thiz.equals(latest))) {
+			return false;
+		}
+		thizHolder.accept(latest);
+		diffTarget.accept(latest);
+		return true;
+	}
+
+}

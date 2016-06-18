@@ -41,8 +41,9 @@ public class UIMessages {
 		return title.hasChange() || info.hasChange() || error.hasChange();
 	}
 
-	public void clearError() {
+	public void clearErrorInfo() {
 		error.setCurrentValue("");
+		info.setCurrentValue("");
 	}
 
 	public UIMessages calcDiffMessages() {

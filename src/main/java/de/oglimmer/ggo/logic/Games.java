@@ -1,23 +1,28 @@
 package de.oglimmer.ggo.logic;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.HashMap;
+import java.util.Map;
 
-@Slf4j
 public enum Games {
 	INSTANCE;
 
-	private Game FAKE = new Game();
+	Games() {
+		games.put("0", new Game());
+	}
+
+	private Map<String, Game> games = new HashMap<>();
 
 	public Game getGameById(String gameId) {
-		return FAKE;
+		return games.get(gameId);
 	}
 
 	public Game getGameByPlayerId(String playerId) {
-		return FAKE;
+		return games.values().stream().filter(g -> g.getPlayers().stream().anyMatch(p -> p.getId().equals(playerId)))
+				.findFirst().get();
 	}
 
 	public void reset() {
-		FAKE = new Game();		
+		games.put("0", new Game());
 	}
 
 }

@@ -59,6 +59,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 				ctx.drawImage(img,this.x,this.y);
 				break;
 		}
+		ctx.lineWidth = 1;
 		ctx.strokeStyle = "black";
 		ctx.rect(this.x,this.y,this.width,this.height);
 		ctx.stroke();

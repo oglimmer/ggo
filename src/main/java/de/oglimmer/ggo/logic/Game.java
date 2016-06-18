@@ -24,7 +24,8 @@ public class Game {
 		players.add(player1);
 		Player player2 = new Player("p2", Side.RED, this);
 		players.add(player2);
-		board = new Board(players);
+		board = new Board();
+		board.addCities(players);
 		currentPhase = new DeployPhase(player1);
 	}
 

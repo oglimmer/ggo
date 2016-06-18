@@ -10,8 +10,15 @@ import de.oglimmer.ggo.ui.UIBoard;
 import de.oglimmer.ggo.ui.UIButton;
 import de.oglimmer.ggo.ui.UIMessages;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 abstract public class BasePhase {
+
+	@Getter
+	@NonNull
+	private Game game;
 
 	@Getter
 	private MessageQueue messages = new MessageQueue();
@@ -30,9 +37,9 @@ abstract public class BasePhase {
 	/**
 	 * Must be idempotent
 	 */
-	abstract public void updateUI(Game game);
+	abstract public void updateUI();
 
-	final public void diffUIState(Game game) {
+	final public void diffUIState() {
 		game.getPlayers().forEach(p -> {
 			UIBoard uiUpdate = p.getClientUIState().calcDiff(p);
 			UIMessages uiMessages = p.getClientMessages().calcDiffMessages();

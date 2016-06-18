@@ -14,6 +14,7 @@
     <!--<logger name="org.atmosphere.cpr.AsyncSupportListenerAdapter" level="INFO"/>-->
 
     <logger name="de.oglimmer.ggo.com.AtmosphereHandler" level="INFO"/>
+    <logger name="de.oglimmer.ggo.com.AtmosphereResourceCache" level="INFO"/>
 
     <root>
         <level value="DEBUG"/>

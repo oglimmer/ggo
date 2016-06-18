@@ -40,6 +40,9 @@ public class UIUnit {
 	@Getter
 	@Setter
 	private DiffableBoolean selected;
+	@Getter
+	@Setter
+	private DiffableUICommand command;
 
 	public void copy(Structure structure, String color, int x, int y) {
 		this.id = structure.getId();
@@ -59,6 +62,7 @@ public class UIUnit {
 		this.y = DiffableInteger.create(y);
 		this.selected = DiffableBoolean.create(unit.isSelected(forPlayer));
 		this.selectable = DiffableBoolean.create(unit.isSelectable(forPlayer));
+		this.command = DiffableUICommand.create(forPlayer, unit);
 	}
 
 	public UIUnit diffAndUpdate(Unit u, int latestX, int latestY, Player forPlayer) {
@@ -68,6 +72,7 @@ public class UIUnit {
 		changed |= y.diffAndUpdate(latestY, diff::setY);
 		changed |= selected.diffAndUpdate(u.isSelected(forPlayer), diff::setSelected);
 		changed |= selectable.diffAndUpdate(u.isSelectable(forPlayer), diff::setSelectable);
+		changed |= DiffableUICommand.diffAndUpdate(command, forPlayer, u, diff::setCommand, this::setCommand);
 		return changed ? diff : null;
 	}
 

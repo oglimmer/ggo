@@ -29,6 +29,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		this.y = y;
 		
 		ctx.beginPath();
+		ctx.lineWidth = 1;
 		ctx.strokeStyle = "black";
 		ctx.fillStyle = "black";
 		ctx.rect(x, y, 30, 20);

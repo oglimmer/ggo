@@ -35,7 +35,7 @@ public class UIBoard {
 
 	public boolean hasChange() {
 		return !corToFields.isEmpty() || !idToUnits.isEmpty() || !unitsToRemove.isEmpty() || !idToHanditems.isEmpty()
-				|| !handitemsToRemove.isEmpty();
+				|| !handitemsToRemove.isEmpty() || !idToButtons.isEmpty();
 	}
 
 	public UIBoard calcDiff(Player player) {
@@ -45,7 +45,7 @@ public class UIBoard {
 	@AllArgsConstructor
 	class TransferBuilder {
 
-		private Player player;
+		private Player uiUpdateForPlayer;
 
 		public UIBoard calcDiff() {
 			UIBoard transferStates = new UIBoard();
@@ -57,12 +57,12 @@ public class UIBoard {
 		}
 
 		private void calcDiffButtons(UIBoard transferStates) {
-			player.getGame().getCurrentPhase().getButtons(player).forEach(b -> {
-				UIButton state = player.getButtons().get(b.getId());
+			uiUpdateForPlayer.getGame().getCurrentPhase().getButtons(uiUpdateForPlayer).forEach(b -> {
+				UIButton state = uiUpdateForPlayer.getButtons().get(b.getId());
 				if (state == null) {
 					state = new UIButton(b.getId(), b.getText(), b.getHidden());
 					state.copy(b);
-					player.getButtons().put(b.getId(), state);
+					uiUpdateForPlayer.getButtons().put(b.getId(), state);
 					transferStates.getIdToButtons().put(b.getId(), state);
 				} else {
 					UIButton diff = state.diffAndUpdate(b);
@@ -79,11 +79,11 @@ public class UIBoard {
 		}
 
 		private void calcDiffRemovedHanditems(UIBoard transferStates) {
-			for (Iterator<Map.Entry<String, UIHandItem>> it = player.getClientUIState().getIdToHanditems().entrySet()
-					.iterator(); it.hasNext();) {
+			for (Iterator<Map.Entry<String, UIHandItem>> it = uiUpdateForPlayer.getClientUIState().getIdToHanditems()
+					.entrySet().iterator(); it.hasNext();) {
 				Map.Entry<String, UIHandItem> en = it.next();
 				String handitemId = en.getKey();
-				if (!player.getUnitInHand().stream().anyMatch(h -> h.getId().equals(handitemId))) {
+				if (!uiUpdateForPlayer.getUnitInHand().stream().anyMatch(h -> h.getId().equals(handitemId))) {
 					it.remove();
 					transferStates.getHanditemsToRemove().add(handitemId);
 				}
@@ -91,15 +91,15 @@ public class UIBoard {
 		}
 
 		private void calcDiffAddChangedHanditems(UIBoard transferStates) {
-			player.getUnitInHand().forEach(u -> {
-				UIHandItem uiHandItem = player.getClientUIState().getIdToHanditems().get(u.getId());
+			uiUpdateForPlayer.getUnitInHand().forEach(u -> {
+				UIHandItem uiHandItem = uiUpdateForPlayer.getClientUIState().getIdToHanditems().get(u.getId());
 				if (uiHandItem == null) {
 					uiHandItem = new UIHandItem();
-					uiHandItem.copy(u, player);
-					player.getClientUIState().getIdToHanditems().put(u.getId(), uiHandItem);
+					uiHandItem.copy(u, uiUpdateForPlayer);
+					uiUpdateForPlayer.getClientUIState().getIdToHanditems().put(u.getId(), uiHandItem);
 					transferStates.getIdToHanditems().put(u.getId(), uiHandItem);
 				} else {
-					UIHandItem diff = uiHandItem.diffAndUpdate(u, player);
+					UIHandItem diff = uiHandItem.diffAndUpdate(u, uiUpdateForPlayer);
 					if (diff != null) {
 						transferStates.getIdToHanditems().put(u.getId(), diff);
 					}
@@ -108,14 +108,14 @@ public class UIBoard {
 		}
 
 		private void calcDiffRemovedUnits(UIBoard transferStates) {
-			for (Iterator<Map.Entry<String, UIUnit>> it = player.getClientUIState().getIdToUnits().entrySet()
+			for (Iterator<Map.Entry<String, UIUnit>> it = uiUpdateForPlayer.getClientUIState().getIdToUnits().entrySet()
 					.iterator(); it.hasNext();) {
 				Map.Entry<String, UIUnit> en = it.next();
 				String unitId = en.getKey();
 				UIUnit unit = en.getValue();
 				if (!unit.getUnitType().equals("city")) {// HACK: need to find a better
 															// way to detect a structure
-					if (!player.getGame().getBoard().getFields().stream().filter(f -> f.getUnit() != null)
+					if (!uiUpdateForPlayer.getGame().getBoard().getFields().stream().filter(f -> f.getUnit() != null)
 							.anyMatch(f -> f.getUnit().getId().equals(unitId))) {
 						it.remove();
 						transferStates.getUnitsToRemove().add(unitId);
@@ -126,7 +126,7 @@ public class UIBoard {
 		}
 
 		private void calcDiffBoard(UIBoard transferStates) {
-			player.getGame().getBoard().getFields().forEach(f -> {
+			uiUpdateForPlayer.getGame().getBoard().getFields().forEach(f -> {
 				calcDiffAddChangedFields(transferStates, f);
 				calcDiffAddStructure(transferStates, f);
 				calcDiffAddChangedUnits(transferStates, f);
@@ -137,14 +137,15 @@ public class UIBoard {
 			if (f.getUnit() != null) {
 				Unit unit = f.getUnit();
 				String unitId = unit.getId();
-				UIUnit uiUnit = player.getClientUIState().getIdToUnits().get(unitId);
+				UIUnit uiUnit = uiUpdateForPlayer.getClientUIState().getIdToUnits().get(unitId);
 				if (uiUnit == null) {
 					uiUnit = new UIUnit();
-					uiUnit.copy(unit, (int) f.getPos().getX(), (int) f.getPos().getY(), player);
-					player.getClientUIState().getIdToUnits().put(unitId, uiUnit);
+					uiUnit.copy(unit, (int) f.getPos().getX(), (int) f.getPos().getY(), uiUpdateForPlayer);
+					uiUpdateForPlayer.getClientUIState().getIdToUnits().put(unitId, uiUnit);
 					transferStates.getIdToUnits().put(unitId, uiUnit);
 				} else {
-					UIUnit diff = uiUnit.diffAndUpdate(unit, (int) f.getPos().getX(), (int) f.getPos().getY(), player);
+					UIUnit diff = uiUnit.diffAndUpdate(unit, (int) f.getPos().getX(), (int) f.getPos().getY(),
+							uiUpdateForPlayer);
 					if (diff != null) {
 						transferStates.getIdToUnits().put(unitId, diff);
 					}
@@ -156,12 +157,12 @@ public class UIBoard {
 			if (f.getStructure() != null) {
 				Structure structure = f.getStructure();
 				String structureId = structure.getId();
-				UIUnit uiUnit = player.getClientUIState().getIdToUnits().get(structureId);
+				UIUnit uiUnit = uiUpdateForPlayer.getClientUIState().getIdToUnits().get(structureId);
 				if (uiUnit == null) {
 					uiUnit = new UIUnit();
 					uiUnit.copy(structure, structure.getPlayer().getSide().toString(), (int) f.getPos().getX(),
 							(int) f.getPos().getY());
-					player.getClientUIState().getIdToUnits().put(structureId, uiUnit);
+					uiUpdateForPlayer.getClientUIState().getIdToUnits().put(structureId, uiUnit);
 					transferStates.getIdToUnits().put(structureId, uiUnit);
 				}
 			}
@@ -169,17 +170,17 @@ public class UIBoard {
 
 		private void calcDiffAddChangedFields(UIBoard transferStates, Field f) {
 			String id = (int) f.getPos().getX() + ":" + (int) f.getPos().getY();
-			UIField uiField = player.getClientUIState().getCorToFields().get(id);
+			UIField uiField = uiUpdateForPlayer.getClientUIState().getCorToFields().get(id);
 			if (uiField == null) {
 				// field from logic not in UI
 				uiField = new UIField(); // created
-				uiField.copy(f, player); // fill it
+				uiField.copy(f, uiUpdateForPlayer); // fill it
 				// add it to uistate
-				player.getClientUIState().getCorToFields().put(id, uiField);
+				uiUpdateForPlayer.getClientUIState().getCorToFields().put(id, uiField);
 				// add it to transfer
 				transferStates.getCorToFields().put(id, uiField);
 			} else {
-				UIField diff = uiField.diffAndUpdate(f, player);
+				UIField diff = uiField.diffAndUpdate(f, uiUpdateForPlayer);
 				if (diff != null) {
 					transferStates.getCorToFields().put(id, diff);
 				}

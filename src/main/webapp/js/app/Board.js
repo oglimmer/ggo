@@ -1,8 +1,5 @@
 define(['jquery', './Constants', './Communication', './GlobalData'], function($, Constants, communication, globalData) {	
 	
-	/**
-	 * CLASS Board
-	 */
 	function Board(elementId) {
 		var canvasBoard = document.getElementById(elementId);
 		this.ctxBoard = canvasBoard.getContext('2d');
@@ -122,9 +119,6 @@ define(['jquery', './Constants', './Communication', './GlobalData'], function($,
 		delete this.idToButtons[buttonId];
 	};
 
-	/**
-	 * draw the board
-	 */
 	Board.prototype.draw = function() {
 		this.ctxBoard.clearRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
 		// board		

@@ -70,6 +70,9 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 				if(typeof jsonObj.message.title  !== 'undefined') {
 					$("#messageTitle").html(jsonObj.message.title);		
 				}
+				if(typeof jsonObj.message.info  !== 'undefined') {
+					$("#messageInfo").html(jsonObj.message.info);
+				}
 				if(typeof jsonObj.message.error  !== 'undefined') {
 					$("#messageError").html(jsonObj.message.error);
 				}

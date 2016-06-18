@@ -1,8 +1,11 @@
 package de.oglimmer.ggo.logic;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import de.oglimmer.ggo.logic.util.GameUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -14,16 +17,40 @@ public class DeployPhase extends BasePhase {
 
 	private Unit selectedUnit;
 
-	private Map<Player, Set<Field>> validTargetFields = new HashMap<>();
+	private Map<Player, Set<Field>> additionalAirborneTargetFields = new HashMap<>();
 
 	public DeployPhase(Player firstActivePlayer) {
+		super(firstActivePlayer.getGame());
 		this.activePlayer = firstActivePlayer;
-		firstActivePlayer.getGame().getPlayers().forEach(p -> validTargetFields.put(p, p.getValidTargetFields()));
+		getGame().getPlayers()
+				.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
+	}
+
+	private Set<Field> getDefaultDeployZone(Player player) {
+		Predicate<? super Field> filter;
+		if (player.getSide() == Side.GREEN) {
+			filter = f -> f.getPos().getX() <= 3;
+		} else {
+			filter = f -> f.getPos().getX() >= 6;
+		}
+		return getGame().getBoard().getFields().stream().filter(filter).collect(Collectors.toSet());
+	}
+
+	private Set<Field> calcAdditionalTargetFieldsAirborne(Player player) {
+		return getGame().getBoard().getFields().stream().filter(f -> f.getUnit() != null)
+				.filter(f -> f.getUnit().getPlayer() == player).flatMap(f -> f.getNeighbords().stream())
+				.collect(Collectors.toSet());
 	}
 
 	@Override
 	public boolean isHighlighted(Field field, Player forPlayer) {
-		return forPlayer == activePlayer && selectedUnit != null && validTargetFields.get(forPlayer).contains(field);
+		Set<Field> tmp = new HashSet<>(getDefaultDeployZone(forPlayer));
+		if (selectedUnit != null && selectedUnit.getUnitType() == UnitType.AIRBORNE) {
+			tmp.addAll(additionalAirborneTargetFields.get(forPlayer));
+		}
+		// remove fields with unit
+		getGame().getBoard().getFields().stream().filter(f -> f.getUnit() != null).forEach(f -> tmp.remove(f));
+		return forPlayer == activePlayer && selectedUnit != null && tmp.contains(field);
 	}
 
 	@Override
@@ -81,7 +108,7 @@ public class DeployPhase extends BasePhase {
 			log.error("execSelectTargetField but selectedUnit was null");
 			return;
 		}
-		Field target = player.getGame().getBoard().getField(param);
+		Field target = getGame().getBoard().getField(param);
 		if (target.getUnit() != null) {
 			log.error("execSelectTargetField but already occupied field was seleted");
 			return;
@@ -89,7 +116,6 @@ public class DeployPhase extends BasePhase {
 		target.setUnit(selectedUnit);
 		selectedUnit.setDeployedOn(target);
 		player.getUnitInHand().remove(selectedUnit);
-		this.validTargetFields.values().forEach(s -> s.remove(target));
 		selectedUnit = null;
 		switchPlayer(player);
 
@@ -97,8 +123,8 @@ public class DeployPhase extends BasePhase {
 
 	protected void switchPlayer(Player player) {
 		boolean nextPhase = false;
-		activePlayer.getClientMessages().clearError();
-		Player nextPlayer = GameUtil.getOtherPlayer(player.getGame(), activePlayer);
+		activePlayer.getClientMessages().clearErrorInfo();
+		Player nextPlayer = GameUtil.getOtherPlayer(getGame(), activePlayer);
 		if (!hasMoreMoves(nextPlayer)) {
 			if (hasMoreMoves(activePlayer)) {
 				nextPlayer = activePlayer;
@@ -110,17 +136,17 @@ public class DeployPhase extends BasePhase {
 			nextPhase(nextPlayer);
 		} else {
 			activePlayer = nextPlayer;
-			updateUI(activePlayer.getGame());
+			updateUI();
 		}
 	}
 
 	@Override
-	public void updateUI(Game game) {
-		game.getPlayers().forEach(player -> {
+	public void updateUI() {
+		getGame().getPlayers().forEach(player -> {
 			if (player == activePlayer) {
 				if (selectedUnit != null) {
-					player.getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getUnitType()
-							+ " or click the unit again to de-select it");
+					player.getClientMessages().setTitle("Select a highlighted field to deploy "
+							+ selectedUnit.getUnitType() + " or click the unit again to de-select it");
 				} else {
 					player.getClientMessages().setTitle("Select a unit from your hand to deploy it");
 				}
@@ -132,7 +158,7 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase(Player firstPlayer) {
-		firstPlayer.getGame().setCurrentPhase(new CombatPhase(firstPlayer.getGame()));
+		getGame().setCurrentPhase(new CombatPhase(getGame()));
 	}
 
 	private boolean hasMoreMoves(Player p) {
