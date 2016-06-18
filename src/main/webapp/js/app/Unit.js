@@ -104,7 +104,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 				break;
 		}
 		
-		if(this.command != null) {
+		if(this.command != null && this.command.commandType != null) {
 			if(this.command.commandType == "F") {
 				ctx.beginPath();
 				ctx.fillStyle = "white";

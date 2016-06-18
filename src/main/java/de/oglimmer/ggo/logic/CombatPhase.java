@@ -52,8 +52,9 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 
 	@Override
 	public boolean isSelectable(Unit unit, Player forPlayer) {
-		// UNIT SELECTABLE: owned unit && unit is onboard && no unit selected yet
-		return unit.getPlayer() == forPlayer && unitOnBoard(unit) && selectedUnits.get(forPlayer) == null;
+		// UNIT SELECTABLE: owned unit && unit is onboard && no unit selected yet || unit is currently selected
+		return unit.getPlayer() == forPlayer && unitOnBoard(unit)
+				&& (selectedUnits.get(forPlayer) == null || selectedUnits.get(forPlayer) == unit);
 	}
 
 	private boolean unitOnBoard(Unit unit) {
@@ -74,7 +75,8 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 			if ("doneButton".equals(param)) {
 				inTurn.remove(player);
 				if (inTurn.isEmpty()) {
-					calcBattles();
+					BattleResolver br = new BattleResolver(cc);
+					br.calcBattles();
 					round++;
 					if (round == 2 || getGame().getBoard().getTotalUnits() == 0) {
 						nextPhase(getGame().getPlayers().get(0));
@@ -93,120 +95,10 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 		if (cc.validCommand(unit, targetField)) {
 			cc.addCommand(unit, targetField, CommandType.MOVE);
 			selectedUnits.remove(player);
+		} else {
+			player.getClientMessages().setError(
+					"One of your own units is/will be alreay there. De-select your unit or chose another target field.");
 		}
-	}
-
-	private void calcBattles() {
-		battleCrossingUnits();
-		battleBattleGrounds();
-		moveUnits();
-		cc.clearCommands();
-	}
-
-	private void moveUnits() {
-		Set<Field> movedTo = new HashSet<>();
-		cc.getCommands().values().forEach(c -> {
-			Field oldField = c.getUnit().getDeployedOn();
-			Unit unit = c.getUnit();
-			Field newField = c.getTargetField();
-
-			log.debug("Move {} from {} to {}", unit, oldField, newField);
-
-			assert !movedTo.contains(newField);
-			movedTo.add(newField);
-
-			unit.setDeployedOn(newField);
-			oldField.setUnit(null);
-			newField.setUnit(unit);
-		});
-	}
-
-	private void battleBattleGrounds() {
-		Map<Field, Set<Unit>> possibleBattleGrounds = new HashMap<>();
-		cc.allCommands(c -> {
-			Set<Unit> battleParticipants = possibleBattleGrounds.get(c.getTargetField());
-			if (battleParticipants == null) {
-				battleParticipants = new HashSet<>();
-				possibleBattleGrounds.put(c.getTargetField(), battleParticipants);
-			}
-			battleParticipants.add(c.getUnit());
-			log.debug("possibleBattleGrounds at {} added {}", c.getTargetField().getPos(), battleParticipants);
-		});
-		for (Iterator<Map.Entry<Field, Set<Unit>>> it = possibleBattleGrounds.entrySet().iterator(); it.hasNext();) {
-			Map.Entry<Field, Set<Unit>> en = it.next();
-			assert en.getValue().size() > 0 && en.getValue().size() < 3;
-			if (en.getValue().size() == 1) {
-				log.debug("Remove battleGrounds {}", en.getKey().getId());
-				it.remove();
-			}
-		}
-		log.debug("Total battleGrounds {}", possibleBattleGrounds.size());
-
-		possibleBattleGrounds.entrySet().forEach(entry -> {
-			// Field f = entry.getKey();
-			Set<Unit> units = entry.getValue();
-			Iterator<Unit> it = units.iterator();
-			Unit u1 = it.next();
-			Unit u2 = it.next();
-			battle(u1, u2, cc);
-		});
-	}
-
-	private void battleCrossingUnits() {
-		Set<Set<Unit>> crossingUnits = new HashSet<>();
-		cc.getCommands().values().forEach(c -> {
-			if (c.getCommandType() == CommandType.MOVE) {
-				Unit unit = c.getUnit();
-				log.debug("Processing unit (battleCrossingUnits): {}", unit);
-				if (!crossingUnits.stream().anyMatch(set -> set.contains(unit))) {
-					Field oldField = unit.getDeployedOn();
-					Field newField = c.getTargetField();
-
-					Unit crossingUnit = cc.getUnitMovingFromTo(newField, oldField);
-					if (crossingUnit != null) {
-						Set<Unit> s = new HashSet<>();
-						s.add(unit);
-						s.add(crossingUnit);
-						crossingUnits.add(s);
-						log.debug("Added crossingUnits {}", s);
-					}
-				}
-			}
-		});
-		log.debug("Total crossingUnits {}", crossingUnits.size());
-
-		crossingUnits.forEach(set -> {
-			assert set.size() == 2;
-			Iterator<Unit> it = set.iterator();
-			Unit u1 = it.next();
-			Unit u2 = it.next();
-			battle(u1, u2, cc);
-		});
-	}
-
-	private void battle(Unit u1, Unit u2, CommandCenter cc) {
-		int strength1 = u1.getUnitType().getStrength() + isFortified(u1, cc);
-		int strength2 = u2.getUnitType().getStrength() + isFortified(u2, cc);
-		if (strength1 == strength2) {
-			kill(u1);
-			kill(u2);
-		} else if (strength1 < strength2) {
-			kill(u1);
-		} else if (strength1 > strength2) {
-			kill(u2);
-		}
-	}
-
-	private int isFortified(Unit u, CommandCenter cc) {
-		return cc.getCommands().get(u).getCommandType() == CommandType.FORTIFY ? 1 : 0;
-	}
-
-	private void kill(Unit u) {
-		log.debug("Kill unit {}", u);
-		u.getPlayer().getClientMessages().setInfo(u.getPlayer().getClientMessages().getInfo()
-				+ u.getUnitType().toString() + " on " + u.getDeployedOn().getId() + " got killed. ");
-		u.getDeployedOn().setUnit(null);
-		cc.remove(u);
 	}
 
 	private void execSelectUnit(Player player, String param) {
@@ -217,6 +109,9 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 			return;
 		}
 		if (currentlySelected == unit) {
+			Command command = cc.get(unit);
+			command.setCommandType(CommandType.FORTIFY);
+			command.setTargetField(unit.getDeployedOn());
 			selectedUnits.remove(player);
 		} else {
 			selectedUnits.put(player, unit);

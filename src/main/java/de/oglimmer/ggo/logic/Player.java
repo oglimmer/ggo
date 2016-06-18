@@ -52,8 +52,8 @@ public class Player {
 
 	public void addUnits() {
 		unitInHand.add(new Unit(this, UnitType.INFANTERY));
-		unitInHand.add(new Unit(this, UnitType.TANK));
-		unitInHand.add(new Unit(this, UnitType.AIRBORNE));
+//		unitInHand.add(new Unit(this, UnitType.TANK));
+//		unitInHand.add(new Unit(this, UnitType.AIRBORNE));
 		// unitInHand.add(new Unit(this, UnitType.INFANTERY));
 		// unitInHand.add(new Unit(this, UnitType.INFANTERY));
 		// unitInHand.add(new Unit(this, UnitType.AIRBORNE));

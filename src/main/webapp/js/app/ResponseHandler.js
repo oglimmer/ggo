@@ -3,7 +3,13 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 
 	function copy(source, target) {
 		for(var att in source) {
-			target[att]=source[att];			
+			//maybe we could use an empty object to set something to null (as server never sends null as @JsonInclude(Include.NON_NULL)) 
+			/*if($.type(source[att]) == 'object' && $.isEmptyObject(source[att])) {
+				target[att] = null;
+			} else {
+				target[att] = source[att];
+			}*/
+			target[att] = source[att];
 		}
 	}
 	

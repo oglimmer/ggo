@@ -14,6 +14,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class DiffableUICommand {
 
+	private static final DiffableUICommand REMOVE_ITEM = new DiffableUICommand();
+
 	@Getter
 	@Setter
 	private String commandType;
@@ -23,6 +25,10 @@ public class DiffableUICommand {
 	@Getter
 	@Setter
 	private DiffableInteger y;
+
+	private DiffableUICommand() {
+		// REMOVE_ITEM
+	}
 
 	public DiffableUICommand(String commandType, int x, int y) {
 		this.commandType = commandType;
@@ -50,8 +56,13 @@ public class DiffableUICommand {
 		if ((thiz == null && latest == null) || (thiz != null && thiz.equals(latest))) {
 			return false;
 		}
-		thizHolder.accept(latest);
-		diffTarget.accept(latest);
+		if (latest == null) {
+			thizHolder.accept(latest);
+			diffTarget.accept(REMOVE_ITEM);
+		} else {
+			thizHolder.accept(latest);
+			diffTarget.accept(latest);
+		}
 		return true;
 	}
 
