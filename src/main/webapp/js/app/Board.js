@@ -1,6 +1,6 @@
 define(['jquery', './Constants', './Communication', './GlobalData'], function($, Constants, communication, globalData) {	
 	
-	function sort(source) {
+	function sortById(source) {
 		var array = [];
 		for(var att in source) {
 			array.push(source[att]);
@@ -161,7 +161,7 @@ define(['jquery', './Constants', './Communication', './GlobalData'], function($,
 		var x = 3;
 		var y = 535;
 		var thiz = this;
-		$.each(sort(this.idToButtons), function(buttonId, buttonToDraw) {
+		$.each(sortById(this.idToButtons), function(buttonId, buttonToDraw) {
 			if(!buttonToDraw.hidden) {
 				buttonToDraw.draw(thiz.ctxBoard, x, y);
 				x += buttonToDraw.width+4;

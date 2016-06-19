@@ -25,6 +25,7 @@
           <a class="navbar-brand" href="#">GridGameOne</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+          <!-- 
           <form class="navbar-form navbar-right">
             <div class="form-group">
               <input type="text" placeholder="Email" class="form-control">
@@ -34,6 +35,7 @@
             </div>
             <button type="submit" class="btn btn-success">Sign in</button>
           </form>
+           -->
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -46,7 +48,7 @@
       <hr>
 
       <footer>
-        <p>${actionBean.longVersion } - Created by oglimmer.de - Impressum/Kontakt/Datenschutz&nbsp;</p>
+        <p>${actionBean.longVersion } - Created by oglimmer.de <!-- - Impressum/Kontakt/Datenschutz&nbsp; --> </p>
       </footer>
     </div> <!-- /container -->
 

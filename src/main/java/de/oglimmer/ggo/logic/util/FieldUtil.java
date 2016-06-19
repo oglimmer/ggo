@@ -4,6 +4,44 @@ import de.oglimmer.ggo.logic.Field;
 
 public class FieldUtil {
 
+	/**
+	 * @formatter:off
+	 * 
+	 *   even(x) && even(y)
+	 *   x y
+ 	 *   - -
+	 *   0 -
+	 *   - 0
+	 *   + 0
+	 *   - +
+	 *   0 +
+	 *   
+	 *   even(x) && odd(y)
+	 *   0 -
+	 *   + -
+	 *   - 0
+	 *   + 0
+	 *   0 +
+	 *   + +
+	 *   
+	 *   odd(x) && even(y) 
+	 *   - -
+	 *   0 -
+	 *   - 0
+	 *   + 0
+	 *   - +
+	 *   0 +
+	 *   
+	 *   odd(x) && odd(y) 
+	 *   0 -
+	 *   + -
+	 *   - 0
+	 *   + 0
+	 *   0 +
+	 *   + +
+	 *   
+	 *  @formatter:on
+	 */
 	public static boolean adjacent(Field a, Field b) {
 		int thisX = (int) a.getPos().getX();
 		int thisY = (int) a.getPos().getY();

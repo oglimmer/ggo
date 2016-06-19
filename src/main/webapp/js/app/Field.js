@@ -51,7 +51,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		if (this.highlight) {
 			ctx.fillStyle = "#889988";
 		} else {
-			ctx.fillStyle = "#886688";
+			ctx.fillStyle = "#c2d6d6";
 		}
 		ctx.fill();
 
