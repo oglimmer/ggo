@@ -27,19 +27,24 @@ public class BattleResolver {
 	}
 
 	private void moveUnits() {
-		Set<Field> movedTo = new HashSet<>();
-		cc.getCommands().values().forEach(c -> {
-			Field oldField = c.getUnit().getDeployedOn();
-			Unit unit = c.getUnit();
-			Field newField = c.getTargetField();
+		Map<Field, Unit> allMoves = new HashMap<>();
+		cc.allCommands(c -> {
+			if (c.getCommandType() == CommandType.MOVE) {
+				assert !allMoves.containsKey(c.getTargetField());
+				allMoves.put(c.getTargetField(), c.getUnit());
+			}
+		});
 
-			log.debug("Move {} from {} to {}", unit, oldField, newField);
-
-			assert !movedTo.contains(newField);
-			movedTo.add(newField);
-
-			unit.setDeployedOn(newField);
+		allMoves.entrySet().forEach(en -> {
+			Unit unit = en.getValue();
+			Field oldField = unit.getDeployedOn();
 			oldField.setUnit(null);
+		});
+
+		allMoves.entrySet().forEach(en -> {
+			Unit unit = en.getValue();
+			Field newField = en.getKey();
+			unit.setDeployedOn(newField);
 			newField.setUnit(unit);
 		});
 	}
