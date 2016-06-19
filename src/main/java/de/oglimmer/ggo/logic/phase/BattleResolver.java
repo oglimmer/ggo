@@ -131,8 +131,8 @@ public class BattleResolver {
 
 	private void kill(Unit u) {
 		log.debug("Kill unit {}", u);
-		u.getPlayer().getClientMessages().setInfo(u.getPlayer().getClientMessages().getInfo()
-				+ u.getUnitType().toString() + " on " + u.getDeployedOn().getId() + " got killed. ");
+		u.getPlayer().getClientMessages()
+				.appendInfo(u.getUnitType().toString() + " on " + u.getDeployedOn().getId() + " got killed. ");
 		u.getDeployedOn().setUnit(null);
 		cc.remove(u);
 	}

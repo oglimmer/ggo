@@ -128,8 +128,14 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 	@Override
 	public void updateUI() {
 		getGame().getPlayers().forEach(player -> {
-			player.getClientMessages().setTitle(
-					"Command your units. Press `done` when finished. Round " + (round + 1) + " of " + MAX_ROUNDS);
+			String title;
+			Unit unit = selectedUnits.get(player);
+			if (unit != null) {
+				title = "Choose a destination field for " + unit.getUnitType().toString();
+			} else {
+				title = "Command your units. Press `done` when finished. Round " + (round + 1) + " of " + MAX_ROUNDS;
+			}
+			player.getClientMessages().setTitle(title);
 		});
 	}
 

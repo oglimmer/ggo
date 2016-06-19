@@ -29,6 +29,14 @@ public class UIMessages {
 		this.info.setCurrentValue(info);
 	}
 
+	public void appendInfo(String info) {
+		if (this.info.getCurrentValue() == null) {
+			this.info.setCurrentValue(info);
+		} else {
+			this.info.setCurrentValue(this.info.getCurrentValue() + " " + info);
+		}
+	}
+
 	public String getError() {
 		return error.getCurrentValue();
 	}
