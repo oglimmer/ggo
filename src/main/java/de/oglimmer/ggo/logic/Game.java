@@ -29,6 +29,7 @@ public class Game {
 		board = new Board();
 		board.addCities(players);
 		currentPhase = new DraftPhase(this);
+		currentPhase.init(player1);
 	}
 
 	public Player getPlayerById(String pid) {

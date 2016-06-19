@@ -1,6 +1,6 @@
 define(['./Constants', './Communication', './GlobalData'], function(Constants, communication, globalData) {
 
-	function drawArrow(ctx, fromx, fromy, tox, toy){
+	function drawArrow(ctx, fromx, fromy, tox, toy, color){
         //variables to be used when creating the arrow
         var headlen = 4;
 
@@ -10,7 +10,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
         ctx.beginPath();
         ctx.moveTo(fromx, fromy);
         ctx.lineTo(tox, toy);
-        ctx.strokeStyle = "#cc0000";
+        ctx.strokeStyle = color;
         ctx.lineWidth = 7;
         ctx.stroke();
 
@@ -27,10 +27,10 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
         ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
 
         //draws the paths created above
-        ctx.strokeStyle = "#cc0000";
+        ctx.strokeStyle = color;
         ctx.lineWidth = 7;
         ctx.stroke();
-        ctx.fillStyle = "#cc0000";
+        ctx.fillStyle = color;
         ctx.fill();
     }
 
@@ -115,7 +115,19 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 			} else {
 				var targetFieldId = this.command.x+":"+this.command.y;
 				var field = globalData.board.corToFields[targetFieldId];
-				drawArrow(ctx, cx, cy, field.realX(), field.realY());
+				var color;
+				switch(this.command.commandType) {
+				case "M":
+					color = "red";
+				break;
+				case 'B':
+					color = "green";
+				break;
+				case 'S':
+					color = "yellow";
+					break;
+				}
+				drawArrow(ctx, cx, cy, field.realX(), field.realY(), color);
 			}
 		}
 		

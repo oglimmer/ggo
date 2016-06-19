@@ -1,5 +1,5 @@
-define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalData', './Button'], 
-		function ($, Field, Unit, Constants, HandItem, globalData, Button) {
+define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalData', './Button', './ModalDialog'], 
+		function ($, Field, Unit, Constants, HandItem, globalData, Button, ModalDialog) {
 
 	function copy(source, target) {
 		for(var att in source) {
@@ -66,13 +66,27 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 						copy(button, existingButton);
 					}					
 				});
+				$.each(jsonObj.board.buttonsToRemove, function(index, buttonId) {
+					delete globalData.board.idToButtons[buttonId];
+				});
 			}
 			/* RESP_MYCOLOR */
 			if( typeof jsonObj.myColor !== 'undefined' ) {
 				globalData.myColor = jsonObj.myColor;
 			}
+			/* RESP_MODAL_DIALOG_EN */
+			if( typeof jsonObj.modalDialogEnable !== 'undefined' ) {
+				globalData.modalDialg = new ModalDialog(jsonObj.modalDialogEnable);
+			}
+			/* RESP_MODAL_DIALOG_DIS */
+			if( typeof jsonObj.modalDialogDisable !== 'undefined' ) {
+				delete globalData.modalDialg;
+			}
 			/* RESP_MESSAGE */
 			if( typeof jsonObj.message !== 'undefined' ) {
+				if(typeof jsonObj.message.score  !== 'undefined') {
+					$("#messageScore").html(jsonObj.message.score);		
+				}
 				if(typeof jsonObj.message.title  !== 'undefined') {
 					$("#messageTitle").html(jsonObj.message.title);		
 				}

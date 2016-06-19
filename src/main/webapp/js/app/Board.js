@@ -1,4 +1,4 @@
-define(['jquery', './Constants', './Communication', './GlobalData'], function($, Constants, communication, globalData) {	
+define(['jquery', './Constants', './Communication', './GlobalData', './CursorUtil'], function($, Constants, communication, globalData, cursorUtil) {	
 	
 	function sortById(source) {
 		var array = [];
@@ -26,29 +26,14 @@ define(['jquery', './Constants', './Communication', './GlobalData'], function($,
 		var thiz = this;
 		$(document).ready(function() {
 			$("#"+elementId).click(function(evt) {
+								
+				var relMousePos = cursorUtil.getRelativeMousePos(evt, canvasBoard);
 				
-				/**
-				 * Returns an object { "x":?, "y":? } for a given click event relative to a html element
-				 */
-				function getRelativeMousePos(evt, htmlElement) {
-					var obj = htmlElement;
-					var top = 0;
-					var left = 0;
-					while (obj && obj.tagName != 'BODY') {
-						top += obj.offsetTop;
-						left += obj.offsetLeft;
-						obj = obj.offsetParent;
-					}
-
-					var mouseX = evt.clientX - left + window.pageXOffset;
-					var mouseY = evt.clientY - top + window.pageYOffset;
-					return {
-						x : mouseX,
-						y : mouseY
-					};
+				if(typeof globalData.modalDialg !== 'undefined') {
+					globalData.modalDialg.onSelect(relMousePos);
+					return;
 				}
 				
-				var relMousePos = getRelativeMousePos(evt, canvasBoard);
 				var selectedHex = thiz.getFieldByPos(relMousePos);
 				if (selectedHex != null) {
 
@@ -89,6 +74,49 @@ define(['jquery', './Constants', './Communication', './GlobalData'], function($,
 		});
 	}
 
+	Board.prototype.draw = function() {
+		this.ctxBoard.clearRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
+		// board		
+		for ( var f in this.corToFields) {
+			this.corToFields[f].draw(this.ctxBoard);
+		}
+		for ( var f in this.idToUnits) {
+			var unitToDraw = this.idToUnits[f];
+			unitToDraw.draw(this.ctxBoard);
+		}
+		// hand
+		this.ctxBoard.beginPath();
+		this.ctxBoard.fillStyle = "#dddddd";
+		this.ctxBoard.fillRect(0, 470, this.ctxBoard.canvas.width-10, 57);
+		var x = 3;
+		var y = 475;
+		for ( var f in this.idToHanditems) {
+			var handitemToDraw = this.idToHanditems[f];
+			handitemToDraw.draw(this.ctxBoard, x, y);
+			x += Constants.size.width*.8+4;
+		}
+		if(x == 3) {
+			this.ctxBoard.beginPath();
+			this.ctxBoard.font = "16px Arial";
+			this.ctxBoard.fillStyle = "black";
+			this.ctxBoard.fillText("No units in hand.",x,y+28);
+		}
+		// buttons
+		var x = 3;
+		var y = 535;
+		var thiz = this;
+		$.each(sortById(this.idToButtons), function(buttonId, buttonToDraw) {
+			if(!buttonToDraw.hidden) {
+				buttonToDraw.draw(thiz.ctxBoard, x, y);
+				x += buttonToDraw.width+4;
+			}
+		});
+		// modalDialog
+		if(typeof globalData.modalDialg !== 'undefined') {
+			globalData.modalDialg.draw(this.ctxBoard);
+		}
+	};	
+	
 	Board.prototype.addFields = function(fields) {
 		for ( var i = 0; i < fields.length; i++) {
 			this.addField(fields[i]);
@@ -128,45 +156,6 @@ define(['jquery', './Constants', './Communication', './GlobalData'], function($,
 	};
 	Board.prototype.removeButton = function(buttonId) {
 		delete this.idToButtons[buttonId];
-	};
-
-	Board.prototype.draw = function() {
-		this.ctxBoard.clearRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
-		// board		
-		for ( var f in this.corToFields) {
-			this.corToFields[f].draw(this.ctxBoard);
-		}
-		for ( var f in this.idToUnits) {
-			var unitToDraw = this.idToUnits[f];
-			unitToDraw.draw(this.ctxBoard);
-		}
-		// hand
-		this.ctxBoard.beginPath();
-		this.ctxBoard.fillStyle = "#dddddd";
-		this.ctxBoard.fillRect(0, 470, this.ctxBoard.canvas.width-10, 57);
-		var x = 3;
-		var y = 475;
-		for ( var f in this.idToHanditems) {
-			var handitemToDraw = this.idToHanditems[f];
-			handitemToDraw.draw(this.ctxBoard, x, y);
-			x += Constants.size.width*.8+4;
-		}
-		if(x == 3) {
-			this.ctxBoard.beginPath();
-			this.ctxBoard.font = "16px Arial";
-			this.ctxBoard.fillStyle = "black";
-			this.ctxBoard.fillText("No units in hand.",x,y+28);
-		}
-		// buttons
-		var x = 3;
-		var y = 535;
-		var thiz = this;
-		$.each(sortById(this.idToButtons), function(buttonId, buttonToDraw) {
-			if(!buttonToDraw.hidden) {
-				buttonToDraw.draw(thiz.ctxBoard, x, y);
-				x += buttonToDraw.width+4;
-			}
-		});
 	};
 
 	/**

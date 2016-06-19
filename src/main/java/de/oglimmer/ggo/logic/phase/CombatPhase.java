@@ -1,5 +1,7 @@
 package de.oglimmer.ggo.logic.phase;
 
+import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,16 +12,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import de.oglimmer.ggo.logic.Constants;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
+import de.oglimmer.ggo.logic.util.GameUtil;
 import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIButton;
 import de.oglimmer.ggo.ui.UnitCommandablePhase;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -30,12 +37,19 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 	private int round = 0;
 
 	private Map<Player, Unit> selectedUnits = new HashMap<>();
+	private Map<Player, Field> selectedFields = new HashMap<>();
+	@Getter
+	private Map<Player, Set<CommandType>> possibleCommandTypesOptions = new HashMap<>();
 	private Set<Player> inTurn = new HashSet<>();
 	private CommandCenter cc = new CommandCenter();
 
 	public CombatPhase(Game game) {
 		super(game);
-		inTurn.addAll(game.getPlayers());
+	}
+
+	@Override
+	public void init(Player firstActivePlayer) {
+		inTurn.addAll(getGame().getPlayers());
 		cc.setAllToFortify();
 		getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
 	}
@@ -43,8 +57,8 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 	@Override
 	public boolean isHighlighted(Field field, Player forPlayer) {
 		Unit unit = selectedUnits.get(forPlayer);
-		// FIELD SELECTEDABLE: unit is selected AND a field around that unit
-		return unit != null && unit.getDeployedOn().getNeighbords().contains(field);
+		// FIELD SELECTEDABLE: unit is selected AND unit can go to or target the field
+		return unit != null && (unit.getMovableFields().contains(field) || unit.getTargetableFields().contains(field));
 	}
 
 	@Override
@@ -78,6 +92,9 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 		case "selectTargetField":
 			execTargetField(player, param);
 			break;
+		case "selectModalDialog":
+			execModalDialog(player, param);
+			break;
 		case "button":
 			if ("doneButton".equals(param)) {
 				inTurn.remove(player);
@@ -86,6 +103,12 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 					br.calcBattles();
 					round++;
 					if (round == MAX_ROUNDS || getGame().getBoard().getTotalUnits() == 0) {
+
+						getGame().getBoard().getFields().stream().filter(f -> f.getStructure() != null)
+								.filter(f -> f.getUnit() != null)
+								.filter(f -> f.getUnit().getPlayer() != f.getStructure().getPlayer())
+								.forEach(f -> f.getUnit().getPlayer().incScore(100));
+
 						nextPhase(getGame().getPlayers().get(0));
 					} else {
 						inTurn.addAll(getGame().getPlayers());
@@ -96,16 +119,50 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 		}
 	}
 
-	private void execTargetField(Player player, String param) {
-		Field targetField = getGame().getBoard().getField(param);
+	private void execModalDialog(Player player, String param) {
 		Unit unit = selectedUnits.get(player);
-		if (cc.validCommand(unit, targetField)) {
-			cc.addCommand(unit, targetField, CommandType.MOVE);
-			selectedUnits.remove(player);
-		} else {
+		if (unit == null) {
+			log.error("execTargetField but no unit was selected");
+			return;
+		}
+		Field targetField = selectedFields.get(player);
+		if (targetField == null) {
+			log.error("execTargetField but no target field was selected");
+			return;
+		}
+		if (!"Cancel".equalsIgnoreCase(param)) {
+			CommandType commandType = CommandType.valueOf(param);
+			cc.addCommand(unit, targetField, commandType);
+		}
+		selectedUnits.remove(player);
+		selectedFields.remove(player);
+		possibleCommandTypesOptions.remove(player);
+		ObjectNode root = instance.objectNode();
+		getMessages().addMessage(player, Constants.RESP_MODAL_DIALOG_DIS, root);
+	}
+
+	private void execTargetField(Player player, String param) {
+		Unit unit = selectedUnits.get(player);
+		if (unit == null) {
+			log.error("execTargetField but no unit was selected");
+			return;
+		}
+		Field targetField = getGame().getBoard().getField(param);
+		Set<CommandType> possibleCommandTypes = getPossibleCommandTypes(unit, targetField);
+		if (possibleCommandTypes.size() == 0) {
 			player.getClientMessages().setError(
 					"One of your own units is/will be alreay there. De-select your unit or chose another target field.");
+		} else if (possibleCommandTypes.size() == 1) {
+			cc.addCommand(unit, targetField, possibleCommandTypes.iterator().next());
+			selectedUnits.remove(player);
+		} else {
+			selectedFields.put(player, targetField);
+			possibleCommandTypesOptions.put(player, possibleCommandTypes);
 		}
+	}
+
+	private Set<CommandType> getPossibleCommandTypes(Unit unit, Field targetField) {
+		return unit.getPossibleCommandTypes(cc, targetField);
 	}
 
 	private void execSelectUnit(Player player, String param) {
@@ -116,9 +173,8 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 			return;
 		}
 		if (currentlySelected == unit) {
-			Command command = cc.get(unit);
-			command.setCommandType(CommandType.FORTIFY);
-			command.setTargetField(unit.getDeployedOn());
+			cc.remove(unit);
+			cc.addCommand(unit, unit.getDeployedOn(), CommandType.FORTIFY);
 			selectedUnits.remove(player);
 		} else {
 			selectedUnits.put(player, unit);
@@ -136,12 +192,30 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 				title = "Command your units. Press `done` when finished. Round " + (round + 1) + " of " + MAX_ROUNDS;
 			}
 			player.getClientMessages().setTitle(title);
+			player.getClientMessages().setScore("Your score: " + player.getScore() + ", opponents score: "
+					+ GameUtil.getOtherPlayer(player).getScore());
+
+			if (possibleCommandTypesOptions.get(player) != null) {
+				ObjectNode root = instance.objectNode();
+				root.set("title", instance.textNode("Choose a command"));
+				ArrayNode options = instance.arrayNode();
+				for (CommandType ct : possibleCommandTypesOptions.get(player)) {
+					ObjectNode option = instance.objectNode();
+					option.set("id", instance.textNode(ct.name()));
+					option.set("description", instance.textNode(ct.name()));
+					options.add(option);
+				}
+				root.set("options", options);
+				getMessages().addMessage(player, Constants.RESP_MODAL_DIALOG_EN, root);
+			}
+
 		});
 	}
 
 	@Override
 	protected void nextPhase(Player firstPlayer) {
 		getGame().setCurrentPhase(new DraftPhase(getGame()));
+		getGame().getCurrentPhase().init(firstPlayer);
 	}
 
 	@Override
@@ -162,13 +236,13 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 		return cc.get(unit);
 	}
 
-	class CommandCenter {
+	public class CommandCenter {
+
 		@Getter
 		private Map<Unit, Command> commands = new HashMap<>();
 
-		public boolean validCommand(Unit unit, Field targetField) {
-			return !commands.values().stream().filter(c -> c.getUnit().getPlayer() == unit.getPlayer())
-					.anyMatch(c -> c.getTargetField() == targetField);
+		public CommandCenter() {
+			setAllToFortify();
 		}
 
 		public void remove(Unit u) {
@@ -196,7 +270,7 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 			setAllToFortify();
 		}
 
-		public void setAllToFortify() {
+		private void setAllToFortify() {
 			getGame().getBoard().getFields().stream().filter(f -> f.getUnit() != null).forEach(f -> {
 				addCommand(f.getUnit(), f, CommandType.FORTIFY);
 			});
@@ -205,6 +279,7 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 		public void addCommand(Unit unit, Field targetField, CommandType command) {
 			Command newCommand = new Command(command, unit, targetField);
 			commands.put(unit, newCommand);
+			log.debug("Added command {} for {} at {} ", command, unit.getUnitType(), targetField.getId());
 		}
 
 		public boolean hasCommandFor(Unit unit, Player forPlayer) {
@@ -218,10 +293,25 @@ public class CombatPhase extends BasePhase implements UnitCommandablePhase {
 		public void allCommands(Consumer<Command> consumer) {
 			commands.values().forEach(consumer);
 		}
+
+		public boolean isNotTargetedByOtherOwnUnit(Player player, Field targetField, Unit unit) {
+			return !isOccupiedByOwnUnit(player, targetField);
+		}
+
+		public boolean isOccupiedByOwnUnit(Player player, Field targetField) {
+			return commands.values().stream().filter(c -> c.getUnit().getPlayer() == player)
+					.anyMatch(c -> c.getTargetField() == targetField);
+		}
+
+		public boolean isOccupiedByEnemyUnit(Player player, Field targetField) {
+			return commands.values().stream().filter(c -> c.getUnit().getPlayer() != player)
+					.anyMatch(c -> c.getTargetField() == targetField);
+		}
+
 	}
 
 	@AllArgsConstructor
-	@Data
+	@Value
 	public class Command {
 		private CommandType commandType;
 		private Unit unit;

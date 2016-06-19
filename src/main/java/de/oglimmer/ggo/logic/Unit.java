@@ -2,9 +2,14 @@ package de.oglimmer.ggo.logic;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import de.oglimmer.ggo.logic.phase.CombatPhase.CommandCenter;
+import de.oglimmer.ggo.logic.phase.CombatPhase.CommandType;
 import de.oglimmer.ggo.util.RandomString;
 import lombok.Getter;
 import lombok.NonNull;
@@ -54,6 +59,53 @@ public class Unit {
 		return "Unit [id=" + id + ", player=" + player.getSide() + ", unitType=" + unitType + ", deployedOn="
 				+ (deployedOn != null ? deployedOn.getId() : null) + ", selected=" + isSelected(player)
 				+ ", selectable=" + isSelectable(player) + "]";
+	}
+
+	public Set<CommandType> getPossibleCommandTypes(CommandCenter cc, Field targetField) {
+		Set<CommandType> possibleCommands = new HashSet<>();
+		if (getMovableFields().contains(targetField) && cc.isNotTargetedByOtherOwnUnit(player, targetField, this)) {
+			possibleCommands.add(CommandType.MOVE);
+		}
+		switch (unitType) {
+		case TANK:
+		case INFANTERY:
+		case AIRBORNE:
+			if (getSupportableFields().contains(targetField) && cc.isOccupiedByOwnUnit(player, targetField)) {
+				possibleCommands.add(CommandType.SUPPORT);
+			}
+			break;
+		case HELICOPTER:
+			if (getSupportableFields().contains(targetField) && cc.isOccupiedByOwnUnit(player, targetField)) {
+				possibleCommands.add(CommandType.SUPPORT);
+			}
+			if (getTargetableFields().contains(targetField) && cc.isOccupiedByEnemyUnit(player, targetField)) {
+				possibleCommands.add(CommandType.BOMBARD);
+			}
+			break;
+		case ARTILLERY:
+			if (getTargetableFields().contains(targetField) && cc.isOccupiedByEnemyUnit(player, targetField)) {
+				possibleCommands.add(CommandType.BOMBARD);
+			}
+			break;
+		}
+		return possibleCommands;
+	}
+
+	public Set<Field> getSupportableFields() {
+		return deployedOn.getNeighbords();
+	}
+
+	public Set<Field> getMovableFields() {
+		return deployedOn.getNeighbords();
+	}
+
+	public Set<Field> getTargetableFields() {
+		Set<Field> targetableFields = new HashSet<>();
+		targetableFields.addAll(deployedOn.getNeighbords());
+		if (unitType == UnitType.ARTILLERY) {
+			deployedOn.getNeighbords().forEach(f -> targetableFields.addAll(f.getNeighbords()));
+		}
+		return targetableFields;
 	}
 
 }

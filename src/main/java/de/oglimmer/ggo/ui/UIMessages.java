@@ -9,9 +9,18 @@ import lombok.ToString;
 @ToString
 public class UIMessages {
 
+	private MemorizingString score = new MemorizingString();
 	private MemorizingString title = new MemorizingString();
 	private MemorizingString info = new MemorizingString();
 	private MemorizingString error = new MemorizingString();
+
+	public String getScore() {
+		return score.getCurrentValue();
+	}
+
+	public void setScore(String score) {
+		this.score.setCurrentValue(score);
+	}
 
 	public String getTitle() {
 		return title.getCurrentValue();
@@ -46,7 +55,7 @@ public class UIMessages {
 	}
 
 	public boolean hasChange() {
-		return title.hasChange() || info.hasChange() || error.hasChange();
+		return title.hasChange() || info.hasChange() || error.hasChange() || score.hasChange();
 	}
 
 	public void clearErrorInfo() {
@@ -56,6 +65,7 @@ public class UIMessages {
 
 	public UIMessages calcDiffMessages() {
 		UIMessages transfer = new UIMessages();
+		transfer.setScore(score.calcDiffMessages());
 		transfer.setTitle(title.calcDiffMessages());
 		transfer.setInfo(info.calcDiffMessages());
 		transfer.setError(error.calcDiffMessages());

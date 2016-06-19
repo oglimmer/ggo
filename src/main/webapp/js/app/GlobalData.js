@@ -1,5 +1,4 @@
-define(['./Board'], 
-		function (Board) {
+define([], function () {
 
 	
 	var globalDataObject = {
@@ -7,8 +6,6 @@ define(['./Board'],
 			myColor : null,
 			playerId: ggoPlayerId
 	};
-	
-	globalDataObject.board = new Board('board');
 	
 	return globalDataObject;
 

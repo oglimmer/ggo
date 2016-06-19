@@ -18,9 +18,14 @@ public class DraftPhase extends BasePhase {
 
 	public DraftPhase(Game game) {
 		super(game);
-		inTurn.addAll(game.getPlayers());
-		game.getPlayers().forEach(p -> p.incCredits(1000));
-		game.getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
+
+	}
+
+	@Override
+	public void init(Player firstPlayer) {
+		inTurn.addAll(getGame().getPlayers());
+		getGame().getPlayers().forEach(p -> p.incCredits(1000));
+		getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
 	}
 
 	@Override
@@ -54,6 +59,7 @@ public class DraftPhase extends BasePhase {
 	@Override
 	protected void nextPhase(Player firstPlayer) {
 		getGame().setCurrentPhase(new DeployPhase(firstPlayer));
+		getGame().getCurrentPhase().init(firstPlayer);
 	}
 
 	@Override

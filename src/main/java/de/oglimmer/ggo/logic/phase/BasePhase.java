@@ -38,6 +38,8 @@ abstract public class BasePhase {
 		}
 	}
 
+	abstract public void init(Player firstPlayer);
+
 	abstract protected void nextPhase(Player firstPlayer);
 
 	/**
@@ -47,7 +49,7 @@ abstract public class BasePhase {
 
 	final public void diffUIState() {
 		game.getPlayers().forEach(p -> {
-			UIBoard uiUpdate = p.getClientUIState().calcDiff(p);
+			UIBoard uiUpdate = p.getClientUIState().calcStateAndDiff(p);
 			UIMessages uiMessages = p.getClientMessages().calcDiffMessages();
 			messages.addMessage(p, uiUpdate, uiMessages);
 		});

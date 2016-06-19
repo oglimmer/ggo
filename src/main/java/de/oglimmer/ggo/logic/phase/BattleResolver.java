@@ -10,20 +10,36 @@ import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.phase.CombatPhase.CommandCenter;
 import de.oglimmer.ggo.logic.phase.CombatPhase.CommandType;
-import lombok.AllArgsConstructor;
+import de.oglimmer.ggo.logic.util.GameUtil;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class BattleResolver {
 
+	@NonNull
 	private CommandCenter cc;
 
 	public void calcBattles() {
+		battleBombard();
 		battleCrossingUnits();
 		battleBattleGrounds();
 		moveUnits();
 		cc.clearCommands();
+	}
+
+	private void battleBombard() {
+		Set<Unit> killed = new HashSet<>();
+		cc.getCommands().values().stream().filter(c -> c.getCommandType() == CommandType.BOMBARD)
+				.forEach(c -> killed.add(c.getTargetField().getUnit()));
+		log.debug("Total units killed during bombard {}", killed.size());
+
+		killed.forEach(u -> {
+			kill(u, cc);
+			GameUtil.getOtherPlayer(u.getPlayer()).incScore(10);
+		});
 	}
 
 	private void moveUnits() {
@@ -76,7 +92,7 @@ public class BattleResolver {
 			Iterator<Unit> it = units.iterator();
 			Unit u1 = it.next();
 			Unit u2 = it.next();
-			battle(u1, u2, cc);
+			resolveBattle(u1, u2);
 		});
 	}
 
@@ -108,28 +124,43 @@ public class BattleResolver {
 			Iterator<Unit> it = set.iterator();
 			Unit u1 = it.next();
 			Unit u2 = it.next();
-			battle(u1, u2, cc);
+			resolveBattle(u1, u2);
 		});
 	}
 
-	private void battle(Unit u1, Unit u2, CommandCenter cc) {
-		int strength1 = u1.getUnitType().getStrength() + isFortified(u1, cc);
-		int strength2 = u2.getUnitType().getStrength() + isFortified(u2, cc);
+	private void resolveBattle(Unit u1, Unit u2) {
+		int strength1 = u1.getUnitType().getStrength() + isFortified(u1, cc) + isSupported(u1, cc);
+		int strength2 = u2.getUnitType().getStrength() + isFortified(u2, cc) + isSupported(u1, cc);
 		if (strength1 == strength2) {
-			kill(u1);
-			kill(u2);
+			score(u1);
+			score(u2);
+			kill(u1, cc);
+			kill(u2, cc);
 		} else if (strength1 < strength2) {
-			kill(u1);
+			score(u2);
+			kill(u1, cc);
 		} else if (strength1 > strength2) {
-			kill(u2);
+			score(u1);
+			kill(u2, cc);
 		}
+	}
+
+	private void score(Unit unit) {
+		System.out.println("score for unit "+unit+"?"+cc.get(unit).getCommandType());
+		if (cc.get(unit).getCommandType() == CommandType.MOVE) {
+			unit.getPlayer().incCredits(10);
+		}
+	}
+
+	private int isSupported(Unit u, CommandCenter cc2) {
+		return 0;
 	}
 
 	private int isFortified(Unit u, CommandCenter cc) {
 		return cc.getCommands().get(u).getCommandType() == CommandType.FORTIFY ? 1 : 0;
 	}
 
-	private void kill(Unit u) {
+	private void kill(Unit u, CommandCenter cc) {
 		log.debug("Kill unit {}", u);
 		u.getPlayer().getClientMessages()
 				.appendInfo(u.getUnitType().toString() + " on " + u.getDeployedOn().getId() + " got killed. ");

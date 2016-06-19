@@ -26,7 +26,21 @@ public class DeployPhase extends BasePhase {
 
 	public DeployPhase(Player firstActivePlayer) {
 		super(firstActivePlayer.getGame());
-		this.activePlayer = firstActivePlayer;
+
+	}
+
+	@Override
+	public void init(Player firstActivePlayer) {
+		if (!firstActivePlayer.getUnitInHand().isEmpty()) {
+			this.activePlayer = firstActivePlayer;
+		} else {
+			Player otherPlayer = GameUtil.getOtherPlayer(firstActivePlayer);
+			if (!otherPlayer.getUnitInHand().isEmpty()) {
+				this.activePlayer = otherPlayer;
+			} else {
+				nextPhase(firstActivePlayer);
+			}
+		}
 		getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
 		getGame().getPlayers()
 				.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
@@ -130,7 +144,7 @@ public class DeployPhase extends BasePhase {
 	protected void switchPlayer(Player player) {
 		boolean nextPhase = false;
 		activePlayer.getClientMessages().clearErrorInfo();
-		Player nextPlayer = GameUtil.getOtherPlayer(getGame(), activePlayer);
+		Player nextPlayer = GameUtil.getOtherPlayer(activePlayer);
 		if (!hasMoreMoves(nextPlayer)) {
 			if (hasMoreMoves(activePlayer)) {
 				nextPlayer = activePlayer;
@@ -165,6 +179,7 @@ public class DeployPhase extends BasePhase {
 	@Override
 	protected void nextPhase(Player firstPlayer) {
 		getGame().setCurrentPhase(new CombatPhase(getGame()));
+		getGame().getCurrentPhase().init(firstPlayer);
 	}
 
 	private boolean hasMoreMoves(Player p) {

@@ -1,5 +1,6 @@
 package de.oglimmer.ggo.ui;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,14 +33,16 @@ public class UIBoard {
 
 	@Getter
 	private Map<String, UIButton> idToButtons = new HashMap<>();
+	@Getter
+	private Set<String> buttonsToRemove = new HashSet<>();
 
 	public boolean hasChange() {
 		return !corToFields.isEmpty() || !idToUnits.isEmpty() || !unitsToRemove.isEmpty() || !idToHanditems.isEmpty()
 				|| !handitemsToRemove.isEmpty() || !idToButtons.isEmpty();
 	}
 
-	public UIBoard calcDiff(Player player) {
-		return new TransferBuilder(player).calcDiff();
+	public UIBoard calcStateAndDiff(Player player) {
+		return new TransferBuilder(player).calcStateAndDiff();
 	}
 
 	@AllArgsConstructor
@@ -47,7 +50,7 @@ public class UIBoard {
 
 		private Player uiUpdateForPlayer;
 
-		public UIBoard calcDiff() {
+		public UIBoard calcStateAndDiff() {
 			UIBoard transferStates = new UIBoard();
 			calcDiffBoard(transferStates);
 			calcDiffRemovedUnits(transferStates);
@@ -57,12 +60,33 @@ public class UIBoard {
 		}
 
 		private void calcDiffButtons(UIBoard transferStates) {
-			uiUpdateForPlayer.getGame().getCurrentPhase().getButtons(uiUpdateForPlayer).forEach(b -> {
-				UIButton state = uiUpdateForPlayer.getButtons().get(b.getId());
+			Collection<UIButton> currentButtonsToShwo = uiUpdateForPlayer.getGame().getCurrentPhase()
+					.getButtons(uiUpdateForPlayer);
+
+			calcDiffAddChangedButtons(transferStates, currentButtonsToShwo);
+			calcDiffRemoveButtons(transferStates, currentButtonsToShwo);
+
+		}
+
+		private void calcDiffRemoveButtons(UIBoard transferStates, Collection<UIButton> currentButtonsToShwo) {
+			for (Iterator<Map.Entry<String, UIButton>> it = uiUpdateForPlayer.getClientUIState().getIdToButtons()
+					.entrySet().iterator(); it.hasNext();) {
+				Map.Entry<String, UIButton> en = it.next();
+				String buttonId = en.getKey();
+				if (!currentButtonsToShwo.stream().anyMatch(b -> b.getId().equals(buttonId))) {
+					it.remove();
+					transferStates.getButtonsToRemove().add(buttonId);
+				}
+			}
+		}
+
+		private void calcDiffAddChangedButtons(UIBoard transferStates, Collection<UIButton> buttons) {
+			buttons.forEach(b -> {
+				UIButton state = uiUpdateForPlayer.getClientUIState().getIdToButtons().get(b.getId());
 				if (state == null) {
 					state = new UIButton(b.getId(), b.getText(), null, 30, 20, b.getHidden());
 					state.copy(b);
-					uiUpdateForPlayer.getButtons().put(b.getId(), state);
+					uiUpdateForPlayer.getClientUIState().getIdToButtons().put(b.getId(), state);
 					transferStates.getIdToButtons().put(b.getId(), state);
 				} else {
 					UIButton diff = state.diffAndUpdate(b);
