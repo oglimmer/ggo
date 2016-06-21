@@ -1,6 +1,7 @@
 package de.oglimmer.ggo.logic;
 
 import java.awt.Point;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,11 +14,9 @@ public class Field {
 	@Getter
 	private String id;
 
-	@Getter
 	private Point pos;
 
-	@Getter
-	private Set<Field> neighbords = new HashSet<>();
+	private Set<Field> neighbors = new HashSet<>();
 
 	@Getter
 	@Setter
@@ -41,7 +40,15 @@ public class Field {
 	}
 
 	public void calcNeighbors(Set<Field> fields) {
-		fields.stream().filter(f -> FieldUtil.adjacent(this, f)).forEach(f -> neighbords.add(f));
+		fields.stream().filter(f -> FieldUtil.adjacent(this, f)).forEach(f -> neighbors.add(f));
+	}
+
+	public Point getPos() {
+		return new Point(pos);
+	}
+
+	public Set<Field> getNeighbors() {
+		return Collections.unmodifiableSet(this.neighbors);
 	}
 
 	@Override

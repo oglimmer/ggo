@@ -2,11 +2,13 @@ package de.oglimmer.ggo.com;
 
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.atmosphere.config.managed.Encoder;
+import java.io.IOException;
 
 import javax.inject.Inject;
-import java.io.IOException;
+
+import org.atmosphere.config.managed.Encoder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonEncoder implements Encoder<CommandMessage, String> {
 

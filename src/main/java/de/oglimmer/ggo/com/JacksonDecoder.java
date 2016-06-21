@@ -1,10 +1,12 @@
 package de.oglimmer.ggo.com;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.atmosphere.config.managed.Decoder;
+import java.io.IOException;
 
 import javax.inject.Inject;
-import java.io.IOException;
+
+import org.atmosphere.config.managed.Decoder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonDecoder implements Decoder<String, CommandMessage> {
 

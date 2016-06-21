@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
-import de.oglimmer.ggo.logic.phase.CombatPhase;
+import de.oglimmer.ggo.logic.phase.Command;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,14 +37,10 @@ public class DiffableUICommand {
 	}
 
 	public static DiffableUICommand create(Player forPlayer, Unit unit) {
-		if (forPlayer.getGame().getCurrentPhase() instanceof UnitCommandablePhase) {
-			UnitCommandablePhase ucp = (UnitCommandablePhase) forPlayer.getGame().getCurrentPhase();
-			if (ucp.hasCommandFor(unit, forPlayer)) {
-				CombatPhase.Command cPCommand = ucp.getCommand(unit);
-				return new DiffableUICommand(cPCommand.getCommandType().toString(),
-						(int) cPCommand.getTargetField().getPos().getX(),
-						(int) cPCommand.getTargetField().getPos().getY());
-			}
+		Command cPCommand = forPlayer.getGame().getCurrentPhase().getCommand(unit, forPlayer);
+		if (cPCommand != null) {
+			return new DiffableUICommand(cPCommand.getCommandType().toString(),
+					(int) cPCommand.getTargetField().getPos().getX(), (int) cPCommand.getTargetField().getPos().getY());
 		}
 		return null;
 	}

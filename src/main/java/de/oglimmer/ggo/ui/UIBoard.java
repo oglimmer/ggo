@@ -38,7 +38,7 @@ public class UIBoard {
 
 	public boolean hasChange() {
 		return !corToFields.isEmpty() || !idToUnits.isEmpty() || !unitsToRemove.isEmpty() || !idToHanditems.isEmpty()
-				|| !handitemsToRemove.isEmpty() || !idToButtons.isEmpty();
+				|| !handitemsToRemove.isEmpty() || !idToButtons.isEmpty() || !buttonsToRemove.isEmpty();
 	}
 
 	public UIBoard calcStateAndDiff(Player player) {
@@ -73,6 +73,7 @@ public class UIBoard {
 					.entrySet().iterator(); it.hasNext();) {
 				Map.Entry<String, UIButton> en = it.next();
 				String buttonId = en.getKey();
+
 				if (!currentButtonsToShwo.stream().anyMatch(b -> b.getId().equals(buttonId))) {
 					it.remove();
 					transferStates.getButtonsToRemove().add(buttonId);

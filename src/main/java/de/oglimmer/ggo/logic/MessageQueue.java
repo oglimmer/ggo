@@ -28,14 +28,6 @@ public class MessageQueue {
 		getMap().put(target, root);
 	}
 
-	// public void addMessage(Game game, String name, JsonNode msg) {
-	// game.getPlayers().forEach(p -> {
-	// ObjectNode root = getMap().getOrDefault(p, instance.objectNode());
-	// root.set(name, msg);
-	// getMap().put(p, root);
-	// });
-	// }
-
 	public void clearMessages() {
 		getMap().clear();
 	}
@@ -51,6 +43,14 @@ public class MessageQueue {
 		});
 	}
 
+	public void addUpdateUIMessages(Game game) {
+		game.getPlayers().forEach(p -> {
+			UIBoard uiUpdate = p.getClientUIState().calcStateAndDiff(p);
+			UIMessages uiMessages = p.getClientMessages().calcDiffMessages();
+			addMessage(p, uiUpdate, uiMessages);
+		});
+	}
+
 	private Map<Player, ObjectNode> getMap() {
 		Map<Player, ObjectNode> map = messages.get();
 		if (map == null) {
@@ -60,7 +60,7 @@ public class MessageQueue {
 		return map;
 	}
 
-	public void addMessage(Player player, UIBoard uiUpdate, UIMessages uiMessages) {
+	private void addMessage(Player player, UIBoard uiUpdate, UIMessages uiMessages) {
 		ObjectMapper mapper = new ObjectMapper();
 		if (uiUpdate.hasChange()) {
 			JsonNode boardJsonObject = mapper.valueToTree(uiUpdate);

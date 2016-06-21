@@ -31,6 +31,15 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	public void init(Player firstActivePlayer) {
+		findActivePlayer(firstActivePlayer);
+		if (this.activePlayer != null) {
+			getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
+			getGame().getPlayers()
+					.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
+		}
+	}
+
+	private void findActivePlayer(Player firstActivePlayer) {
 		if (!firstActivePlayer.getUnitInHand().isEmpty()) {
 			this.activePlayer = firstActivePlayer;
 		} else {
@@ -38,27 +47,25 @@ public class DeployPhase extends BasePhase {
 			if (!otherPlayer.getUnitInHand().isEmpty()) {
 				this.activePlayer = otherPlayer;
 			} else {
+				this.activePlayer = null;
 				nextPhase(firstActivePlayer);
 			}
 		}
-		getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
-		getGame().getPlayers()
-				.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
 	}
 
 	private Set<Field> getDefaultDeployZone(Player player) {
 		Predicate<? super Field> filter;
 		if (player.getSide() == Side.GREEN) {
-			filter = f -> f.getPos().getX() <= 3;
+			filter = f -> f.getPos().getX() <= 4;
 		} else {
-			filter = f -> f.getPos().getX() >= 6;
+			filter = f -> f.getPos().getX() >= 5;
 		}
 		return getGame().getBoard().getFields().stream().filter(filter).collect(Collectors.toSet());
 	}
 
 	private Set<Field> calcAdditionalTargetFieldsAirborne(Player player) {
 		return getGame().getBoard().getFields().stream().filter(f -> f.getUnit() != null)
-				.filter(f -> f.getUnit().getPlayer() == player).flatMap(f -> f.getNeighbords().stream())
+				.filter(f -> f.getUnit().getPlayer() == player).flatMap(f -> f.getNeighbors().stream())
 				.collect(Collectors.toSet());
 	}
 
@@ -156,24 +163,21 @@ public class DeployPhase extends BasePhase {
 			nextPhase(nextPlayer);
 		} else {
 			activePlayer = nextPlayer;
-			updateUI();
 		}
 	}
 
 	@Override
-	public void updateUI() {
-		getGame().getPlayers().forEach(player -> {
-			if (player == activePlayer) {
-				if (selectedUnit != null) {
-					player.getClientMessages().setTitle("Select a highlighted field to deploy "
-							+ selectedUnit.getUnitType() + " or click the unit again to de-select it");
-				} else {
-					player.getClientMessages().setTitle("Select a unit from your hand to deploy it");
-				}
+	protected void updateMessage(Player player) {
+		if (player == activePlayer) {
+			if (selectedUnit != null) {
+				player.getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getUnitType()
+						+ " or click the unit again to de-select it");
 			} else {
-				player.getClientMessages().setTitle("waiting for other player's deployment");
+				player.getClientMessages().setTitle("Select a unit from your hand to deploy it");
 			}
-		});
+		} else {
+			player.getClientMessages().setTitle("waiting for other player's deployment");
+		}
 	}
 
 	@Override

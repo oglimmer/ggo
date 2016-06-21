@@ -14,17 +14,18 @@ import de.oglimmer.ggo.ui.UIButton;
 
 public class DraftPhase extends BasePhase {
 
+	private static final int CREDITS_PER_TURN = 1000;
+
 	private Set<Player> inTurn = new HashSet<>();
 
 	public DraftPhase(Game game) {
 		super(game);
-
 	}
 
 	@Override
 	public void init(Player firstPlayer) {
 		inTurn.addAll(getGame().getPlayers());
-		getGame().getPlayers().forEach(p -> p.incCredits(1000));
+		getGame().getPlayers().forEach(p -> p.incCredits(CREDITS_PER_TURN));
 		getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
 	}
 
@@ -42,6 +43,9 @@ public class DraftPhase extends BasePhase {
 						player.spendCredits(type.getCost());
 						player.getUnitInHand().add(new Unit(player, type));
 					}
+					if (player.getCredits() < getCheapestUnit()) {
+						playerDone(player);
+					}
 				}
 			}
 			break;
@@ -56,6 +60,16 @@ public class DraftPhase extends BasePhase {
 		}
 	}
 
+	private int getCheapestUnit() {
+		int minCost = Integer.MAX_VALUE;
+		for (UnitType ut : UnitType.values()) {
+			if (ut.getCost() < minCost) {
+				minCost = ut.getCost();
+			}
+		}
+		return minCost;
+	}
+
 	@Override
 	protected void nextPhase(Player firstPlayer) {
 		getGame().setCurrentPhase(new DeployPhase(firstPlayer));
@@ -63,24 +77,28 @@ public class DraftPhase extends BasePhase {
 	}
 
 	@Override
-	public void updateUI() {
-		getGame().getPlayers().forEach(player -> {
+	protected void updateMessage(Player player) {
+		if (inTurn.contains(player)) {
 			player.getClientMessages().setTitle("Draft your units until all your credits are spent.");
 			player.getClientMessages().setInfo("You have " + player.getCredits() + " credits.");
-		});
+		} else {
+			player.getClientMessages().setTitle("Wait for your opponent to finish the draft phase.");
+			player.getClientMessages().setInfo("You have " + player.getCredits() + " credits left for next round.");
+		}
 	}
 
 	@Override
 	public Collection<UIButton> getButtons(Player forPlayer) {
 		Collection<UIButton> buttons = new ArrayList<>();
-		buttons.add(
-				new UIButton("doneButton", "Done", null, 30, 20, DiffableBoolean.create(!inTurn.contains(forPlayer))));
+		if (inTurn.contains(forPlayer)) {
+			buttons.add(new UIButton("doneButton", "Done", null, 30, 20,
+					DiffableBoolean.create(!inTurn.contains(forPlayer))));
 
-		for (UnitType type : UnitType.values()) {
-			buttons.add(new UIButton("buy" + type.toString(), null, type.toString(), 48, 48,
-					DiffableBoolean.create(forPlayer.getCredits() < type.getCost())));
+			for (UnitType type : UnitType.values()) {
+				buttons.add(new UIButton("buy" + type.toString(), null, type.toString(), 48, 48,
+						DiffableBoolean.create(forPlayer.getCredits() < type.getCost())));
+			}
 		}
-
 		return buttons;
 	}
 }

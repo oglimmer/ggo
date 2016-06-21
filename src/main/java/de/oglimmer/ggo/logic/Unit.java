@@ -8,8 +8,10 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import de.oglimmer.ggo.logic.phase.CombatPhase.CommandCenter;
-import de.oglimmer.ggo.logic.phase.CombatPhase.CommandType;
+import de.oglimmer.ggo.logic.phase.Command;
+import de.oglimmer.ggo.logic.phase.CommandCenter;
+import de.oglimmer.ggo.logic.phase.CommandType;
+import de.oglimmer.ggo.logic.util.FieldUtil;
 import de.oglimmer.ggo.util.RandomString;
 import lombok.Getter;
 import lombok.NonNull;
@@ -54,36 +56,29 @@ public class Unit {
 		return forPlayer.getGame().getCurrentPhase().isSelectable(this, forPlayer);
 	}
 
-	@Override
-	public String toString() {
-		return "Unit [id=" + id + ", player=" + player.getSide() + ", unitType=" + unitType + ", deployedOn="
-				+ (deployedOn != null ? deployedOn.getId() : null) + ", selected=" + isSelected(player)
-				+ ", selectable=" + isSelectable(player) + "]";
-	}
-
 	public Set<CommandType> getPossibleCommandTypes(CommandCenter cc, Field targetField) {
 		Set<CommandType> possibleCommands = new HashSet<>();
-		if (getMovableFields().contains(targetField) && cc.isNotTargetedByOtherOwnUnit(player, targetField, this)) {
+		if (getMovableFields(cc).contains(targetField)) {
 			possibleCommands.add(CommandType.MOVE);
 		}
 		switch (unitType) {
 		case TANK:
 		case INFANTERY:
 		case AIRBORNE:
-			if (getSupportableFields().contains(targetField) && cc.isOccupiedByOwnUnit(player, targetField)) {
+			if (getSupportableFields(cc).contains(targetField)) {
 				possibleCommands.add(CommandType.SUPPORT);
 			}
 			break;
 		case HELICOPTER:
-			if (getSupportableFields().contains(targetField) && cc.isOccupiedByOwnUnit(player, targetField)) {
+			if (getSupportableFields(cc).contains(targetField)) {
 				possibleCommands.add(CommandType.SUPPORT);
 			}
-			if (getTargetableFields().contains(targetField) && cc.isOccupiedByEnemyUnit(player, targetField)) {
+			if (getTargetableFields().contains(targetField)) {
 				possibleCommands.add(CommandType.BOMBARD);
 			}
 			break;
 		case ARTILLERY:
-			if (getTargetableFields().contains(targetField) && cc.isOccupiedByEnemyUnit(player, targetField)) {
+			if (getTargetableFields().contains(targetField)) {
 				possibleCommands.add(CommandType.BOMBARD);
 			}
 			break;
@@ -91,21 +86,74 @@ public class Unit {
 		return possibleCommands;
 	}
 
-	public Set<Field> getSupportableFields() {
-		return deployedOn.getNeighbords();
+	private Set<Field> getSupportableFields(CommandCenter cc) {
+		/*
+		 * A unit can support a neighbor if an own unit is currently there and not moving away.
+		 */
+		Set<Field> mf = new HashSet<>();
+		for (Field f : deployedOn.getNeighbors()) {
+
+			if (f.getUnit() != null && f.getUnit().getPlayer() == player) {
+				Command cmdForTargetUnit = cc.getByUnit(f.getUnit());
+				if (cmdForTargetUnit.getCommandType().isFortify() || cmdForTargetUnit.getCommandType().isBombard()
+						|| cmdForTargetUnit.getCommandType().isSupport()) {
+					mf.add(f);
+				} else if (cmdForTargetUnit.getCommandType().isMove()) {
+					Field targetFieldForMovingTargetUnit = cmdForTargetUnit.getTargetField();
+					if (FieldUtil.adjacent(targetFieldForMovingTargetUnit, deployedOn)) {
+						mf.add(f);
+					}
+				}
+			}
+		}
+		return mf;
 	}
 
-	public Set<Field> getMovableFields() {
-		return deployedOn.getNeighbords();
+	private Set<Field> getMovableFields(CommandCenter cc) {
+		/*
+		 * A unit can move to all neighbors if no own unit has a FORTIFY or MOVE on/to this field
+		 */
+		Set<Field> mf = new HashSet<>();
+		for (Field f : deployedOn.getNeighbors()) {
+			Set<Command> myCommandsForThisField = cc.getByTargetField(player, f);
+			boolean occupiedByOwnUnit = myCommandsForThisField.stream().filter(c -> c.getUnit() != this)
+					.anyMatch(c -> c.getCommandType().isMove() || c.getCommandType().isFortify());
+			if (!occupiedByOwnUnit) {
+				mf.add(f);
+			}
+		}
+		return mf;
 	}
 
-	public Set<Field> getTargetableFields() {
-		Set<Field> targetableFields = new HashSet<>();
-		targetableFields.addAll(deployedOn.getNeighbords());
+	private Set<Field> getTargetableFields() {
+		/*
+		 * A unit can target a neighbor if an enemy unit is on that field (don't care about enemy commands)
+		 */
+		Set<Field> possibleTargetableFields = new HashSet<>(deployedOn.getNeighbors());
 		if (unitType == UnitType.ARTILLERY) {
-			deployedOn.getNeighbords().forEach(f -> targetableFields.addAll(f.getNeighbords()));
+			deployedOn.getNeighbors().forEach(f -> possibleTargetableFields.addAll(f.getNeighbors()));
+		}
+		Set<Field> targetableFields = new HashSet<>();
+		for (Field f : possibleTargetableFields) {
+			if (f.getUnit() != null && f.getUnit().getPlayer() != player) {
+				targetableFields.add(f);
+			}
 		}
 		return targetableFields;
 	}
 
+	public boolean isOnBoard() {
+		return player.getGame().getBoard().getFields().stream().anyMatch(f -> f.getUnit() == this);
+	}
+
+	public boolean hasCommandOnField(CommandCenter cc, Field field) {
+		return !getPossibleCommandTypes(cc, field).isEmpty();
+	}
+
+	@Override
+	public String toString() {
+		return "Unit [id=" + id + ", player=" + player.getSide() + ", unitType=" + unitType + ", deployedOn="
+				+ (deployedOn != null ? deployedOn.getId() : null) + ", selected=" + isSelected(player)
+				+ ", selectable=" + isSelectable(player) + "]";
+	}
 }
