@@ -38,7 +38,6 @@ public class CrossingBattleResolver extends BaseBattleResolver {
 
 	private void check(Command c) {
 		Unit unit = c.getUnit();
-		log.debug("Processing unit (battleCrossingUnits): {}", unit);
 		Field oldField = unit.getDeployedOn();
 		Field newField = c.getTargetField();
 		Unit crossingUnit = getUnitMovingFromTo(newField, oldField);
@@ -47,7 +46,7 @@ public class CrossingBattleResolver extends BaseBattleResolver {
 			newSet.add(unit);
 			newSet.add(crossingUnit);
 			crossingUnits.add(newSet);
-			log.debug("Added crossingUnits {}", newSet);
+			log.debug("Added crossingUnits {} and {}", unit, crossingUnit);
 		}
 	}
 
@@ -58,8 +57,7 @@ public class CrossingBattleResolver extends BaseBattleResolver {
 	private Unit getUnitMovingFromTo(Field from, Field to) {
 		Optional<Command> findFirst = getCc().stream()
 				.filter(c -> c.getTargetField() == to && c.getUnit().getDeployedOn() == from).findFirst();
-		if (findFirst.isPresent()) {
-			log.debug("Found unit moving from {} to {}. Unit: {}", from.getId(), to.getId(), findFirst.get().getUnit());
+		if (findFirst.isPresent() && findFirst.get().getCommandType().isMove()) {
 			return findFirst.get().getUnit();
 		}
 		return null;

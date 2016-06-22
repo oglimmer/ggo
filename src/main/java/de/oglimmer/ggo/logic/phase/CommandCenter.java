@@ -28,7 +28,7 @@ public class CommandCenter {
 	public void addCommand(Unit unit, Field targetField, CommandType command) {
 		Command newCommand = new Command(command, unit, targetField);
 		commands.put(unit, newCommand);
-		log.debug("Added command {} for {} at {} ", command, unit.getUnitType(), targetField.getId());
+		log.trace("Added command {} for {} at {} ", command, unit.getUnitType(), targetField.getId());
 	}
 
 	public void removeCommandForUnit(Unit u) {

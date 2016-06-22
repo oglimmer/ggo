@@ -1,10 +1,12 @@
 package de.oglimmer.ggo.logic.phase;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Unit;
@@ -21,9 +23,20 @@ public class BattleGroundResolver extends BaseBattleResolver {
 
 	public void battleBattleGrounds() {
 		collectFieldsWithUnits();
+		collectAdditionalUnitsOnBattleGrounds();
 		removeFieldWithJustOneUnit();
 		log.debug("Total battleGrounds {}", possibleBattleGrounds.size());
 		fightAllBattleGrounds();
+	}
+
+	private void collectAdditionalUnitsOnBattleGrounds() {
+		possibleBattleGrounds.entrySet().forEach(en -> en.getValue().addAll(getNonMovingUnitsOnField(en.getKey())));
+	}
+
+	private Collection<? extends Unit> getNonMovingUnitsOnField(Field battleGround) {
+		return getCc().stream().filter(c -> !c.getCommandType().isMove())
+				.filter(c -> c.getUnit().getDeployedOn() == battleGround).map(c -> c.getUnit())
+				.collect(Collectors.toSet());
 	}
 
 	private void fightAllBattleGrounds() {
@@ -43,7 +56,6 @@ public class BattleGroundResolver extends BaseBattleResolver {
 			Set<Unit> battlingUnits = en.getValue();
 			assert battlingUnits.size() > 0 && battlingUnits.size() < 3;
 			if (battlingUnits.size() == 1) {
-				log.debug("Remove battleGrounds {}", en.getKey().getId());
 				it.remove();
 			}
 		}
@@ -54,7 +66,7 @@ public class BattleGroundResolver extends BaseBattleResolver {
 	}
 
 	private void collectFieldsWithUnits(Command c) {
-		if (c.getCommandType().isFortify() || c.getCommandType().isMove()) {
+		if (c.getCommandType().isMove()) {
 			possibleBattleGrounds.computeIfAbsent(c.getTargetField(), t -> new HashSet<>()).add(c.getUnit());
 		}
 	}

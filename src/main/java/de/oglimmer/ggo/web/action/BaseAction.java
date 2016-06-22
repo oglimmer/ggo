@@ -35,7 +35,7 @@ public abstract class BaseAction implements ActionBean {
 					getContext().getServletContext().getRealPath("/META-INF/MANIFEST.MF"))) {
 				Manifest mf = new Manifest(is);
 				Attributes attr = mf.getMainAttributes();
-				commit = attr.getValue("SVN-Revision-No");
+				commit = attr.getValue("GIT-buildNumber");
 				version = attr.getValue("GGO-Version");
 				long time = Long.parseLong(attr.getValue("Creation-Date"));
 				creationDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)

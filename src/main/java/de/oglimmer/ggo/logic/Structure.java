@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @RequiredArgsConstructor
-@ToString(exclude = { "player" })
+@ToString(exclude = { "id", "player" })
 public class Structure {
 
 	@Getter

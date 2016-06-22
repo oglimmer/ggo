@@ -25,12 +25,12 @@ public class BombarbResolver extends BaseBattleResolver {
 
 	public void collectTargets() {
 		getCc().stream().filter(c -> c.getCommandType().isBombard()).forEach(c -> collectTarget(c));
-		log.debug("Total units killed during bombard {}", targetByBombard.size());
 	}
 
 	private void collectTarget(Command c) {
 		targetByBombard.add(c.getTargetField().getUnit());
 		score(c.getUnit(), CommandType.BOMBARD);
+		log.debug("Unit {} marked to be killed due to bombard by {}", c.getTargetField().getUnit(), c.getUnit());
 	}
 
 }

@@ -53,7 +53,6 @@ public class Field {
 
 	@Override
 	public String toString() {
-		return "Field [id=" + id + ", pos=" + pos + ", structure=" + structure + ", unit=" + unit + ", highlighted="
-				+ ", selectable=" + "]";
+		return "Field [id=" + id + ", structure=" + structure + ", unit=" + unit + "]";
 	}
 }

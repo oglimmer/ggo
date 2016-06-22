@@ -4,6 +4,7 @@ import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -119,10 +120,28 @@ public class Unit {
 			boolean occupiedByOwnUnit = myCommandsForThisField.stream().filter(c -> c.getUnit() != this)
 					.anyMatch(c -> c.getCommandType().isMove() || c.getCommandType().isFortify());
 			if (!occupiedByOwnUnit) {
-				mf.add(f);
+
+				Set<Command> supportCommands = getSupportingUnits(cc);
+				if (supportCommands != null) {
+					if (allSupportCommandsAdjacent(supportCommands, f)) {
+						mf.add(f);
+					}
+				} else {
+					mf.add(f);
+				}
+
 			}
 		}
 		return mf;
+	}
+
+	private boolean allSupportCommandsAdjacent(Set<Command> supportUnits, Field f) {
+		return supportUnits.stream().allMatch(c -> FieldUtil.adjacent(f, c.getUnit().getDeployedOn()));
+	}
+
+	private Set<Command> getSupportingUnits(CommandCenter cc) {
+		return cc.stream().filter(c -> c.getUnit().getPlayer() == player).filter(c -> c.getCommandType().isSupport())
+				.filter(c -> c.getTargetField() == deployedOn).collect(Collectors.toSet());
 	}
 
 	private Set<Field> getTargetableFields() {
@@ -152,8 +171,6 @@ public class Unit {
 
 	@Override
 	public String toString() {
-		return "Unit [id=" + id + ", player=" + player.getSide() + ", unitType=" + unitType + ", deployedOn="
-				+ (deployedOn != null ? deployedOn.getId() : null) + ", selected=" + isSelected(player)
-				+ ", selectable=" + isSelectable(player) + "]";
+		return "Unit [player=" + player.getSide() + ", type=" + unitType + ", on=" + deployedOn.getId() + "]";
 	}
 }
