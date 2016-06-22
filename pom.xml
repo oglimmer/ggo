@@ -10,6 +10,13 @@
 	<name>grid</name>
 	<packaging>war</packaging>
 
+	<scm>
+		<url>https://github.com/oglimmer/ggo</url>
+		<connection>scm:git:git://github.com/oglimmer/ggo.git</connection>
+		<developerConnection>scm:git:git@github.com:oglimmer/ggo.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
 	<properties>
 		<sonar.java.source>1.8</sonar.java.source>
 		<maven.compiler.source>1.8</maven.compiler.source>

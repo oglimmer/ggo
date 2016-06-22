@@ -11,11 +11,11 @@
 	     <p>
 	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.BoardActionBean">
 	     		<stripes:param name="playerId">p1</stripes:param>
-	     		Create Game
+	     		Player 1
 	     	</stripes:link>
 	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.BoardActionBean">
 	     		<stripes:param name="playerId">p2</stripes:param>
-	     		Join Game
+	     		Player 2
 	     	</stripes:link>
 	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.LandingActionBean" event="resetGame">
 	     		RESET Game
