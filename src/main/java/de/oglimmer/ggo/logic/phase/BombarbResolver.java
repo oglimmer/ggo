@@ -15,12 +15,7 @@ public class BombarbResolver extends BaseBattleResolver {
 		super(cc);
 	}
 
-	public void battleBombard() {
-		collectTargets();
-		killTargets();
-	}
-
-	private void killTargets() {
+	public void killTargets() {
 		targetByBombard.forEach(this::kilTarget);
 	}
 
@@ -28,12 +23,14 @@ public class BombarbResolver extends BaseBattleResolver {
 		kill(u);
 	}
 
-	private void collectTargets() {
-		getCc().stream().filter(c -> c.getCommandType().isBombard()).forEach(c -> {
-			targetByBombard.add(c.getTargetField().getUnit());
-			BaseBattleResolver.score(c.getUnit(), CommandType.BOMBARD);
-		});
+	public void collectTargets() {
+		getCc().stream().filter(c -> c.getCommandType().isBombard()).forEach(c -> collectTarget(c));
 		log.debug("Total units killed during bombard {}", targetByBombard.size());
+	}
+
+	private void collectTarget(Command c) {
+		targetByBombard.add(c.getTargetField().getUnit());
+		score(c.getUnit(), CommandType.BOMBARD);
 	}
 
 }

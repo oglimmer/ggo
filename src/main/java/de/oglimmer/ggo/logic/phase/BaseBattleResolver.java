@@ -42,7 +42,7 @@ public class BaseBattleResolver {
 		score(winningUnit, cc.getByUnit(winningUnit).getCommandType());
 	}
 
-	static void score(Unit winningUnit, CommandType ct) {
+	protected static void score(Unit winningUnit, CommandType ct) {
 		int score = 0;
 		if (ct == CommandType.MOVE) {
 			score = 10;

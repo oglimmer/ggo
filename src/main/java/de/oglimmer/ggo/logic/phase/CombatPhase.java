@@ -116,13 +116,15 @@ public class CombatPhase extends BasePhase {
 
 	private void calcBattle() {
 		BombarbResolver bomb = new BombarbResolver(cc);
-		bomb.battleBombard();
+		bomb.collectTargets();
 
 		CrossingBattleResolver br = new CrossingBattleResolver(cc);
 		br.battleCrossingUnits();
 
 		BattleGroundResolver bgr = new BattleGroundResolver(cc);
 		bgr.battleBattleGrounds();
+
+		bomb.killTargets();
 
 		MoveResolver mr = new MoveResolver(cc);
 		mr.moveUnits();
