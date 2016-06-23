@@ -9,6 +9,7 @@
 
 		<div class="row">
 			<div class="col-md-10 col-md-offset-2">
+				<div id="messageOpponentConnectionLost"></div>
 				<div id="messageScore">Your score: 0, opponents score: 0</div>
 				<div id="messageTitle">waiting for server message ...</div>
 				<div id="messageInfo"></div>

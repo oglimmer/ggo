@@ -5,7 +5,7 @@
 <c:forEach var="i" items="${actionBean.availableGames}">
 	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.JoinActionBean" event="join">
 		<stripes:param name="gameId">${i.id}</stripes:param>
-		Join Game ${i.id}
+		Join ${i.id}
 	</stripes:link>
 	<br/><br/>
 </c:forEach>

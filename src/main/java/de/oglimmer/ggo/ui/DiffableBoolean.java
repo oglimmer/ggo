@@ -23,6 +23,7 @@ public class DiffableBoolean {
 	private Boolean val;
 
 	public boolean diffAndUpdate(Boolean newVal, Consumer<DiffableBoolean> object) {
+		assert val != null;
 		if (val != null && !val.equals(newVal)) {
 			DiffableBoolean db = null;
 			if (newVal != null) {

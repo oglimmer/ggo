@@ -82,6 +82,14 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 			if( typeof jsonObj.modalDialogDisable !== 'undefined' ) {
 				delete globalData.modalDialg;
 			}
+			/* RESP_PLAYER_CONNECTION_STATUS */
+			if( typeof jsonObj.playerConnectionStatus !== 'undefined' ) {
+				if(jsonObj.playerConnectionStatus.connectionStateOtherPlayer) {
+					$("#messageOpponentConnectionLost").html("");
+				} else {
+					$("#messageOpponentConnectionLost").html("OPPONENT GOT DISCONNECTED!");
+				}
+			}
 			/* RESP_MESSAGE */
 			if( typeof jsonObj.message !== 'undefined' ) {
 				if(typeof jsonObj.message.score  !== 'undefined') {

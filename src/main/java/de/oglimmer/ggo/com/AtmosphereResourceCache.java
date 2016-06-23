@@ -12,6 +12,7 @@ import org.atmosphere.cpr.AtmosphereResourceImpl;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.util.GameUtil;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 public enum AtmosphereResourceCache {
 	INSTANCE;
 
+	@Getter
 	private List<Item> items = new ArrayList<>();
 
 	@RequiredArgsConstructor
 	@Data
-	class Item {
+	public class Item {
 
 		@NonNull
 		private String uuid;
@@ -35,6 +37,11 @@ public enum AtmosphereResourceCache {
 		private Player player;
 
 		private boolean disconnected;
+
+		public String toString() {
+			return "Item [uuid=" + uuid + ", ar=" + (ar != null ? ar.hashCode() : null) + ", player="
+					+ (player != null ? player.getId() : null) + ", disconnected=" + disconnected + "]";
+		}
 	}
 
 	/**
@@ -86,7 +93,7 @@ public enum AtmosphereResourceCache {
 	public boolean isConnected(Player player) {
 		Item item = getItem(player);
 		if (item != null) {
-			return item.isDisconnected();
+			return !item.isDisconnected();
 		}
 		return false;
 	}

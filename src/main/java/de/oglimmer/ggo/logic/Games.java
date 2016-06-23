@@ -8,7 +8,7 @@ public enum Games {
 	INSTANCE;
 
 	Games() {
-		//games.put("0", new Game());
+		// games.put("0", new Game());
 	}
 
 	private Map<String, Game> games = new HashMap<>();
@@ -23,7 +23,7 @@ public enum Games {
 	}
 
 	public void reset() {
-		//games.put("0", new Game());
+		// games.put("0", new Game());
 		games = new HashMap<>();
 	}
 
@@ -34,6 +34,10 @@ public enum Games {
 	}
 
 	public Collection<Game> getOpenGames() {
+		return games.values();
+	}
+
+	public Collection<Game> getAllGames() {
 		return games.values();
 	}
 

@@ -3,7 +3,9 @@ package de.oglimmer.ggo.logic;
 import de.oglimmer.ggo.ui.UIBoard;
 import de.oglimmer.ggo.ui.UIMessages;
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 public class UIStates {
 
 	@Getter

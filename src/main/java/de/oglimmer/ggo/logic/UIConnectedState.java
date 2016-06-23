@@ -6,7 +6,9 @@ import de.oglimmer.ggo.ui.DiffableBoolean;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+@ToString
 @NoArgsConstructor
 public class UIConnectedState {
 
@@ -26,7 +28,7 @@ public class UIConnectedState {
 		UIConnectedState diff = new UIConnectedState();
 		boolean change = false;
 		change |= connectionStateOtherPlayer.diffAndUpdate(getConnectionStatus(player),
-				this::setConnectionStateOtherPlayer);
+				diff::setConnectionStateOtherPlayer);
 		return change ? diff : null;
 	}
 
