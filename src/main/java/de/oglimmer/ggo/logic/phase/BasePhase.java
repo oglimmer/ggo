@@ -30,6 +30,7 @@ abstract public class BasePhase {
 	 * @param player
 	 * @param cmd
 	 * @param param
+	 * @param messages
 	 */
 	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
 		switch (cmd) {
@@ -42,15 +43,11 @@ abstract public class BasePhase {
 
 	/**
 	 * Initializes a phase. May call nextPhase.
-	 * 
-	 * @param firstPlayer
 	 */
 	abstract public void init();
 
 	/**
 	 * Moves the game to the next phase
-	 * 
-	 * @param firstPlayer
 	 */
 	abstract protected void nextPhase();
 
@@ -77,6 +74,9 @@ abstract public class BasePhase {
 	 * Set modal dialog for a player
 	 * 
 	 * Must be idempotent
+	 * 
+	 * @param player
+	 * @param messages
 	 */
 	protected void updateModalDialg(Player player, MessageQueue messages) {
 	}
