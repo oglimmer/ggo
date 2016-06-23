@@ -47,9 +47,9 @@ public class CombatPhase extends BasePhase {
 	}
 
 	@Override
-	public void init(Player firstActivePlayer) {
+	public void init() {
 		if (getGame().getBoard().getTotalUnits() == 0) {
-			nextPhase(firstActivePlayer);
+			nextPhase();
 		} else {
 			inTurn.addAll(getGame().getPlayers());
 			cc.clearCommands();
@@ -109,7 +109,7 @@ public class CombatPhase extends BasePhase {
 		calcBattle();
 		round++;
 		if (round == MAX_ROUNDS || getGame().getBoard().getTotalUnits() == 0) {
-			nextPhase(getGame().getPlayers().get(0));
+			nextPhase();
 		} else {
 			inTurn.addAll(getGame().getPlayers());
 		}
@@ -223,7 +223,7 @@ public class CombatPhase extends BasePhase {
 	}
 
 	@Override
-	protected void nextPhase(Player firstPlayer) {
+	protected void nextPhase() {
 
 		getGame().getBoard().getFields().stream().filter(f -> f.getStructure() != null).filter(f -> f.getUnit() != null)
 				.filter(f -> f.getUnit().getPlayer() != f.getStructure().getPlayer()).forEach(f -> {
@@ -232,7 +232,7 @@ public class CombatPhase extends BasePhase {
 				});
 
 		getGame().setCurrentPhase(new DraftPhase(getGame()));
-		getGame().getCurrentPhase().init(firstPlayer);
+		getGame().getCurrentPhase().init();
 	}
 
 	@Override

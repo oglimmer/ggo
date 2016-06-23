@@ -28,7 +28,7 @@ public class Game {
 	}
 
 	public void startGame() {	
-		currentPhase.init(players.get(0));
+		currentPhase.init();
 	}
 
 	public Player getPlayerById(String pid) {

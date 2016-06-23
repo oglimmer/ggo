@@ -33,7 +33,6 @@ public class JoinActionBean extends BaseAction {
 	}
 
 	public Resolution join() {
-		System.out.println("gameId=" + gameId);
 		game = Games.INSTANCE.getGameById(gameId);
 		player = game.createPlayer();
 		game.startGame();

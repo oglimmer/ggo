@@ -45,14 +45,14 @@ abstract public class BasePhase {
 	 * 
 	 * @param firstPlayer
 	 */
-	abstract public void init(Player firstPlayer);
+	abstract public void init();
 
 	/**
 	 * Moves the game to the next phase
 	 * 
 	 * @param firstPlayer
 	 */
-	abstract protected void nextPhase(Player firstPlayer);
+	abstract protected void nextPhase();
 
 	final public void updateMessages(MessageQueue messages) {
 		getGame().getPlayers().forEach(p -> updateMessage(p, messages));

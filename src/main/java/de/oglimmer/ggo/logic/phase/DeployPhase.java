@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import de.oglimmer.ggo.logic.Field;
+import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Side;
@@ -25,19 +26,43 @@ public class DeployPhase extends BasePhase {
 
 	private Map<Player, Set<Field>> additionalAirborneTargetFields = new HashMap<>();
 
-	public DeployPhase(Player firstActivePlayer) {
-		super(firstActivePlayer.getGame());
+	public DeployPhase(Game game) {
+		super(game);
 
 	}
 
 	@Override
-	public void init(Player firstActivePlayer) {
+	public void init() {
+		Player firstActivePlayer = findFirstPlayer();
 		findActivePlayer(firstActivePlayer);
 		if (this.activePlayer != null) {
 			getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
 			getGame().getPlayers()
 					.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
 		}
+	}
+
+	private Player findFirstPlayer() {
+		Player player1 = getGame().getPlayers().get(0);
+		Player player2 = getGame().getPlayers().get(1);
+		if (player1.getCredits() > player2.getCredits()) {
+			return player1;
+		} else if (player1.getCredits() < player2.getCredits()) {
+			return player2;
+		}
+		int totalUnits1 = getTotalUnits(player1);
+		int totalUnits2 = getTotalUnits(player2);
+		if (totalUnits1 < totalUnits2) {
+			return player1;
+		} else if (totalUnits1 > totalUnits2) {
+			return player2;
+		}
+		return Math.random() < 0.5 ? player1 : player2;
+	}
+
+	private int getTotalUnits(Player player) {
+		return (int) (player.getUnitInHand().size() + getGame().getBoard().getFields().stream()
+				.filter(f -> f.getUnit() != null).filter(f -> f.getUnit().getPlayer() == player).count());
 	}
 
 	private void findActivePlayer(Player firstActivePlayer) {
@@ -49,7 +74,7 @@ public class DeployPhase extends BasePhase {
 				this.activePlayer = otherPlayer;
 			} else {
 				this.activePlayer = null;
-				nextPhase(firstActivePlayer);
+				nextPhase();
 			}
 		}
 	}
@@ -161,7 +186,7 @@ public class DeployPhase extends BasePhase {
 			}
 		}
 		if (nextPhase) {
-			nextPhase(nextPlayer);
+			nextPhase();
 		} else {
 			activePlayer = nextPlayer;
 		}
@@ -171,8 +196,8 @@ public class DeployPhase extends BasePhase {
 	protected void updateMessage(Player player, MessageQueue messages) {
 		if (player == activePlayer) {
 			if (selectedUnit != null) {
-				player.getUiStates().getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getUnitType()
-						+ " or click the unit again to de-select it");
+				player.getUiStates().getClientMessages().setTitle("Select a highlighted field to deploy "
+						+ selectedUnit.getUnitType() + " or click the unit again to de-select it");
 			} else {
 				player.getUiStates().getClientMessages().setTitle("Select a unit from your hand to deploy it");
 			}
@@ -182,9 +207,9 @@ public class DeployPhase extends BasePhase {
 	}
 
 	@Override
-	protected void nextPhase(Player firstPlayer) {
+	protected void nextPhase() {
 		getGame().setCurrentPhase(new CombatPhase(getGame()));
-		getGame().getCurrentPhase().init(firstPlayer);
+		getGame().getCurrentPhase().init();
 	}
 
 	private boolean hasMoreMoves(Player p) {
