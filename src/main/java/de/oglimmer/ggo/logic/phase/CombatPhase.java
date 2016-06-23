@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.oglimmer.ggo.logic.Constants;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
+import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.ui.DiffableBoolean;
@@ -52,7 +53,7 @@ public class CombatPhase extends BasePhase {
 		} else {
 			inTurn.addAll(getGame().getPlayers());
 			cc.clearCommands();
-			getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
+			getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
 		}
 	}
 
@@ -77,8 +78,8 @@ public class CombatPhase extends BasePhase {
 	}
 
 	@Override
-	public void execCmd(Player player, String cmd, String param) {
-		super.execCmd(player, cmd, param);
+	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
+		super.execCmd(player, cmd, param, messages);
 		switch (cmd) {
 		case "selectUnit":
 			execSelectUnit(player, param);
@@ -87,7 +88,7 @@ public class CombatPhase extends BasePhase {
 			execTargetField(player, param);
 			break;
 		case "selectModalDialog":
-			execModalDialog(player, param);
+			execModalDialog(player, param, messages);
 			break;
 		case "button":
 			if ("doneButton".equals(param)) {
@@ -132,7 +133,7 @@ public class CombatPhase extends BasePhase {
 		cc.clearCommands();
 	}
 
-	private void execModalDialog(Player player, String param) {
+	private void execModalDialog(Player player, String param, MessageQueue messages) {
 		Unit unit = get(player).getSelectedUnits();
 		if (unit == null) {
 			log.error("execTargetField but no unit was selected");
@@ -149,7 +150,7 @@ public class CombatPhase extends BasePhase {
 		}
 		get(player).clear();
 		ObjectNode root = instance.objectNode();
-		getGame().getMessages().addMessage(player, Constants.RESP_MODAL_DIALOG_DIS, root);
+		messages.addMessage(player, Constants.RESP_MODAL_DIALOG_DIS, root);
 	}
 
 	private void execTargetField(Player player, String param) {
@@ -161,7 +162,7 @@ public class CombatPhase extends BasePhase {
 		Field targetField = getGame().getBoard().getField(param);
 		Set<CommandType> possibleCommandTypes = unit.getPossibleCommandTypes(cc, targetField);
 		if (possibleCommandTypes.size() == 0) {
-			player.getClientMessages().setError(
+			player.getUiStates().getClientMessages().setError(
 					"One of your own units is/will be alreay there. De-select your unit or chose another target field.");
 		} else if (possibleCommandTypes.size() == 1) {
 			cc.addCommand(unit, targetField, possibleCommandTypes.iterator().next());
@@ -189,7 +190,7 @@ public class CombatPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player) {
+	protected void updateMessage(Player player, MessageQueue messages) {
 		String title;
 		if (inTurn.contains(player)) {
 			Unit unit = get(player).getSelectedUnits();
@@ -201,11 +202,11 @@ public class CombatPhase extends BasePhase {
 		} else {
 			title = "Wait for your opponent to finish the turn. Round " + (round + 1) + " of " + MAX_ROUNDS;
 		}
-		player.getClientMessages().setTitle(title);
+		player.getUiStates().getClientMessages().setTitle(title);
 	}
 
 	@Override
-	protected void updateModalDialg(Player player) {
+	protected void updateModalDialg(Player player, MessageQueue messages) {
 		if (get(player).getPossibleCommandTypesOptions() != null) {
 			ObjectNode root = instance.objectNode();
 			root.set("title", instance.textNode("Choose a command"));
@@ -217,7 +218,7 @@ public class CombatPhase extends BasePhase {
 				options.add(option);
 			}
 			root.set("options", options);
-			getGame().getMessages().addMessage(player, Constants.RESP_MODAL_DIALOG_EN, root);
+			messages.addMessage(player, Constants.RESP_MODAL_DIALOG_EN, root);
 		}
 	}
 

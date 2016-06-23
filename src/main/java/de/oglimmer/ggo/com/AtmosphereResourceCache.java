@@ -10,6 +10,7 @@ import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
 
 import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.logic.util.GameUtil;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,8 @@ public enum AtmosphereResourceCache {
 
 	public void disconnect(String uuid) {
 		items.stream().filter(i -> i.getUuid().equals(uuid)).forEach(i -> i.setDisconnected(true));
+		Player remainingPlayer = GameUtil.getOtherPlayer(getItem(uuid).getPlayer());
+		remainingPlayer.updateUI();
 	}
 
 	private Item getItem(String uuid) {
@@ -70,6 +73,14 @@ public enum AtmosphereResourceCache {
 		}
 		log.debug("NO Resource for uuid {}", uuid);
 		return null;
+	}
+
+	public boolean isConnected(Player player) {
+		Item item = getItem(player);
+		if (item != null) {
+			return item.isDisconnected();
+		}
+		return false;
 	}
 
 	public void registerPlayer(Player player, String uuid) {

@@ -8,6 +8,7 @@ import java.util.Collections;
 import de.oglimmer.ggo.logic.Constants;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
+import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.util.GameUtil;
@@ -30,12 +31,11 @@ abstract public class BasePhase {
 	 * @param cmd
 	 * @param param
 	 */
-	public void execCmd(Player player, String cmd, String param) {
+	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
 		switch (cmd) {
 		case "join":
 			player.resetUiState();
-			getGame().getMessages().addMessage(player, Constants.RESP_MYCOLOR,
-					instance.textNode(player.getSide().toString()));
+			messages.addMessage(player, Constants.RESP_MYCOLOR, instance.textNode(player.getSide().toString()));
 			break;
 		}
 	}
@@ -54,8 +54,8 @@ abstract public class BasePhase {
 	 */
 	abstract protected void nextPhase(Player firstPlayer);
 
-	final public void updateMessages() {
-		getGame().getPlayers().forEach(this::updateMessage);
+	final public void updateMessages(MessageQueue messages) {
+		getGame().getPlayers().forEach(p -> updateMessage(p, messages));
 	}
 
 	/**
@@ -63,12 +63,12 @@ abstract public class BasePhase {
 	 * 
 	 * Must be idempotent
 	 */
-	abstract protected void updateMessage(Player player);
+	abstract protected void updateMessage(Player player, MessageQueue messages);
 
-	final public void updateModalDialgs() {
-		getGame().getPlayers().forEach(this::updateModalDialg);
+	final public void updateModalDialgs(MessageQueue messages) {
+		getGame().getPlayers().forEach(p -> updateModalDialg(p, messages));
 		getGame().getPlayers().forEach(player -> {
-			player.getClientMessages().setScore("Your score: " + player.getScore() + ", opponents score: "
+			player.getUiStates().getClientMessages().setScore("Your score: " + player.getScore() + ", opponents score: "
 					+ GameUtil.getOtherPlayer(player).getScore());
 		});
 	}
@@ -78,7 +78,7 @@ abstract public class BasePhase {
 	 * 
 	 * Must be idempotent
 	 */
-	protected void updateModalDialg(Player player) {
+	protected void updateModalDialg(Player player, MessageQueue messages) {
 	}
 
 	/**

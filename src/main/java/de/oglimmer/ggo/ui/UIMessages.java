@@ -9,10 +9,10 @@ import lombok.ToString;
 @ToString
 public class UIMessages {
 
-	private MemorizingString score = new MemorizingString();
-	private MemorizingString title = new MemorizingString();
-	private MemorizingString info = new MemorizingString();
-	private MemorizingString error = new MemorizingString();
+	private MemorizingObject<String> score = new MemorizingObject<>();
+	private MemorizingObject<String> title = new MemorizingObject<>();
+	private MemorizingObject<String> info = new MemorizingObject<>();
+	private MemorizingObject<String> error = new MemorizingObject<>();
 
 	public String getScore() {
 		return score.getCurrentValue();

@@ -3,8 +3,6 @@ package de.oglimmer.ggo.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.oglimmer.ggo.ui.UIBoard;
-import de.oglimmer.ggo.ui.UIMessages;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -29,17 +27,10 @@ public class Player {
 	private int score;
 
 	@Getter
-	@NonNull
-	// never accessed to set client ui states. this just hold the last transfered
-	// ui states retrieved from game.board
-	private UIBoard clientUIState = new UIBoard();
-	@Getter
-	@NonNull
-	// holds last transfered and next messages. used to set next messages
-	private UIMessages clientMessages = new UIMessages();
+	private List<Unit> unitInHand = new ArrayList<>();
 
 	@Getter
-	private List<Unit> unitInHand = new ArrayList<>();
+	private UIStates uiStates = new UIStates(this);
 
 	public Player(String id, Side side, Game game) {
 		this.id = id;
@@ -48,8 +39,7 @@ public class Player {
 	}
 
 	public void resetUiState() {
-		clientUIState = new UIBoard();
-		clientMessages = new UIMessages();
+		uiStates = new UIStates(this);
 	}
 
 	public void spendCredits(int toSpend) {
@@ -62,6 +52,14 @@ public class Player {
 
 	public void incScore(int addScore) {
 		score += addScore;
+	}
+
+	public void updateUI() {
+		MessageQueue messages = new MessageQueue();
+		game.getCurrentPhase().updateMessages(messages);
+		game.getCurrentPhase().updateModalDialgs(messages);
+		messages.addUpdateUIMessages(game);
+		messages.sendMessages();
 	}
 
 }

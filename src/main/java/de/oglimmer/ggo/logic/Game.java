@@ -21,9 +21,6 @@ public class Game {
 	@Getter
 	private Board board;
 
-	@Getter
-	private MessageQueue messages = new MessageQueue();
-
 	public Game() {
 		Player player1 = new Player("p1", Side.GREEN, this);
 		players.add(player1);

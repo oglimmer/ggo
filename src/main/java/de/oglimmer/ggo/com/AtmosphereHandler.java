@@ -18,6 +18,7 @@ import org.atmosphere.cpr.AtmosphereResourceImpl;
 
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Games;
+import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,14 +61,14 @@ public class AtmosphereHandler {
 		Player player = game.getPlayerById(message.getPid());
 		assert player != null;
 		if ("join".equals(message.getCmd())) {
-			AtmosphereResourceCache.INSTANCE.registerPlayer(player, r.uuid());
+			AtmosphereResourceCache.INSTANCE.registerPlayer(player, r.uuid());			
 		}
-		game.getMessages().clearMessages();
-		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam());
-		game.getCurrentPhase().updateMessages();
-		game.getCurrentPhase().updateModalDialgs();
-		game.getMessages().addUpdateUIMessages(game);
-		game.getMessages().sendMessages();
+		MessageQueue messages = new MessageQueue();
+		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam(), messages);
+		game.getCurrentPhase().updateMessages(messages);
+		game.getCurrentPhase().updateModalDialgs(messages);
+		messages.addUpdateUIMessages(game);
+		messages.sendMessages();
 	}
 
 }
