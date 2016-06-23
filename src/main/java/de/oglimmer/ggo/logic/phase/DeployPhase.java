@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import de.oglimmer.ggo.logic.Field;
+import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Side;
 import de.oglimmer.ggo.logic.Unit;
@@ -33,7 +34,7 @@ public class DeployPhase extends BasePhase {
 	public void init(Player firstActivePlayer) {
 		findActivePlayer(firstActivePlayer);
 		if (this.activePlayer != null) {
-			getGame().getPlayers().forEach(p -> p.getClientMessages().clearErrorInfo());
+			getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
 			getGame().getPlayers()
 					.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
 		}
@@ -97,8 +98,8 @@ public class DeployPhase extends BasePhase {
 	}
 
 	@Override
-	public void execCmd(Player player, String cmd, String param) {
-		super.execCmd(player, cmd, param);
+	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
+		super.execCmd(player, cmd, param, messages);
 		switch (cmd) {
 		case "selectHandCard":
 			execSelectHandCard(player, param);
@@ -150,7 +151,7 @@ public class DeployPhase extends BasePhase {
 
 	protected void switchPlayer(Player player) {
 		boolean nextPhase = false;
-		activePlayer.getClientMessages().clearErrorInfo();
+		activePlayer.getUiStates().getClientMessages().clearErrorInfo();
 		Player nextPlayer = GameUtil.getOtherPlayer(activePlayer);
 		if (!hasMoreMoves(nextPlayer)) {
 			if (hasMoreMoves(activePlayer)) {
@@ -167,16 +168,16 @@ public class DeployPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player) {
+	protected void updateMessage(Player player, MessageQueue messages) {
 		if (player == activePlayer) {
 			if (selectedUnit != null) {
-				player.getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getUnitType()
+				player.getUiStates().getClientMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getUnitType()
 						+ " or click the unit again to de-select it");
 			} else {
-				player.getClientMessages().setTitle("Select a unit from your hand to deploy it");
+				player.getUiStates().getClientMessages().setTitle("Select a unit from your hand to deploy it");
 			}
 		} else {
-			player.getClientMessages().setTitle("waiting for other player's deployment");
+			player.getUiStates().getClientMessages().setTitle("waiting for other player's deployment");
 		}
 	}
 

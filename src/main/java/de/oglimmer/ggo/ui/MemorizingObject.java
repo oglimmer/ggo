@@ -3,15 +3,15 @@ package de.oglimmer.ggo.ui;
 import lombok.Getter;
 import lombok.Setter;
 
-public class MemorizingString {
+public class MemorizingObject<T> {
 
 	@Getter
 	@Setter
-	private String currentValue;
+	private T currentValue;
 
-	private String memory;
+	private T memory;
 
-	public String calcDiffMessages() {
+	public T calcDiffMessages() {
 		if (different()) {
 			memory = currentValue;
 			return currentValue;

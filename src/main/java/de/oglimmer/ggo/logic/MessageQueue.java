@@ -19,21 +19,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MessageQueue {
 
-	private ThreadLocal<Map<Player, ObjectNode>> messages = new ThreadLocal<>();
+	private Map<Player, ObjectNode> messages = new HashMap<>();
 
 	public void addMessage(Player target, String name, JsonNode msg) {
-		ObjectNode root = getMap().getOrDefault(target, instance.objectNode());
+		ObjectNode root = messages.getOrDefault(target, instance.objectNode());
 		assert !root.has(name);
 		root.set(name, msg);
-		getMap().put(target, root);
-	}
-
-	public void clearMessages() {
-		getMap().clear();
+		messages.put(target, root);
 	}
 
 	public void sendMessages() {
-		getMap().entrySet().forEach(en -> {
+		messages.entrySet().forEach(en -> {
 			AtmosphereResource r = AtmosphereResourceCache.INSTANCE.get(en.getKey());
 			if (r != null) {
 				r.getBroadcaster().broadcast(en.getValue(), r);
@@ -44,31 +40,37 @@ public class MessageQueue {
 	}
 
 	public void addUpdateUIMessages(Game game) {
-		game.getPlayers().forEach(p -> {
-			UIBoard uiUpdate = p.getClientUIState().calcStateAndDiff(p);
-			UIMessages uiMessages = p.getClientMessages().calcDiffMessages();
-			addMessage(p, uiUpdate, uiMessages);
-		});
+		game.getPlayers().forEach(this::addMessage);
 	}
 
-	private Map<Player, ObjectNode> getMap() {
-		Map<Player, ObjectNode> map = messages.get();
-		if (map == null) {
-			map = new HashMap<>();
-			messages.set(map);
-		}
-		return map;
-	}
-
-	private void addMessage(Player player, UIBoard uiUpdate, UIMessages uiMessages) {
+	private void addMessage(Player player) {
 		ObjectMapper mapper = new ObjectMapper();
-		if (uiUpdate.hasChange()) {
-			JsonNode boardJsonObject = mapper.valueToTree(uiUpdate);
-			addMessage(player, Constants.RESP_BOARD, boardJsonObject);
+		addMessageUIBoard(player, mapper);
+		addMessageUIMessages(player, mapper);
+		addMessageUIConnectState(player, mapper);
+	}
+
+	private void addMessageUIConnectState(Player player, ObjectMapper mapper) {
+		UIConnectedState uiConnected = player.getUiStates().getConnected().calcStateAndDiff(player);
+		if (uiConnected.hasChange()) {
+			JsonNode messageJsonObject = mapper.valueToTree(uiConnected);
+			addMessage(player, Constants.RESP_PLAYER_CONNECTION_STATUS, messageJsonObject);
 		}
+	}
+
+	private void addMessageUIMessages(Player player, ObjectMapper mapper) {
+		UIMessages uiMessages = player.getUiStates().getClientMessages().calcDiffMessages();
 		if (uiMessages.hasChange()) {
 			JsonNode messageJsonObject = mapper.valueToTree(uiMessages);
 			addMessage(player, Constants.RESP_MESSAGE, messageJsonObject);
+		}
+	}
+
+	private void addMessageUIBoard(Player player, ObjectMapper mapper) {
+		UIBoard uiUpdate = player.getUiStates().getClientUIState().calcStateAndDiff(player);
+		if (uiUpdate.hasChange()) {
+			JsonNode boardJsonObject = mapper.valueToTree(uiUpdate);
+			addMessage(player, Constants.RESP_BOARD, boardJsonObject);
 		}
 	}
 

@@ -64,7 +64,7 @@ public class BaseBattleResolver {
 
 	protected void kill(Unit u) {
 		log.debug("Kill unit {}", u);
-		u.getPlayer().getClientMessages()
+		u.getPlayer().getUiStates().getClientMessages()
 				.appendInfo(u.getUnitType().toString() + " on " + u.getDeployedOn().getId() + " got killed. ");
 		u.getDeployedOn().setUnit(null);
 		cc.removeCommandForUnit(u);

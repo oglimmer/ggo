@@ -7,5 +7,6 @@ public interface Constants {
 	String RESP_MESSAGE = "message";
 	String RESP_MODAL_DIALOG_EN = "modalDialogEnable";
 	String RESP_MODAL_DIALOG_DIS = "modalDialogDisable";
+	String RESP_PLAYER_CONNECTION_STATUS = "playerConnectionStatus";
 
 }

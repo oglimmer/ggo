@@ -21,9 +21,6 @@ public class Game {
 	@Getter
 	private Board board;
 
-	@Getter
-	private MessageQueue messages = new MessageQueue();
-
 	public void startGame() {
 		board = new Board();
 		board.addCities(players);
