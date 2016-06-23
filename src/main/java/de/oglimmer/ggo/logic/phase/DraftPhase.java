@@ -34,6 +34,9 @@ public class DraftPhase extends BasePhase {
 	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
 		super.execCmd(player, cmd, param, messages);
 		switch (cmd) {
+		case "selectHandCard":
+			execSelectHandCard(player, param);
+			break;
 		case "button":
 			if ("doneButton".equals(param)) {
 				playerDone(player);
@@ -44,9 +47,6 @@ public class DraftPhase extends BasePhase {
 						player.spendCredits(type.getCost());
 						player.getUnitInHand().add(new Unit(player, type));
 					}
-					if (player.getCredits() < getCheapestUnit()) {
-						playerDone(player);
-					}
 				}
 			}
 			break;
@@ -54,21 +54,25 @@ public class DraftPhase extends BasePhase {
 
 	}
 
+	private void execSelectHandCard(Player player, String param) {
+		if (!inTurn.contains(player)) {
+			return;
+		}
+		Unit paramSelectedUnit = player.getUnitInHand().stream().filter(u -> u.getId().equals(param)).findFirst().get();
+		player.incCredits(paramSelectedUnit.getUnitType().getCost());
+		player.getUnitInHand().remove(paramSelectedUnit);
+	}
+
+	@Override
+	public boolean isSelectable(Unit unit, Player forPlayer) {
+		return unit.getPlayer() == forPlayer && forPlayer.getUnitInHand().contains(unit) && inTurn.contains(forPlayer);
+	}
+
 	private void playerDone(Player player) {
 		inTurn.remove(player);
 		if (inTurn.isEmpty()) {
 			nextPhase(getGame().getPlayers().get(0));
 		}
-	}
-
-	private int getCheapestUnit() {
-		int minCost = Integer.MAX_VALUE;
-		for (UnitType ut : UnitType.values()) {
-			if (ut.getCost() < minCost) {
-				minCost = ut.getCost();
-			}
-		}
-		return minCost;
 	}
 
 	@Override
@@ -84,7 +88,8 @@ public class DraftPhase extends BasePhase {
 			player.getUiStates().getClientMessages().setInfo("You have " + player.getCredits() + " credits.");
 		} else {
 			player.getUiStates().getClientMessages().setTitle("Wait for your opponent to finish the draft phase.");
-			player.getUiStates().getClientMessages().setInfo("You have " + player.getCredits() + " credits left for next round.");
+			player.getUiStates().getClientMessages()
+					.setInfo("You have " + player.getCredits() + " credits left for next round.");
 		}
 	}
 

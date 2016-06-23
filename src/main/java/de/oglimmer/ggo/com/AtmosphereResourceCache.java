@@ -104,7 +104,7 @@ public enum AtmosphereResourceCache {
 			remove(disconnectedPlayerItem.getUuid());
 		}
 		Item connectedUuidItem = getItem(uuid);
-		if (connectedUuidItem.getPlayer() != player) {
+		if (connectedUuidItem != null && connectedUuidItem.getPlayer() != player) {
 			connectedUuidItem.setPlayer(player);
 			log.debug("set on {} player {}", uuid, player.getSide());
 		}
