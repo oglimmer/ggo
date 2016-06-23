@@ -19,16 +19,6 @@
   </stripes:layout-component>
   <stripes:layout-component name="center">
   
-
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="col-md-10 col-md-offset-2">
-	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.LandingActionBean" event="resetGame">
-	     		RESET Game
-	     	</stripes:link>
-        </div>
-      </div>
-      
       <script data-main="js/landing.js" src="webjars/requirejs/2.2.0/require.min.js"></script>
 	  
  </stripes:layout-component>
