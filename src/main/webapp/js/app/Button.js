@@ -35,7 +35,11 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		
 		if(typeof this.graphic !== 'undefined' && this.graphic != null) {			
 			var img=document.getElementById(this.graphic+"_"+globalData.myColor);
-			ctx.drawImage(img,this.x,this.y);		
+			if(typeof img === 'undefined' || img == null) {
+				console.log("img = " + img + ", graphic="+ this.graphic+", globalData.myColor="+globalData.myColor);
+			} else {
+				ctx.drawImage(img,this.x,this.y);
+			}
 		}
 	};
 	
