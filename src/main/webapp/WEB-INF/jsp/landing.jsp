@@ -9,8 +9,7 @@
 	     <h1>Welcome to Grid Game One</h1>
 	     <p>A 2 player hex-field based no-luck turn-based game.</p>
 	     <p>
-	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.BoardActionBean">
-	     		<stripes:param name="playerId">p1</stripes:param>
+	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.WaitingActionBean">
 	     		Player 1
 	     	</stripes:link>
 	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.BoardActionBean">

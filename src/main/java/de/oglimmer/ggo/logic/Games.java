@@ -25,4 +25,10 @@ public enum Games {
 		games.put("0", new Game());
 	}
 
+	public Game createGame() {
+		Game newGame = new Game();
+		games.put(newGame.getId(), newGame);
+		return newGame;
+	}
+
 }

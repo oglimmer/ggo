@@ -10,7 +10,7 @@ import lombok.Getter;
 public class Game {
 
 	@Getter
-	private String id = "0";
+	private String id = "id" + Math.random();
 
 	@Getter
 	private List<Player> players = new ArrayList<>();
@@ -24,15 +24,11 @@ public class Game {
 	@Getter
 	private MessageQueue messages = new MessageQueue();
 
-	public Game() {
-		Player player1 = new Player("p1", Side.GREEN, this);
-		players.add(player1);
-		Player player2 = new Player("p2", Side.RED, this);
-		players.add(player2);
+	public void startGame() {
 		board = new Board();
 		board.addCities(players);
 		currentPhase = new DraftPhase(this);
-		currentPhase.init(player1);
+		currentPhase.init(players.get(0));
 	}
 
 	public Player getPlayerById(String pid) {
@@ -46,6 +42,20 @@ public class Game {
 
 	public void setCurrentPhase(BasePhase nextPhase) {
 		currentPhase = nextPhase;
+	}
+
+	public Player createPlayer() {
+		Side side;
+		if (players.size() == 0) {
+			side = Side.GREEN;
+		} else if (players.size() == 1) {
+			side = Side.RED;
+		} else {
+			throw new RuntimeException();
+		}
+		Player newPlayer = new Player(side, this);
+		players.add(newPlayer);
+		return newPlayer;
 	}
 
 }

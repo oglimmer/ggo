@@ -5,14 +5,14 @@ import java.util.List;
 
 import de.oglimmer.ggo.ui.UIBoard;
 import de.oglimmer.ggo.ui.UIMessages;
+import de.oglimmer.ggo.util.RandomString;
 import lombok.Getter;
 import lombok.NonNull;
 
 public class Player {
 
 	@Getter
-	@NonNull
-	private String id;
+	private String id = RandomString.getRandomStringHex(8);
 
 	@Getter
 	@NonNull
@@ -41,8 +41,7 @@ public class Player {
 	@Getter
 	private List<Unit> unitInHand = new ArrayList<>();
 
-	public Player(String id, Side side, Game game) {
-		this.id = id;
+	public Player(Side side, Game game) {
 		this.side = side;
 		this.game = game;
 	}
