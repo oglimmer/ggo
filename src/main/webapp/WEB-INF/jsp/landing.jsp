@@ -9,16 +9,10 @@
 	     <h1>Welcome to Grid Game One</h1>
 	     <p>A 2 player hex-field based no-luck turn-based game.</p>
 	     <p>
-	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.WaitingActionBean">
-	     		Player 1
+	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.JoinActionBean" event="create">
+	     		Create Game
 	     	</stripes:link>
-	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.BoardActionBean">
-	     		<stripes:param name="playerId">p2</stripes:param>
-	     		Player 2
-	     	</stripes:link>
-	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.LandingActionBean" event="resetGame">
-	     		RESET Game
-	     	</stripes:link>
+	     	<div id="availGames">querying games ...</div>
 	     </p>
 	   </div>
 	 </div>
@@ -29,6 +23,9 @@
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-10 col-md-offset-2">
+	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.LandingActionBean" event="resetGame">
+	     		RESET Game
+	     	</stripes:link>
         </div>
       </div>
       

@@ -5,12 +5,13 @@ import java.util.List;
 
 import de.oglimmer.ggo.logic.phase.BasePhase;
 import de.oglimmer.ggo.logic.phase.DraftPhase;
+import de.oglimmer.ggo.util.RandomName;
 import lombok.Getter;
 
 public class Game {
 
 	@Getter
-	private String id = "id" + Math.random();
+	private String id = RandomName.getName(4);
 
 	@Getter
 	private List<Player> players = new ArrayList<>();
@@ -21,10 +22,12 @@ public class Game {
 	@Getter
 	private Board board;
 
-	public void startGame() {
+	public Game() {
 		board = new Board();
-		board.addCities(players);
 		currentPhase = new DraftPhase(this);
+	}
+
+	public void startGame() {	
 		currentPhase.init(players.get(0));
 	}
 

@@ -6,6 +6,7 @@ import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Games;
 import de.oglimmer.ggo.logic.Player;
 import lombok.Getter;
+import lombok.Setter;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.ForwardResolution;
@@ -21,6 +22,7 @@ public class JoinActionBean extends BaseAction {
 	@Getter
 	private Player player;
 
+	@Setter
 	private String gameId;
 
 	public Resolution create() {
@@ -31,8 +33,10 @@ public class JoinActionBean extends BaseAction {
 	}
 
 	public Resolution join() {
+		System.out.println("gameId=" + gameId);
 		game = Games.INSTANCE.getGameById(gameId);
 		player = game.createPlayer();
+		game.startGame();
 		getContext().getResponse().addCookie(new Cookie("playerId", player.getId()));
 		RedirectResolution redirect = new RedirectResolution(BoardActionBean.class);
 		redirect.addParameter("playerId", player.getId());

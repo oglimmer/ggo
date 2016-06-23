@@ -2,7 +2,6 @@ package de.oglimmer.ggo.logic;
 
 import java.awt.Point;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,14 +26,15 @@ public class Board {
 		fields.stream().forEach(f -> f.calcNeighbors(fields));
 	}
 
-	public void addCities(List<Player> players) {
-		if (players.size() > 0) {
-			getField(0, 0).setStructure(new Structure(StructureType.CITY, players.get(0)));
-			getField(0, 4).setStructure(new Structure(StructureType.CITY, players.get(0)));
-			getField(0, 8).setStructure(new Structure(StructureType.CITY, players.get(0)));
-			getField(9, 1).setStructure(new Structure(StructureType.CITY, players.get(1)));
-			getField(9, 5).setStructure(new Structure(StructureType.CITY, players.get(1)));
-			getField(9, 9).setStructure(new Structure(StructureType.CITY, players.get(1)));
+	public void addCities(Player player) {
+		if (player.getSide() == Side.GREEN) {
+			getField(0, 0).setStructure(new Structure(StructureType.CITY, player));
+			getField(0, 4).setStructure(new Structure(StructureType.CITY, player));
+			getField(0, 8).setStructure(new Structure(StructureType.CITY, player));
+		} else {
+			getField(9, 1).setStructure(new Structure(StructureType.CITY, player));
+			getField(9, 5).setStructure(new Structure(StructureType.CITY, player));
+			getField(9, 9).setStructure(new Structure(StructureType.CITY, player));
 		}
 	}
 

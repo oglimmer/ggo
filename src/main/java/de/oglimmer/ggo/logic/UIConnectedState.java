@@ -31,7 +31,11 @@ public class UIConnectedState {
 	}
 
 	private boolean getConnectionStatus(Player otherPlayer) {
-		return AtmosphereResourceCache.INSTANCE.isConnected(GameUtil.getOtherPlayer(otherPlayer));
+		Player player = GameUtil.getOtherPlayer(otherPlayer);
+		if (player == null) {
+			return false;
+		}
+		return AtmosphereResourceCache.INSTANCE.isConnected(player);
 	}
 
 }

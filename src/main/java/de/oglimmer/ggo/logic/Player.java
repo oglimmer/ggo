@@ -3,8 +3,7 @@ package de.oglimmer.ggo.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.oglimmer.ggo.ui.UIBoard;
-import de.oglimmer.ggo.ui.UIMessages;
+import de.oglimmer.ggo.logic.phase.BasePhase;
 import de.oglimmer.ggo.util.RandomString;
 import lombok.Getter;
 import lombok.NonNull;
@@ -32,11 +31,13 @@ public class Player {
 	private List<Unit> unitInHand = new ArrayList<>();
 
 	@Getter
-	private UIStates uiStates = new UIStates(this);
+	private UIStates uiStates;
 
 	public Player(Side side, Game game) {
 		this.side = side;
 		this.game = game;
+		uiStates = new UIStates(this);
+		game.getBoard().addCities(this);
 	}
 
 	public void resetUiState() {
@@ -57,8 +58,11 @@ public class Player {
 
 	public void updateUI() {
 		MessageQueue messages = new MessageQueue();
-		game.getCurrentPhase().updateMessages(messages);
-		game.getCurrentPhase().updateModalDialgs(messages);
+		BasePhase currentPhase = game.getCurrentPhase();
+		if (currentPhase != null) {
+			currentPhase.updateMessages(messages);
+			currentPhase.updateModalDialgs(messages);
+		}
 		messages.addUpdateUIMessages(game);
 		messages.sendMessages();
 	}

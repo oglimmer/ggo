@@ -7,6 +7,9 @@ public class GameUtil {
 
 	public static Player getOtherPlayer(Player currentPlayer) {
 		Game game = currentPlayer.getGame();
+		if (game.getPlayers().size() != 2) {
+			return null;
+		}
 		return game.getPlayers().get(0) == currentPlayer ? game.getPlayers().get(1) : game.getPlayers().get(0);
 	}
 

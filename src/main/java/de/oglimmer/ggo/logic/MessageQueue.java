@@ -52,7 +52,7 @@ public class MessageQueue {
 
 	private void addMessageUIConnectState(Player player, ObjectMapper mapper) {
 		UIConnectedState uiConnected = player.getUiStates().getConnected().calcStateAndDiff(player);
-		if (uiConnected.hasChange()) {
+		if (uiConnected != null) {
 			JsonNode messageJsonObject = mapper.valueToTree(uiConnected);
 			addMessage(player, Constants.RESP_PLAYER_CONNECTION_STATUS, messageJsonObject);
 		}

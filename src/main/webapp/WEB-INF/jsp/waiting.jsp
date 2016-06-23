@@ -3,23 +3,20 @@
 
 <stripes:layout-render name="/WEB-INF/jsp/common.jsp">
   <stripes:layout-component name="head">	 
+	 <div class="jumbotron">
+	   <div class="container">
+	     <h1>Your game is ${actionBean.game.getId()}</h1>
+	     <p>waiting for other player <span id="waitingProgress"></span></p>
+	   </div>
+	 </div>
   </stripes:layout-component>
   <stripes:layout-component name="center">
   
-
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="col-md-10 col-md-offset-2">
-        	Your game is ${actionBean.game.getId()}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-10 col-md-offset-2">
-        	waiting for other player ...
-        </div>
-      </div>
-      
-      <script data-main="js/landing.js" src="webjars/requirejs/2.2.0/require.min.js"></script>
+	  <script>
+		var gameId = "${actionBean.game.getId()}";
+		var playerId = "${actionBean.player.getId()}";
+	  </script>
+      <script data-main="js/waiting.js" src="webjars/requirejs/2.2.0/require.min.js"></script>
 	  
  </stripes:layout-component>
 </stripes:layout-render>
