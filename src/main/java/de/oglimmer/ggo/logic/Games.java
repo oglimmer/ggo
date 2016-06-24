@@ -3,6 +3,7 @@ package de.oglimmer.ggo.logic;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public enum Games {
@@ -19,8 +20,12 @@ public enum Games {
 	}
 
 	public Game getGameByPlayerId(String playerId) {
-		return games.values().stream().filter(g -> g.getPlayers().stream().anyMatch(p -> p.getId().equals(playerId)))
-				.findFirst().get();
+		Optional<Game> findFirst = games.values().stream()
+				.filter(g -> g.getPlayers().stream().anyMatch(p -> p.getId().equals(playerId))).findFirst();
+		if (findFirst.isPresent()) {
+			return findFirst.get();
+		}
+		return null;
 	}
 
 	public void reset() {

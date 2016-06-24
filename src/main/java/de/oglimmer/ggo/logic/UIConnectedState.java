@@ -12,8 +12,8 @@ import lombok.ToString;
 @NoArgsConstructor
 public class UIConnectedState {
 
-	public UIConnectedState(Player player) {
-		connectionStateOtherPlayer = DiffableBoolean.create(getConnectionStatus(player));
+	public UIConnectedState(Player forPlayer) {
+		connectionStateOtherPlayer = DiffableBoolean.create(null);
 	}
 
 	@Getter
@@ -24,20 +24,20 @@ public class UIConnectedState {
 		return connectionStateOtherPlayer != null;
 	}
 
-	public UIConnectedState calcStateAndDiff(Player player) {
+	public UIConnectedState calcStateAndDiff(Player forPlayer) {
 		UIConnectedState diff = new UIConnectedState();
 		boolean change = false;
-		change |= connectionStateOtherPlayer.diffAndUpdate(getConnectionStatus(player),
+		change |= connectionStateOtherPlayer.diffAndUpdate(getConnectionStatus(forPlayer),
 				diff::setConnectionStateOtherPlayer);
 		return change ? diff : null;
 	}
 
-	private boolean getConnectionStatus(Player otherPlayer) {
-		Player player = GameUtil.getOtherPlayer(otherPlayer);
-		if (player == null) {
+	private boolean getConnectionStatus(Player forPlayer) {
+		Player opponent = GameUtil.getOtherPlayer(forPlayer);
+		if (opponent == null) {
 			return false;
 		}
-		return AtmosphereResourceCache.INSTANCE.isConnected(player);
+		return AtmosphereResourceCache.INSTANCE.isConnected(opponent);
 	}
 
 }

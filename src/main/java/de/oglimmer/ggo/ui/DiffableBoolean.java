@@ -23,12 +23,10 @@ public class DiffableBoolean {
 	private Boolean val;
 
 	public boolean diffAndUpdate(Boolean newVal, Consumer<DiffableBoolean> object) {
-		assert val != null;
-		if (val != null && !val.equals(newVal)) {
-			DiffableBoolean db = null;
-			if (newVal != null) {
-				db = new DiffableBoolean(newVal);
-			}
+		if (isNewValFromNull(newVal) || isDifferentNewVal(newVal)) {
+			// the system is not capable to set a value to null. null is only allowed as the initial value (==undefined)
+			assert newVal != null;
+			DiffableBoolean db = new DiffableBoolean(newVal);
 			object.accept(db);
 			val = newVal;
 			return true;
@@ -36,10 +34,15 @@ public class DiffableBoolean {
 		return false;
 	}
 
+	private boolean isDifferentNewVal(Boolean newVal) {
+		return val != null && !val.equals(newVal);
+	}
+
+	private boolean isNewValFromNull(Boolean newVal) {
+		return val == null && newVal != null;
+	}
+
 	public static DiffableBoolean create(Boolean b) {
-		if (b == null) {
-			return null;
-		}
 		return new DiffableBoolean(b);
 	}
 
