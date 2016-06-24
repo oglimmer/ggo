@@ -1,8 +1,8 @@
-package de.oglimmer.ggo.logic;
+package de.oglimmer.ggo.ui;
 
 import de.oglimmer.ggo.com.AtmosphereResourceCache;
+import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.util.GameUtil;
-import de.oglimmer.ggo.ui.DiffableBoolean;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

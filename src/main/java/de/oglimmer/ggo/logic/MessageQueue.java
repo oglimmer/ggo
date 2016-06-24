@@ -12,7 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.oglimmer.ggo.com.AtmosphereResourceCache;
+import de.oglimmer.ggo.com.Constants;
 import de.oglimmer.ggo.ui.UIBoard;
+import de.oglimmer.ggo.ui.UIConnectedState;
 import de.oglimmer.ggo.ui.UIMessages;
 import lombok.extern.slf4j.Slf4j;
 

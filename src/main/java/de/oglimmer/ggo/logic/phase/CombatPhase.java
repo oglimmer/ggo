@@ -12,7 +12,7 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import de.oglimmer.ggo.logic.Constants;
+import de.oglimmer.ggo.com.Constants;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.MessageQueue;

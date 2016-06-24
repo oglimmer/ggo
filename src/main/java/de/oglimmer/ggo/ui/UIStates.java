@@ -1,7 +1,6 @@
-package de.oglimmer.ggo.logic;
+package de.oglimmer.ggo.ui;
 
-import de.oglimmer.ggo.ui.UIBoard;
-import de.oglimmer.ggo.ui.UIMessages;
+import de.oglimmer.ggo.logic.Player;
 import lombok.Getter;
 import lombok.ToString;
 
