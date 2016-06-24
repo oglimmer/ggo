@@ -24,11 +24,13 @@ public class LandingActionBean extends BaseAction {
 	@DefaultHandler
 	@DontValidate
 	public Resolution show() {
-		for (Cookie cookie : getContext().getRequest().getCookies()) {
-			if ("playerId".equals(cookie.getName())) {
-				game = Games.INSTANCE.getGameByPlayerId(cookie.getValue());
-				if (game != null) {
-					player = game.getPlayerById(cookie.getValue());
+		if (getContext().getRequest().getCookies() != null) {
+			for (Cookie cookie : getContext().getRequest().getCookies()) {
+				if ("playerId".equals(cookie.getName())) {
+					game = Games.INSTANCE.getGameByPlayerId(cookie.getValue());
+					if (game != null) {
+						player = game.getPlayerById(cookie.getValue());
+					}
 				}
 			}
 		}
