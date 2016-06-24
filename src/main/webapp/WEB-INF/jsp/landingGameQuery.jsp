@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:forEach var="i" items="${actionBean.availableGames}">
-	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.JoinActionBean" event="join">
+	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.JoinGameActionBean">
 		<stripes:param name="gameId">${i.id}</stripes:param>
 		Join ${i.id}
 	</stripes:link>

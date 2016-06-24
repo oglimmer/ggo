@@ -3,6 +3,19 @@
 requirejs([ './commons' ], function(commons) {
 	requirejs([ "jquery", "bootstrap" ], function($) {
 
+		var gameId = null;
+		var playerId = null;
+
+		$.ajax({
+			url : "./CreateGameQuery.action",
+			success : function(result) {
+				$("#gameId").html(result.gameId);
+				gameId = result.gameId;
+				playerId = result.playerId;
+				setTimeout(reload, 1000);
+			}
+		});
+
 		var counter = "";
 		
 		function reload() {
@@ -26,8 +39,6 @@ requirejs([ './commons' ], function(commons) {
 				}
 			});
 		}
-
-		setTimeout(reload, 1000);
 
 		// Safari + Firefox
 		$(window).on('pagehide', function() {
