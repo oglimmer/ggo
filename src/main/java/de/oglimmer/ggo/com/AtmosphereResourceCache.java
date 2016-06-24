@@ -64,6 +64,16 @@ public enum AtmosphereResourceCache {
 			assert false;
 		}
 		item.setDisconnected(false);
+
+		Player disconnectingPlayer = item.getPlayer();
+		System.out.println("disconnectingPlayer=" + disconnectingPlayer);
+		if (disconnectingPlayer != null) {
+			Player remainingPlayer = GameUtil.getOtherPlayer(disconnectingPlayer);
+			System.out.println("remainingPlayer=" + remainingPlayer);
+			if (remainingPlayer != null) {
+				remainingPlayer.updateUI();
+			}
+		}
 	}
 
 	public void disconnect(String uuid) {

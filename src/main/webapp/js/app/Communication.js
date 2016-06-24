@@ -13,7 +13,8 @@ define(['jquery', './Constants', 'atmosphere'], function($, Constants, atmospher
 		trackMessageLength : false,
 		shared : false,
 		transport : transport,
-		fallbackTransport : 'long-polling'
+		fallbackTransport : 'long-polling',
+		maxReconnectOnClose: 5000
 //		reconnectInterval : 5000
 	};
 	
