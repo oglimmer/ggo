@@ -67,4 +67,7 @@ public class Player {
 		messages.sendMessages();
 	}
 
+	public String toString() {
+		return "Player [id=" + id + ", side=" + side + "]";
+	}
 }

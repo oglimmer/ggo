@@ -31,11 +31,11 @@ requirejs([ './commons' ], function(commons) {
 
 		// Safari + Firefox
 		$(window).on('pagehide', function() {
-			$.ajax({url : "./RemoveAbandonedGame.action", data: {gameId:gameId}});
+			$.ajax({url : "./RemoveAbandonedGame.action", data: {gameId:gameId}, async: false});
 		});
 		// Chrome + Firefox 
 		$(window).on('beforeunload', function() {
-			$.ajax({url : "./RemoveAbandonedGame.action", data: {gameId:gameId}});
+			$.ajax({url : "./RemoveAbandonedGame.action", data: {gameId:gameId}, async: false});
 		});
 		
 	});

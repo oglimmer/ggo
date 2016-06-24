@@ -8,12 +8,10 @@ import javax.inject.Inject;
 
 import org.atmosphere.config.service.Disconnect;
 import org.atmosphere.config.service.Get;
-import org.atmosphere.config.service.Heartbeat;
 import org.atmosphere.config.service.ManagedService;
 import org.atmosphere.config.service.Message;
 import org.atmosphere.config.service.Ready;
 import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.cpr.AtmosphereResourceEvent;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
 
 import de.oglimmer.ggo.logic.Game;
@@ -32,11 +30,6 @@ public class AtmosphereHandler {
 	@Get
 	public void init(AtmosphereResource r) {
 		r.getResponse().setCharacterEncoding("UTF-8");
-	}
-
-	@Heartbeat
-	public void onHeartbeat(final AtmosphereResourceEvent event) {
-		log.debug("Heartbeat send by {}", event.getResource());
 	}
 
 	@Ready
@@ -61,7 +54,7 @@ public class AtmosphereHandler {
 		Player player = game.getPlayerById(message.getPid());
 		assert player != null;
 		if ("join".equals(message.getCmd())) {
-			AtmosphereResourceCache.INSTANCE.registerPlayer(player, r.uuid());			
+			AtmosphereResourceCache.INSTANCE.registerPlayer(player, r.uuid());
 		}
 		MessageQueue messages = new MessageQueue();
 		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam(), messages);
