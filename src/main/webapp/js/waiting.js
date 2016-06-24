@@ -28,5 +28,15 @@ requirejs([ './commons' ], function(commons) {
 		}
 
 		setTimeout(reload, 1000);
+
+		// Safari + Firefox
+		$(window).on('pagehide', function() {
+			$.ajax({url : "./RemoveAbandonedGame.action", data: {gameId:gameId}});
+		});
+		// Chrome + Firefox 
+		$(window).on('beforeunload', function() {
+			$.ajax({url : "./RemoveAbandonedGame.action", data: {gameId:gameId}});
+		});
+		
 	});
 });

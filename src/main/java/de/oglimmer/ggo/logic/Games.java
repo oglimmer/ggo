@@ -3,6 +3,7 @@ package de.oglimmer.ggo.logic;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public enum Games {
 	INSTANCE;
@@ -34,11 +35,18 @@ public enum Games {
 	}
 
 	public Collection<Game> getOpenGames() {
-		return games.values();
+		return games.values().stream().filter(g -> g.getPlayers().size() != 2).collect(Collectors.toSet());
 	}
 
 	public Collection<Game> getAllGames() {
 		return games.values();
+	}
+
+	public void removeAbandonedGame(String gameId) {
+		Game game = games.get(gameId);
+		if (game != null && game.getPlayers().size() != 2) {
+			games.remove(gameId);
+		}
 	}
 
 }
