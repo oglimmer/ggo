@@ -56,7 +56,7 @@ public enum GameNotifications {
 	public void confirmEmail(String confirmId) {
 		execQuery(con -> {
 			try {
-				String query = "update game_notification set confirmed = now()  where confirmId = ?";
+				String query = "update game_notification set confirmed = now()  where confirmId = ? and confirmed is null";
 				try (PreparedStatement preparedStmt = con.prepareStatement(query)) {
 					preparedStmt.setString(1, confirmId);
 					preparedStmt.executeUpdate();

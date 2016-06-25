@@ -16,8 +16,9 @@ public enum EmailService {
 	public void sendConfirmation(String email, int id, String confirmId) {
 		this.send(email, "Confirm GridGameOne notifications",
 				"Hi,\n\nplease click this link to confirm your email address for notifications for GridGameOne (ggo.oglimmer.de)\n\n"
-						+ "http://" + GridGameOneProperties.INSTANCE.getDomain() + "/ConfirmEmail.action?confirmId="
-						+ confirmId + "\n\n\nRegards,\nOliZ");
+						+ "http://" + GridGameOneProperties.INSTANCE.getDomain()
+						+ GridGameOneProperties.INSTANCE.getUrlPath() + "/ConfirmEmail.action?confirmId=" + confirmId
+						+ "\n\n\nRegards,\nOliZ");
 	}
 
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();

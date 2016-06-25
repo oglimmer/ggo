@@ -174,6 +174,10 @@ public class GridGameOneProperties {
 		return json.getString("app.domain");
 	}
 
+	public String getUrlPath() {
+		return json.getString("app.urlPath");
+	}
+
 	public void registerOnReload(Runnable toCall) {
 		reloadables.add(toCall);
 	}
