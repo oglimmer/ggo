@@ -73,6 +73,21 @@ public enum GameNotifications {
 		});
 	}
 
+	public void unregisterEmail(String confirmId) {
+		execQuery(con -> {
+			try {
+				String query = "delete from game_notification where confirmId = ?";
+				try (PreparedStatement preparedStmt = con.prepareStatement(query)) {
+					preparedStmt.setString(1, confirmId);
+					preparedStmt.executeUpdate();
+				}
+			} catch (SQLException e) {
+				log.error("Failed to unregisterEmail", e);
+			}
+			return 0;
+		});
+	}
+
 	public void confirmEmail(String confirmId) {
 		execQuery(con -> {
 			try {

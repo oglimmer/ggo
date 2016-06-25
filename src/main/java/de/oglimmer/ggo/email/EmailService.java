@@ -13,19 +13,25 @@ import lombok.extern.slf4j.Slf4j;
 public enum EmailService {
 	INSTANCE;
 
+	private String getUnregister(String confirmId) {
+		return "\n\n\n\n\nTo unsubscribe (we actually delete your email in our system) click here " + "http://"
+				+ GridGameOneProperties.INSTANCE.getDomain() + GridGameOneProperties.INSTANCE.getUrlPath()
+				+ "/UnregisterEmail.action?confirmId=" + confirmId;
+	}
+
 	public void sendConfirmation(String email, int id, String confirmId) {
 		this.send(email, "[GridGameOne] Confirm notifications",
 				"Hi,\n\nplease click this link to confirm your email address for notifications for GridGameOne (ggo.oglimmer.de)\n\n"
 						+ "http://" + GridGameOneProperties.INSTANCE.getDomain()
 						+ GridGameOneProperties.INSTANCE.getUrlPath() + "/ConfirmEmail.action?confirmId=" + confirmId
-						+ "\n\n\nRegards,\nOliZ");
+						+ "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
 	}
 
-	public void notifyGameCreated(String email) {
+	public void notifyGameCreated(String email, String confirmId) {
 		this.send(email, "[GridGameOne] Game created notification",
 				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne (ggo.oglimmer.de).\n\nThis just happened.\n\n"
 						+ "Now go the website and join this game:\nhttp://" + GridGameOneProperties.INSTANCE.getDomain()
-						+ "\n\n\nRegards,\nOliZ");
+						+ "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
 	}
 
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
