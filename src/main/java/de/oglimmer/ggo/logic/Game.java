@@ -1,6 +1,7 @@
 package de.oglimmer.ggo.logic;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.oglimmer.ggo.logic.phase.BasePhase;
@@ -12,6 +13,9 @@ public class Game {
 
 	@Getter
 	private String id = RandomName.getName(4);
+
+	@Getter
+	private Date createdOn = new Date();
 
 	@Getter
 	private List<Player> players = new ArrayList<>();
@@ -27,7 +31,7 @@ public class Game {
 		currentPhase = new DraftPhase(this);
 	}
 
-	public void startGame() {	
+	public void startGame() {
 		currentPhase.init();
 	}
 
