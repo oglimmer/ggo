@@ -5,13 +5,20 @@ define(['./Constants', './Communication', './GlobalData', './CursorUtil'], funct
 		// remote
 		this.title = creationObj.title;
 		this.options = creationObj.options;
-		this.options.push({
-			id: 'Cancel',
-			description: 'Cancel'
-		});
+		if(this.options.length>0) {
+			this.options.push({
+				id: 'Cancel',
+				description: 'Cancel'
+			});
+		}
 		// local		
-		this.width = 130;
-		this.height = 100;
+		if(this.options.length>0) {
+			this.width = 130;
+			this.height = 100;
+		} else {
+			this.width = 300;
+			this.height = 200;			
+		}
 		this.rowHeight = 20;
 	}
 
@@ -22,6 +29,10 @@ define(['./Constants', './Communication', './GlobalData', './CursorUtil'], funct
 		}
 		if(latestCur.y == 0) {
 			latestCur.y = 10;
+		}
+		if(this.options.length==0) {
+			latestCur.x = 150;
+			latestCur.y = 120;
 		}
 
 		ctx.beginPath();

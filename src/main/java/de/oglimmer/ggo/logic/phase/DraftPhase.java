@@ -21,6 +21,7 @@ public class DraftPhase extends BasePhase {
 
 	public DraftPhase(Game game) {
 		super(game);
+		game.setTurn(game.getTurn() + 1);
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
+import de.oglimmer.ggo.logic.util.GameUtil;
 import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIButton;
 import lombok.Data;
@@ -207,17 +208,32 @@ public class CombatPhase extends BasePhase {
 
 	@Override
 	protected void updateModalDialg(Player player, MessageQueue messages) {
-		if (get(player).getPossibleCommandTypesOptions() != null) {
-			ObjectNode root = instance.objectNode();
-			root.set("title", instance.textNode("Choose a command"));
-			ArrayNode options = instance.arrayNode();
-			for (CommandType ct : get(player).getPossibleCommandTypesOptions()) {
-				ObjectNode option = instance.objectNode();
-				option.set("id", instance.textNode(ct.name()));
-				option.set("description", instance.textNode(ct.name()));
-				options.add(option);
+		if (getGame().getTurn() < Game.TOTAL_TURNS) {
+			if (get(player).getPossibleCommandTypesOptions() != null) {
+				ObjectNode root = instance.objectNode();
+				root.set("title", instance.textNode("Choose a command"));
+				ArrayNode options = instance.arrayNode();
+				for (CommandType ct : get(player).getPossibleCommandTypesOptions()) {
+					ObjectNode option = instance.objectNode();
+					option.set("id", instance.textNode(ct.name()));
+					option.set("description", instance.textNode(ct.name()));
+					options.add(option);
+				}
+				root.set("options", options);
+				messages.addMessage(player, Constants.RESP_MODAL_DIALOG_EN, root);
 			}
-			root.set("options", options);
+		} else {
+			ObjectNode root = instance.objectNode();
+			String winningInfo;
+			if (player.getScore() > GameUtil.getOtherPlayer(player).getScore()) {
+				winningInfo = "You win!";
+			} else if (player.getScore() < GameUtil.getOtherPlayer(player).getScore()) {
+				winningInfo = "The opponent wins!";
+			} else {
+				winningInfo = "It's a tie!";
+			}
+			root.set("title", instance.textNode("GAME OVER! " + winningInfo));
+			root.set("options", instance.arrayNode());
 			messages.addMessage(player, Constants.RESP_MODAL_DIALOG_EN, root);
 		}
 	}
@@ -231,8 +247,10 @@ public class CombatPhase extends BasePhase {
 					log.debug("Player {} scores 25 points for owning a city.", f.getUnit().getPlayer().getSide());
 				});
 
-		getGame().setCurrentPhase(new DraftPhase(getGame()));
-		getGame().getCurrentPhase().init();
+		if (getGame().getTurn() < Game.TOTAL_TURNS) {
+			getGame().setCurrentPhase(new DraftPhase(getGame()));
+			getGame().getCurrentPhase().init();
+		}
 	}
 
 	@Override

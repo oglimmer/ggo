@@ -8,8 +8,11 @@ import de.oglimmer.ggo.logic.phase.BasePhase;
 import de.oglimmer.ggo.logic.phase.DraftPhase;
 import de.oglimmer.ggo.util.RandomName;
 import lombok.Getter;
+import lombok.Setter;
 
 public class Game {
+
+	public static final int TOTAL_TURNS = 5;
 
 	@Getter
 	private String id = RandomName.getName(4);
@@ -25,6 +28,10 @@ public class Game {
 
 	@Getter
 	private Board board;
+
+	@Getter
+	@Setter
+	private int turn;
 
 	public Game() {
 		board = new Board();
