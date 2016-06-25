@@ -14,6 +14,7 @@ import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.SimpleMessage;
 
 public class LandingActionBean extends BaseAction {
 
@@ -50,11 +51,14 @@ public class LandingActionBean extends BaseAction {
 		GameNotification rec = GameNotifications.INSTANCE.addEmail(email);
 		EmailService.INSTANCE.sendConfirmation(email, rec.getId(), rec.getConfirmId());
 		email = "";
+		getContext().getMessages()
+				.add(new SimpleMessage("We sent you a confirmation email. Please look in your inbox/spam folder."));
 		return show();
 	}
 
 	@DontValidate
 	public Resolution resetGame() {
+		getContext().getMessages().add(new SimpleMessage("All games reseted"));
 		Games.INSTANCE.reset();
 		return show();
 	}

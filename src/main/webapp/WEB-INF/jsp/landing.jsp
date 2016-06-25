@@ -19,6 +19,8 @@
 	 </div>
   </stripes:layout-component>
   <stripes:layout-component name="center">
+
+	<stripes:messages/>
   
 	<c:if test="${not empty actionBean.player}">
 		<p>
