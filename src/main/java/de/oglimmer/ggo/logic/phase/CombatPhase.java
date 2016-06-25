@@ -52,15 +52,26 @@ public class CombatPhase extends BasePhase {
 		if (getGame().getBoard().getTotalUnits() == 0) {
 			nextPhase();
 		} else {
-			inTurn.addAll(getGame().getPlayers());
+			initRound();
 			cc.clearCommands();
 			getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
 		}
 	}
 
+	private void initRound() {
+		getGame().getPlayers().forEach(p -> {
+			if (getGame().getBoard().getTotalUnits(p) > 0) {
+				inTurn.add(p);
+			}
+		});
+		if (inTurn.isEmpty()) {
+			nextPhase();
+		}
+	}
+
 	@Override
 	public boolean isHighlighted(Field field, Player forPlayer) {
-		return states.get(forPlayer).isHighlighted(field);
+		return get(forPlayer).isHighlighted(field);
 	}
 
 	@Override
@@ -70,12 +81,12 @@ public class CombatPhase extends BasePhase {
 
 	@Override
 	public boolean isSelected(Unit unit, Player forPlayer) {
-		return states.get(forPlayer).isSelected(unit);
+		return get(forPlayer).isSelected(unit);
 	}
 
 	@Override
 	public boolean isSelectable(Unit unit, Player forPlayer) {
-		return states.get(forPlayer).isSelectable(unit);
+		return get(forPlayer).isSelectable(unit);
 	}
 
 	@Override
@@ -112,7 +123,7 @@ public class CombatPhase extends BasePhase {
 		if (round == MAX_ROUNDS || getGame().getBoard().getTotalUnits() == 0) {
 			nextPhase();
 		} else {
-			inTurn.addAll(getGame().getPlayers());
+			initRound();
 		}
 	}
 

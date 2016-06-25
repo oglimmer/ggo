@@ -62,4 +62,8 @@ public class Board {
 		return fields.stream().filter(f -> f.getUnit() != null).count();
 	}
 
+	public long getTotalUnits(Player p) {
+		return fields.stream().filter(f -> f.getUnit() != null).filter(f -> f.getUnit().getPlayer() == p).count();
+	}
+
 }
