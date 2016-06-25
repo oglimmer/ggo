@@ -69,23 +69,23 @@
 	</p>
 
 	<h1>Units</h1>
-	<h2>Infantry <img src="images/infantry_green.png"  /></h2>
+	<h2>Infantry <img src="images/infantry_green.png" /></h2>
 	<p>			
 		Strength: 1 (Has support ability)
 	</p>
-	<h2>Tank <img src="images/tank_green.png"  /></h2>
+	<h2>Tank <img src="images/tank_green.png" /></h2>
 	<p>	
 		Strength: 2 (Has support ability)
 	</p>
-	<h2>Airborne <img src="images/airborne_green.png"  /></h2>
+	<h2>Airborne forces <img src="images/airborne_green.png" /></h2>
 	<p>	
 		Strength: 1 (Has support ability and can be deployed into the enemy side of the board)
 	</p>
-	<h2>Helicopter <img src="images/helicopter_green.png"  /></h2>
+	<h2>Helicopter <img src="images/helicopter_green.png" /></h2>
 	<p>	
 		Strength: 1 (Has support ability and can bombard fields within 1 field range)
 	</p>
-	<h2>Artillery <img src="images/artillery_green.png"  /></h2>
+	<h2>Artillery <img src="images/artillery_green.png" /></h2>
 	<p>	
 		Strength: 0 (Doesn't have support ability, but can bombard fields within 2 fields range)
 	</p>
