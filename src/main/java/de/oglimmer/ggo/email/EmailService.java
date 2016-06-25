@@ -30,7 +30,7 @@ public enum EmailService {
 	public void notifyGameCreated(String email, String confirmId) {
 		this.send(email, "[GridGameOne] Game created notification",
 				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne.\n\nThis just happened.\n\n"
-						+ "Now go the website and join this game:\nhttp://" + GridGameOneProperties.INSTANCE.getDomain()
+						+ "Now go to our website and join this game:\nhttp://" + GridGameOneProperties.INSTANCE.getDomain()
 						+ "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
 	}
 
