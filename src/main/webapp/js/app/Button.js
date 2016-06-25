@@ -27,10 +27,6 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		ctx.strokeStyle = "black";
 		ctx.fillStyle = "black";
 		ctx.rect(x, y, this.width, this.height);
-		if(typeof this.text !== 'undefined' && this.text != null) {
-			ctx.font = "10px Arial";
-			ctx.fillText(this.text,x+2,y+12);
-		}
 		ctx.stroke();
 		
 		if(typeof this.graphic !== 'undefined' && this.graphic != null) {			
@@ -40,6 +36,11 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 			} else {
 				ctx.drawImage(img,this.x,this.y);
 			}
+			ctx.font = "10px Arial";
+			ctx.fillText(this.text,x+30,y+46);
+		} else {
+			ctx.font = "10px Arial";
+			ctx.fillText(this.text,x+2,y+12);
 		}
 	};
 	

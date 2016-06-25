@@ -43,7 +43,7 @@ public class CombatPhase extends BasePhase {
 		cc = new CommandCenter(game);
 	}
 
-	private State get(Player player) {
+	private State getState(Player player) {
 		return states.computeIfAbsent(player, t -> new State(player));
 	}
 
@@ -71,7 +71,7 @@ public class CombatPhase extends BasePhase {
 
 	@Override
 	public boolean isHighlighted(Field field, Player forPlayer) {
-		return get(forPlayer).isHighlighted(field);
+		return getState(forPlayer).isHighlighted(field);
 	}
 
 	@Override
@@ -81,12 +81,12 @@ public class CombatPhase extends BasePhase {
 
 	@Override
 	public boolean isSelected(Unit unit, Player forPlayer) {
-		return get(forPlayer).isSelected(unit);
+		return getState(forPlayer).isSelected(unit);
 	}
 
 	@Override
 	public boolean isSelectable(Unit unit, Player forPlayer) {
-		return get(forPlayer).isSelectable(unit);
+		return getState(forPlayer).isSelectable(unit);
 	}
 
 	@Override
@@ -146,12 +146,12 @@ public class CombatPhase extends BasePhase {
 	}
 
 	private void execModalDialog(Player player, String param, MessageQueue messages) {
-		Unit unit = get(player).getSelectedUnits();
+		Unit unit = getState(player).getSelectedUnits();
 		if (unit == null) {
 			log.error("execTargetField but no unit was selected");
 			return;
 		}
-		Field targetField = get(player).getSelectedFields();
+		Field targetField = getState(player).getSelectedFields();
 		if (targetField == null) {
 			log.error("execTargetField but no target field was selected");
 			return;
@@ -160,13 +160,13 @@ public class CombatPhase extends BasePhase {
 			CommandType commandType = CommandType.valueOf(param);
 			cc.addCommand(unit, targetField, commandType);
 		}
-		get(player).clear();
+		getState(player).clear();
 		ObjectNode root = instance.objectNode();
 		messages.addMessage(player, Constants.RESP_MODAL_DIALOG_DIS, root);
 	}
 
 	private void execTargetField(Player player, String param) {
-		Unit unit = get(player).getSelectedUnits();
+		Unit unit = getState(player).getSelectedUnits();
 		if (unit == null) {
 			log.error("execTargetField but no unit was selected");
 			return;
@@ -178,16 +178,16 @@ public class CombatPhase extends BasePhase {
 					"One of your own units is/will be alreay there. De-select your unit or chose another target field.");
 		} else if (possibleCommandTypes.size() == 1) {
 			cc.addCommand(unit, targetField, possibleCommandTypes.iterator().next());
-			get(player).clear();
+			getState(player).clear();
 		} else {
-			get(player).setPossibleCommandTypesOptions(possibleCommandTypes);
-			get(player).setSelectedFields(targetField);
+			getState(player).setPossibleCommandTypesOptions(possibleCommandTypes);
+			getState(player).setSelectedFields(targetField);
 		}
 	}
 
 	private void execSelectUnit(Player player, String param) {
 		Unit unit = getGame().getUnitById(param);
-		Unit currentlySelected = get(player).getSelectedUnits();
+		Unit currentlySelected = getState(player).getSelectedUnits();
 		if (currentlySelected != null && currentlySelected != unit) {
 			log.error("Player {} has unit selected", player.getSide());
 			return;
@@ -195,9 +195,9 @@ public class CombatPhase extends BasePhase {
 		if (currentlySelected == unit) {
 			cc.removeCommandForUnit(unit);
 			cc.addCommand(unit, unit.getDeployedOn(), CommandType.FORTIFY);
-			get(player).clear();
+			getState(player).clear();
 		} else {
-			get(player).setSelectedUnits(unit);
+			getState(player).setSelectedUnits(unit);
 		}
 	}
 
@@ -205,7 +205,7 @@ public class CombatPhase extends BasePhase {
 	protected void updateMessage(Player player, MessageQueue messages) {
 		String title;
 		if (inTurn.contains(player)) {
-			Unit unit = get(player).getSelectedUnits();
+			Unit unit = getState(player).getSelectedUnits();
 			if (unit != null) {
 				title = "Choose a destination field for " + unit.getUnitType().toString();
 			} else {
@@ -220,11 +220,11 @@ public class CombatPhase extends BasePhase {
 	@Override
 	protected void updateModalDialg(Player player, MessageQueue messages) {
 		if (getGame().getTurn() < Game.TOTAL_TURNS) {
-			if (get(player).getPossibleCommandTypesOptions() != null) {
+			if (getState(player).getPossibleCommandTypesOptions() != null) {
 				ObjectNode root = instance.objectNode();
 				root.set("title", instance.textNode("Choose a command"));
 				ArrayNode options = instance.arrayNode();
-				for (CommandType ct : get(player).getPossibleCommandTypesOptions()) {
+				for (CommandType ct : getState(player).getPossibleCommandTypesOptions()) {
 					ObjectNode option = instance.objectNode();
 					option.set("id", instance.textNode(ct.name()));
 					option.set("description", instance.textNode(ct.name()));

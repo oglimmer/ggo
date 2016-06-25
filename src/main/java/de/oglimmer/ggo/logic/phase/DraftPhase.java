@@ -85,7 +85,8 @@ public class DraftPhase extends BasePhase {
 	@Override
 	protected void updateMessage(Player player, MessageQueue messages) {
 		if (inTurn.contains(player)) {
-			player.getUiStates().getClientMessages().setTitle("Draft your units until all your credits are spent.");
+			player.getUiStates().getClientMessages().setTitle(
+					"Draft units by clicking one at the bottom. To revert click the unit in your hand. Click 'done' to finish the draft phase. The player with more money left will start the next phase.");
 			player.getUiStates().getClientMessages().setInfo("You have " + player.getCredits() + " credits.");
 		} else {
 			player.getUiStates().getClientMessages().setTitle("Wait for your opponent to finish the draft phase.");
@@ -102,8 +103,8 @@ public class DraftPhase extends BasePhase {
 					DiffableBoolean.create(!inTurn.contains(forPlayer))));
 
 			for (UnitType type : UnitType.values()) {
-				buttons.add(new UIButton("buy" + type.toString(), null, type.toString(), 48, 48,
-						DiffableBoolean.create(forPlayer.getCredits() < type.getCost())));
+				buttons.add(new UIButton("buy" + type.toString(), Integer.toString(type.getCost()), type.toString(), 48,
+						48, DiffableBoolean.create(forPlayer.getCredits() < type.getCost())));
 			}
 		}
 		return buttons;

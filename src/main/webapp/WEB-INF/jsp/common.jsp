@@ -25,6 +25,9 @@
           <a class="navbar-brand" href="#">GridGameOne</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="Help.action" target="_blank">Help</a></li>
+			</ul>
           <!-- 
           <form class="navbar-form navbar-right">
             <div class="form-group">
