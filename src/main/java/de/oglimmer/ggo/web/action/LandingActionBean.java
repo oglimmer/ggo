@@ -2,10 +2,14 @@ package de.oglimmer.ggo.web.action;
 
 import javax.servlet.http.Cookie;
 
+import de.oglimmer.ggo.db.GameNotifications;
+import de.oglimmer.ggo.db.GameNotifications.GameNotification;
+import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Games;
 import de.oglimmer.ggo.logic.Player;
 import lombok.Getter;
+import lombok.Setter;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.ForwardResolution;
@@ -21,6 +25,10 @@ public class LandingActionBean extends BaseAction {
 	@Getter
 	private Player player;
 
+	@Setter
+	@Getter
+	private String email;
+
 	@DefaultHandler
 	@DontValidate
 	public Resolution show() {
@@ -35,6 +43,14 @@ public class LandingActionBean extends BaseAction {
 			}
 		}
 		return new ForwardResolution(VIEW);
+	}
+
+	@DontValidate
+	public Resolution register() {
+		GameNotification rec = GameNotifications.INSTANCE.addEmail(email);
+		EmailService.INSTANCE.sendConfirmation(email, rec.getId(), rec.getConfirmId());
+		email = "";
+		return show();
 	}
 
 	@DontValidate
