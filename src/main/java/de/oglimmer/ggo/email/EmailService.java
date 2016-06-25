@@ -21,15 +21,15 @@ public enum EmailService {
 
 	public void sendConfirmation(String email, int id, String confirmId) {
 		this.send(email, "[GridGameOne] Confirm notifications",
-				"Hi,\n\nplease click this link to confirm your email address for notifications for GridGameOne (ggo.oglimmer.de)\n\n"
+				"Hi,\n\nplease click this link to confirm your email address for notifications for GridGameOne.\n\n"
 						+ "http://" + GridGameOneProperties.INSTANCE.getDomain()
 						+ GridGameOneProperties.INSTANCE.getUrlPath() + "/ConfirmEmail.action?confirmId=" + confirmId
-						+ "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
+						+ "\n\n\nRegards,\nOliZ\n\n\n\n\nBtw, we will always give you the chance to delete your email address (completely) from our system.");
 	}
 
 	public void notifyGameCreated(String email, String confirmId) {
 		this.send(email, "[GridGameOne] Game created notification",
-				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne (ggo.oglimmer.de).\n\nThis just happened.\n\n"
+				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne.\n\nThis just happened.\n\n"
 						+ "Now go the website and join this game:\nhttp://" + GridGameOneProperties.INSTANCE.getDomain()
 						+ "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
 	}
