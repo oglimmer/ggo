@@ -87,7 +87,7 @@
 	</p>
 	<h2>Artillery <img src="images/artillery_green.png"  /></h2>
 	<p>	
-		Strength: 0 (Don't has support ability, but can bombard fields within 2 fields range)
+		Strength: 0 (Doesn't have support ability, but can bombard fields within 2 fields range)
 	</p>
 	
   
