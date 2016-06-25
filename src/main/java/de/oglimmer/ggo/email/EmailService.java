@@ -14,11 +14,17 @@ public enum EmailService {
 	INSTANCE;
 
 	public void sendConfirmation(String email, int id, String confirmId) {
-		this.send(email, "Confirm GridGameOne notifications",
+		this.send(email, "[GridGameOne] Confirm notifications",
 				"Hi,\n\nplease click this link to confirm your email address for notifications for GridGameOne (ggo.oglimmer.de)\n\n"
 						+ "http://" + GridGameOneProperties.INSTANCE.getDomain()
 						+ GridGameOneProperties.INSTANCE.getUrlPath() + "/ConfirmEmail.action?confirmId=" + confirmId
 						+ "\n\n\nRegards,\nOliZ");
+	}
+
+	public void notifyGameCreated(String email) {
+		this.send(email, "[GridGameOne] Game created notification",
+				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne (ggo.oglimmer.de). This just happened.\n\n"
+						+ "http://" + GridGameOneProperties.INSTANCE.getDomain() + "\n\n\nRegards,\nOliZ");
 	}
 
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import de.oglimmer.ggo.util.GridGameOneProperties;
@@ -32,6 +33,25 @@ public enum GameNotifications {
 		}
 	}
 
+	public void allConfirmed(Consumer<GameNotification> callback) {
+		execQuery(con -> {
+			try {
+				String query = "select id,email,confirmId from game_notification where confirmed is not null";
+				try (PreparedStatement preparedStmt = con.prepareStatement(query)) {
+					try (ResultSet rs = preparedStmt.executeQuery()) {
+						while (rs.next()) {
+							callback.accept(new GameNotification(rs.getInt("id"), rs.getString("email"),
+									rs.getString("confirmId")));
+						}
+					}
+				}
+			} catch (SQLException e) {
+				log.error("Failed to load allConfirmed", e);
+			}
+			return 0;
+		});
+	}
+
 	public GameNotification addEmail(String email) {
 		return execQuery(con -> {
 			try {
@@ -43,7 +63,7 @@ public enum GameNotifications {
 					preparedStmt.executeUpdate();
 					try (ResultSet rs = preparedStmt.getGeneratedKeys()) {
 						rs.next();
-						return new GameNotification(rs.getInt(1), confirmId);
+						return new GameNotification(rs.getInt(1), email, confirmId);
 					}
 				}
 			} catch (SQLException e) {
@@ -87,6 +107,8 @@ public enum GameNotifications {
 	@Data
 	public class GameNotification {
 		private int id;
+		private String email;
 		private String confirmId;
 	}
+
 }
