@@ -23,8 +23,9 @@ public enum EmailService {
 
 	public void notifyGameCreated(String email) {
 		this.send(email, "[GridGameOne] Game created notification",
-				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne (ggo.oglimmer.de). This just happened.\n\n"
-						+ "http://" + GridGameOneProperties.INSTANCE.getDomain() + "\n\n\nRegards,\nOliZ");
+				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne (ggo.oglimmer.de).\n\nThis just happened.\n\n"
+						+ "Now go the website and join this game:\nhttp://" + GridGameOneProperties.INSTANCE.getDomain()
+						+ "\n\n\nRegards,\nOliZ");
 	}
 
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
