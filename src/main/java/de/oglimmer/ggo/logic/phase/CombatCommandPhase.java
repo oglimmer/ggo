@@ -44,6 +44,7 @@ public class CombatCommandPhase extends BasePhase {
 		this.combatPhaseRoundCounter = combatPhaseRoundCounter;
 		if (this.combatPhaseRoundCounter == null) {
 			this.combatPhaseRoundCounter = new CombatPhaseRoundCounter();
+			getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
 		}
 		cc = new CommandCenter(game);
 	}
@@ -66,8 +67,7 @@ public class CombatCommandPhase extends BasePhase {
 				nextPhase();
 			}
 
-			cc.setAllToFortify();
-			getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
+			cc.setAllToFortify();			
 		}
 	}
 

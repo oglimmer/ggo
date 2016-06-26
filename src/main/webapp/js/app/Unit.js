@@ -160,7 +160,17 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 	        ctx.moveTo(fromx, fromy);
 	        ctx.lineTo(tox, toy);
 	        ctx.strokeStyle = color;
-	        ctx.lineWidth = 7;
+	        switch(color) {
+	        case 'red':
+	        	ctx.lineWidth = 7;
+	        	break;
+	        case 'green':
+	        	ctx.lineWidth = 3;
+	        	break;
+	        case 'yello':
+	        	ctx.lineWidth = 5;
+	        	break;
+	        }	        
 	        ctx.stroke();
 	        
         }

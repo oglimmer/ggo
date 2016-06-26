@@ -1,6 +1,8 @@
 package de.oglimmer.ggo.logic.battle;
 
+import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
+import de.oglimmer.ggo.logic.util.GameUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +29,14 @@ public class BaseBattleResolver {
 		if (total1 == total2) {
 			score(u1);
 			score(u2);
-			kill(u1);
-			kill(u2);
+			kill(u1, u2);
+			kill(u2, u1);
 		} else if (total1 < total2) {
 			score(u2);
-			kill(u1);
+			kill(u1, u2);
 		} else if (total1 > total2) {
 			score(u1);
-			kill(u2);
+			kill(u2, u1);
 		}
 	}
 
@@ -49,8 +51,10 @@ public class BaseBattleResolver {
 		} else if (ct == CommandType.BOMBARD) {
 			score = 5;
 		}
-		log.debug("Unit {} scores for {} points by {}", winningUnit, score, ct);
-		winningUnit.getPlayer().incScore(score);
+		if (score > 0) {
+			log.debug("Unit {} scores for {} points by {}", winningUnit, score, ct);
+			winningUnit.getPlayer().incScore(score);
+		}
 	}
 
 	protected int isSupported(Unit u) {
@@ -62,12 +66,22 @@ public class BaseBattleResolver {
 		return cc.getByUnit(u).getCommandType() == CommandType.FORTIFY ? 1 : 0;
 	}
 
-	protected void kill(Unit u) {
-		log.debug("Kill unit {}", u);
-		u.getPlayer().getUiStates().getClientMessages()
-				.appendInfo(u.getUnitType().toString() + " on " + u.getDeployedOn().getId() + " got killed. ");
-		u.getDeployedOn().setUnit(null);
-		cc.removeCommandForUnit(u);
+	protected void kill(Unit unitKilled, Unit killer) {
+		log.debug("Kill unit {} by {}", unitKilled, killer);
+
+		Player owner = unitKilled.getPlayer();
+		Player winner = GameUtil.getOtherPlayer(owner);
+		owner.getUiStates().getClientMessages()
+				.appendInfo("One of your " + unitKilled.getUnitType() + "'s on " + unitKilled.getDeployedOn().getId()
+						+ " got defeated by enemy " + killer.getUnitType() + " from " + killer.getDeployedOn().getId()
+						+ ".");
+
+		winner.getUiStates().getClientMessages().appendInfo(
+				"Your " + killer.getUnitType() + " on " + killer.getDeployedOn().getId() + " destroyed enemy "
+						+ unitKilled.getUnitType() + " on " + unitKilled.getDeployedOn().getId() + ".");
+
+		unitKilled.getDeployedOn().setUnit(null);
+		cc.removeCommandForUnit(unitKilled);
 	}
 
 }
