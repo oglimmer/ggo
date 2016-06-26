@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.logic.phase;
+package de.oglimmer.ggo.logic.battle;
 
 public enum CommandType {
 	MOVE("M"), FORTIFY("F"), BOMBARD("B"), SUPPORT("S");

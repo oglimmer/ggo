@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.logic.phase;
+package de.oglimmer.ggo.logic.battle;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,12 +40,7 @@ public class CommandCenter {
 		}
 	}
 
-	public void clearCommands() {
-		commands.clear();
-		setAllToFortify();
-	}
-
-	private void setAllToFortify() {
+	public void setAllToFortify() {
 		game.getBoard().getFields().stream().filter(f -> f.getUnit() != null)
 				.forEach(f -> addCommand(f.getUnit(), f, CommandType.FORTIFY));
 	}

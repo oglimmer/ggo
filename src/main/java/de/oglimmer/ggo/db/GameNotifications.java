@@ -34,6 +34,9 @@ public enum GameNotifications {
 	}
 
 	public void allConfirmed(Consumer<GameNotification> callback) {
+		if (GridGameOneProperties.INSTANCE.isEmailDisabled()) {
+			return;
+		}
 		execQuery(con -> {
 			try {
 				String query = "select id,email,confirmId from game_notification where confirmed is not null";

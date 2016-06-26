@@ -75,14 +75,26 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 	}
 
 	Board.prototype.draw = function() {
+		// clear the field
 		this.ctxBoard.clearRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
-		// board		
+		// fields		
 		for ( var f in this.corToFields) {
 			this.corToFields[f].draw(this.ctxBoard);
 		}
+		// units- z-level:0
 		for ( var f in this.idToUnits) {
 			var unitToDraw = this.idToUnits[f];
-			unitToDraw.draw(this.ctxBoard);
+			unitToDraw.draw0(this.ctxBoard);
+		}
+		// units- z-level:1
+		for ( var f in this.idToUnits) {
+			var unitToDraw = this.idToUnits[f];
+			unitToDraw.draw1(this.ctxBoard);
+		}
+		// units- z-level:2
+		for ( var f in this.idToUnits) {
+			var unitToDraw = this.idToUnits[f];
+			unitToDraw.draw2(this.ctxBoard);
 		}
 		// hand
 		this.ctxBoard.beginPath();

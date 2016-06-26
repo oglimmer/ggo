@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
-import de.oglimmer.ggo.logic.phase.Command;
+import de.oglimmer.ggo.logic.battle.Command;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.logic.phase;
+package de.oglimmer.ggo.logic.battle;
 
 import java.util.Collection;
 import java.util.HashMap;

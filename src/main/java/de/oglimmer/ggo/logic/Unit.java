@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import de.oglimmer.ggo.logic.phase.Command;
-import de.oglimmer.ggo.logic.phase.CommandCenter;
-import de.oglimmer.ggo.logic.phase.CommandType;
+import de.oglimmer.ggo.logic.battle.Command;
+import de.oglimmer.ggo.logic.battle.CommandCenter;
+import de.oglimmer.ggo.logic.battle.CommandType;
 import de.oglimmer.ggo.logic.util.FieldUtil;
 import de.oglimmer.ggo.util.RandomString;
 import lombok.Getter;

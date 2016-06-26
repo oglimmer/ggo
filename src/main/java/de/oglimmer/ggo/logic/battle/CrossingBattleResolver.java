@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.logic.phase;
+package de.oglimmer.ggo.logic.battle;
 
 import java.util.HashSet;
 import java.util.Iterator;

@@ -11,6 +11,7 @@ import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
+import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.util.GameUtil;
 import de.oglimmer.ggo.ui.UIButton;
 import lombok.Getter;

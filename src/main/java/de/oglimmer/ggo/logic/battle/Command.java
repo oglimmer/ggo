@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.logic.phase;
+package de.oglimmer.ggo.logic.battle;
 
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Unit;

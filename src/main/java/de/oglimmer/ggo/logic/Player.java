@@ -54,6 +54,7 @@ public class Player {
 	}
 
 	public void incScore(int addScore) {
+		assert addScore > 0;
 		score += addScore;
 	}
 
