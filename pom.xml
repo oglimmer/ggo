@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.oglimmer</groupId>
 	<artifactId>grid</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.3</version>
 	<name>grid</name>
 	<packaging>war</packaging>
 
@@ -13,7 +13,7 @@
 		<url>https://github.com/oglimmer/ggo</url>
 		<connection>scm:git:git://github.com/oglimmer/ggo.git</connection>
 		<developerConnection>scm:git:git@github.com:oglimmer/ggo.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>ggo-0.3</tag>
 	</scm>
 
 	<properties>
