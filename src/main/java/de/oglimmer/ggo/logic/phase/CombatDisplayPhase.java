@@ -1,15 +1,10 @@
 package de.oglimmer.ggo.logic.phase;
 
-import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import de.oglimmer.ggo.com.Constants;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
@@ -21,7 +16,6 @@ import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.battle.CommandCenter;
 import de.oglimmer.ggo.logic.battle.CrossingBattleResolver;
 import de.oglimmer.ggo.logic.battle.MoveResolver;
-import de.oglimmer.ggo.logic.util.GameUtil;
 import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIButton;
 import lombok.extern.slf4j.Slf4j;
@@ -41,12 +35,8 @@ public class CombatDisplayPhase extends BasePhase {
 
 	@Override
 	public void init() {
-		if (getGame().getBoard().getTotalUnits() == 0) {
-			nextPhase();
-		} else {
-			inTurn.addAll(getGame().getPlayers());
-			getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
-		}
+		inTurn.addAll(getGame().getPlayers());
+		getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
 	}
 
 	@Override
@@ -82,24 +72,6 @@ public class CombatDisplayPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateModalDialg(Player player, MessageQueue messages) {
-		if (getGame().getTurn() >= Game.TOTAL_TURNS) {
-			ObjectNode root = instance.objectNode();
-			String winningInfo;
-			if (player.getScore() > GameUtil.getOtherPlayer(player).getScore()) {
-				winningInfo = "You win!";
-			} else if (player.getScore() < GameUtil.getOtherPlayer(player).getScore()) {
-				winningInfo = "The opponent wins!";
-			} else {
-				winningInfo = "It's a tie!";
-			}
-			root.set("title", instance.textNode("GAME OVER! " + winningInfo));
-			root.set("options", instance.arrayNode());
-			messages.addMessage(player, Constants.RESP_MODAL_DIALOG_EN, root);
-		}
-	}
-
-	@Override
 	protected void nextPhase() {
 		calcBattle();
 		combatPhaseRoundCounter.incRound();
@@ -113,6 +85,9 @@ public class CombatDisplayPhase extends BasePhase {
 
 			if (getGame().getTurn() < Game.TOTAL_TURNS) {
 				getGame().setCurrentPhase(new DraftPhase(getGame()));
+				getGame().getCurrentPhase().init();
+			} else {
+				getGame().setCurrentPhase(new GameFinishedPhase(getGame()));
 				getGame().getCurrentPhase().init();
 			}
 		} else {
