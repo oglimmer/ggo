@@ -208,7 +208,7 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase() {
-		getGame().setCurrentPhase(new CombatPhase(getGame()));
+		getGame().setCurrentPhase(new CombatPhase(getGame(), null));
 		getGame().getCurrentPhase().init();
 	}
 

@@ -29,17 +29,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CombatPhase extends BasePhase {
 
-	private static final int MAX_ROUNDS = 3;
-
-	private int round = 0;
+	private CombatPhaseRoundCounter combatPhaseRoundCounter;
 
 	private Map<Player, State> states = new HashMap<>();
 
 	private Set<Player> inTurn = new HashSet<>();
 	private CommandCenter cc;
 
-	public CombatPhase(Game game) {
+	public CombatPhase(Game game, CombatPhaseRoundCounter combatPhaseRoundCounter) {
 		super(game);
+		this.combatPhaseRoundCounter = combatPhaseRoundCounter;
+		if (this.combatPhaseRoundCounter == null) {
+			this.combatPhaseRoundCounter = new CombatPhaseRoundCounter();
+		}
 		cc = new CommandCenter(game);
 	}
 
@@ -52,20 +54,17 @@ public class CombatPhase extends BasePhase {
 		if (getGame().getBoard().getTotalUnits() == 0) {
 			nextPhase();
 		} else {
-			initRound();
+			getGame().getPlayers().forEach(p -> {
+				if (getGame().getBoard().getTotalUnits(p) > 0) {
+					inTurn.add(p);
+				}
+			});
+			if (inTurn.isEmpty()) {
+				nextPhase();
+			}
+
 			cc.clearCommands();
 			getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
-		}
-	}
-
-	private void initRound() {
-		getGame().getPlayers().forEach(p -> {
-			if (getGame().getBoard().getTotalUnits(p) > 0) {
-				inTurn.add(p);
-			}
-		});
-		if (inTurn.isEmpty()) {
-			nextPhase();
 		}
 	}
 
@@ -113,36 +112,8 @@ public class CombatPhase extends BasePhase {
 	private void execDoneButton(Player player) {
 		inTurn.remove(player);
 		if (inTurn.isEmpty()) {
-			roundEnded();
-		}
-	}
-
-	private void roundEnded() {
-		calcBattle();
-		round++;
-		if (round == MAX_ROUNDS || getGame().getBoard().getTotalUnits() == 0) {
 			nextPhase();
-		} else {
-			initRound();
 		}
-	}
-
-	private void calcBattle() {
-		BombarbResolver bomb = new BombarbResolver(cc);
-		bomb.collectTargets();
-
-		CrossingBattleResolver br = new CrossingBattleResolver(cc);
-		br.battleCrossingUnits();
-
-		BattleGroundResolver bgr = new BattleGroundResolver(cc);
-		bgr.battleBattleGrounds();
-
-		bomb.killTargets();
-
-		MoveResolver mr = new MoveResolver(cc);
-		mr.moveUnits();
-
-		cc.clearCommands();
 	}
 
 	private void execModalDialog(Player player, String param, MessageQueue messages) {
@@ -209,10 +180,12 @@ public class CombatPhase extends BasePhase {
 			if (unit != null) {
 				title = "Choose a destination field for " + unit.getUnitType().toString();
 			} else {
-				title = "Command your units. Press `done` when finished. Round " + (round + 1) + " of " + MAX_ROUNDS;
+				title = "Command your units. Press `done` when finished. Round "
+						+ combatPhaseRoundCounter.getCurrentRound() + " of " + combatPhaseRoundCounter.getMaxRounds();
 			}
 		} else {
-			title = "Wait for your opponent to finish the turn. Round " + (round + 1) + " of " + MAX_ROUNDS;
+			title = "Wait for your opponent to finish the turn. Round " + combatPhaseRoundCounter.getCurrentRound()
+					+ " of " + combatPhaseRoundCounter.getMaxRounds();
 		}
 		player.getUiStates().getClientMessages().setTitle(title);
 	}
@@ -251,17 +224,8 @@ public class CombatPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase() {
-
-		getGame().getBoard().getFields().stream().filter(f -> f.getStructure() != null).filter(f -> f.getUnit() != null)
-				.filter(f -> f.getUnit().getPlayer() != f.getStructure().getPlayer()).forEach(f -> {
-					f.getUnit().getPlayer().incScore(25);
-					log.debug("Player {} scores 25 points for owning a city.", f.getUnit().getPlayer().getSide());
-				});
-
-		if (getGame().getTurn() < Game.TOTAL_TURNS) {
-			getGame().setCurrentPhase(new DraftPhase(getGame()));
-			getGame().getCurrentPhase().init();
-		}
+		getGame().setCurrentPhase(new CombatDisplayPhase(getGame(), combatPhaseRoundCounter, cc));
+		getGame().getCurrentPhase().init();
 	}
 
 	@Override
