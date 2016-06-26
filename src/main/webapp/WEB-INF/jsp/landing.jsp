@@ -9,12 +9,14 @@
 	   <div class="container">
 	     <h1>Welcome to Grid Game One</h1>
 	     <p>A 2 player hex-field based, no-luck, strategy game.</p>
+	     <img src="images/portal_overview.png" />
 	     <p>
+	     <p>	     	
 	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.CreateGameActionBean">
 	     		Create Game
 	     	</stripes:link>
-	     	<div id="availGames">querying games ...</div>
 	     </p>
+	     <div id="availGames">querying games ...</div>
 	   </div>
 	 </div>
   </stripes:layout-component>
