@@ -7,7 +7,7 @@
 	   <div class="container">
 	     <h3>Your game is <span id="gameId"></span></h3>
 	     <p>Waiting for other player <span id="waitingProgress"></span></p>
-	     <p>(We have informed <span id="numberOfNotifications"></span> fellas by email about your new game)
+	     <p>(We have informed <span id="numberOfNotifications"></span> by email about your new game)
 	   </div>
 	 </div>
   </stripes:layout-component>
