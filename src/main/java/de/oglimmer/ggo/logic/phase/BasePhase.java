@@ -138,4 +138,11 @@ abstract public class BasePhase {
 	public Command getCommand(Unit unit, Player forPlayer) {
 		return null;
 	}
+
+	/**
+	 * @return
+	 */
+	public Boolean isShowCoordinates() {
+		return false;
+	}
 }

@@ -28,7 +28,7 @@ public class CrossingBattleResolver extends BaseBattleResolver {
 		Iterator<Unit> it = set.iterator();
 		Unit u1 = it.next();
 		Unit u2 = it.next();
-		resolveBattle(u1, u2);
+		resolveBattle(u1, u2, true);
 	}
 
 	private void collectCrossingUnits() {

@@ -3,19 +3,16 @@ package de.oglimmer.ggo.logic.phase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
-import de.oglimmer.ggo.logic.battle.BattleGroundResolver;
-import de.oglimmer.ggo.logic.battle.BombarbResolver;
 import de.oglimmer.ggo.logic.battle.CombatPhaseRoundCounter;
 import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.battle.CommandCenter;
-import de.oglimmer.ggo.logic.battle.CrossingBattleResolver;
-import de.oglimmer.ggo.logic.battle.MoveResolver;
 import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIButton;
 import lombok.extern.slf4j.Slf4j;
@@ -24,19 +21,24 @@ import lombok.extern.slf4j.Slf4j;
 public class CombatDisplayPhase extends BasePhase {
 
 	private CombatPhaseRoundCounter combatPhaseRoundCounter;
+	private CommandCenter ccDryRun;
 	private CommandCenter cc;
 	private Set<Player> inTurn = new HashSet<>();
+	private Map<Player, StringBuilder> infoMessages;
 
 	public CombatDisplayPhase(Game game, CombatPhaseRoundCounter combatPhaseRoundCounter, CommandCenter cc) {
 		super(game);
 		this.combatPhaseRoundCounter = combatPhaseRoundCounter;
 		this.cc = cc;
+		this.ccDryRun = new CommandCenter(cc, true);
 	}
 
 	@Override
 	public void init() {
 		inTurn.addAll(getGame().getPlayers());
 		getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
+		ccDryRun.calcBattle();
+		infoMessages = ccDryRun.getInfoMessages();
 	}
 
 	@Override
@@ -69,11 +71,15 @@ public class CombatDisplayPhase extends BasePhase {
 					+ " of " + combatPhaseRoundCounter.getMaxRounds();
 		}
 		player.getUiStates().getClientMessages().setTitle(title);
+
+		getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages()
+				.setInfo(infoMessages.getOrDefault(p, new StringBuilder()).toString()));
+
 	}
 
 	@Override
 	protected void nextPhase() {
-		calcBattle();
+		cc.calcBattle();
 		combatPhaseRoundCounter.incRound();
 		if (combatPhaseRoundCounter.lastRoundReached() || getGame().getBoard().getTotalUnits() == 0) {
 			getGame().getBoard().getFields().stream().filter(f -> f.getStructure() != null)
@@ -110,19 +116,8 @@ public class CombatDisplayPhase extends BasePhase {
 		return cc.getByUnit(unit);
 	}
 
-	private void calcBattle() {
-		BombarbResolver bomb = new BombarbResolver(cc);
-		bomb.collectTargets();
-
-		CrossingBattleResolver br = new CrossingBattleResolver(cc);
-		br.battleCrossingUnits();
-
-		BattleGroundResolver bgr = new BattleGroundResolver(cc);
-		bgr.battleBattleGrounds();
-
-		bomb.killTargets();
-
-		MoveResolver mr = new MoveResolver(cc);
-		mr.moveUnits();
+	@Override
+	public Boolean isShowCoordinates() {
+		return true;
 	}
 }

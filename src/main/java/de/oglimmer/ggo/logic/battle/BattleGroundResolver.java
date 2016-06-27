@@ -47,7 +47,7 @@ public class BattleGroundResolver extends BaseBattleResolver {
 		Iterator<Unit> it = units.iterator();
 		Unit u1 = it.next();
 		Unit u2 = it.next();
-		resolveBattle(u1, u2);
+		resolveBattle(u1, u2, false);
 	}
 
 	private void removeFieldWithJustOneUnit() {

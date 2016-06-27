@@ -32,7 +32,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 	/*
 	 * draws the field
 	 */
-	Field.prototype.draw = function(ctx) {
+	Field.prototype.draw = function(ctx, showCoordinates) {
 		var x = this.x;
 		var y = this.y;
 		var width = this.width;
@@ -61,15 +61,16 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 			ctx.stroke();
 		}
 		
-		ctx.save();
-		ctx.translate(cx-9,cy-15);
-		ctx.rotate(-Math.PI/7);
-		ctx.textAlign = "center";
-		ctx.fillStyle = "#222222";
-		ctx.font = "8px Arial";
-		ctx.fillText(this.x+":"+this.y,0,0);
-		ctx.restore();
-		 
+		if(showCoordinates) {
+			ctx.save();
+			ctx.translate(cx-9,cy-15);
+			ctx.rotate(-Math.PI/7);
+			ctx.textAlign = "center";
+			ctx.fillStyle = "#222222";
+			ctx.font = "8px Arial";
+			ctx.fillText(this.x+":"+this.y,0,0);
+			ctx.restore();
+		}		 
 	};
 	
 	Field.prototype.onSelect = function() {

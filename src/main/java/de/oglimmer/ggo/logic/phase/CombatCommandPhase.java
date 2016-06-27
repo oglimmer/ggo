@@ -55,6 +55,7 @@ public class CombatCommandPhase extends BasePhase {
 
 	@Override
 	public void init() {
+		getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
 		if (getGame().getBoard().getTotalUnits() == 0) {
 			nextPhase();
 		} else {

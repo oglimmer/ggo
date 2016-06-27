@@ -22,6 +22,8 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 		this.idToHanditems = {}; // map<id,handItem-object>
 		// BUTTON
 		this.idToButtons = {}; // map<id,button-object>
+		
+		this.showCoordinates = false;
 
 		var thiz = this;
 		$(document).ready(function() {
@@ -79,7 +81,7 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 		this.ctxBoard.clearRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
 		// fields		
 		for ( var f in this.corToFields) {
-			this.corToFields[f].draw(this.ctxBoard);
+			this.corToFields[f].draw(this.ctxBoard, this.showCoordinates);
 		}
 		// units- z-level:0
 		for ( var f in this.idToUnits) {

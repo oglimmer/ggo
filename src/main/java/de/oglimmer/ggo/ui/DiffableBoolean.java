@@ -51,7 +51,11 @@ public class DiffableBoolean {
 		@Override
 		public void serialize(DiffableBoolean value, JsonGenerator jgen, SerializerProvider provider)
 				throws IOException, JsonProcessingException {
-			jgen.writeBoolean(value.val);
+			if (value.val == null) {
+				jgen.writeNull();
+			} else {
+				jgen.writeBoolean(value.val);
+			}
 		}
 
 	}

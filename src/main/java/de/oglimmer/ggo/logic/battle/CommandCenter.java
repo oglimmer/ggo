@@ -12,8 +12,10 @@ import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
@@ -23,7 +25,20 @@ public class CommandCenter {
 	@NonNull
 	private Game game;
 
+	@Setter
+	@Getter
+	private boolean dry;
+
 	private Map<Unit, Command> commands = new HashMap<>();
+
+	@Getter
+	private Map<Player, StringBuilder> infoMessages = new HashMap<>();
+
+	public CommandCenter(CommandCenter toCopy, boolean dryRun) {
+		this.game = toCopy.game;
+		this.commands = new HashMap<>(toCopy.commands);
+		this.dry = dryRun;
+	}
 
 	public void addCommand(Unit unit, Field targetField, CommandType command) {
 		Command newCommand = new Command(command, unit, targetField);
@@ -62,6 +77,26 @@ public class CommandCenter {
 
 	public Stream<Command> stream() {
 		return commands.values().stream();
+	}
+
+	// BATTLE
+
+	public void calcBattle() {
+		BombarbResolver bomb = new BombarbResolver(this);
+		bomb.collectTargets();
+
+		CrossingBattleResolver br = new CrossingBattleResolver(this);
+		br.battleCrossingUnits();
+
+		BattleGroundResolver bgr = new BattleGroundResolver(this);
+		bgr.battleBattleGrounds();
+
+		bomb.killTargets();
+
+		if (!dry) {
+			MoveResolver mr = new MoveResolver(this);
+			mr.moveUnits();
+		}
 	}
 
 }

@@ -11,8 +11,10 @@ import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Structure;
 import de.oglimmer.ggo.logic.Unit;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @ToString
@@ -36,39 +38,54 @@ public class UIBoard {
 	@Getter
 	private Set<String> buttonsToRemove = new HashSet<>();
 
+	@Getter
+	@Setter
+	private DiffableBoolean showCoordinates = DiffableBoolean.create(null);
+
 	public boolean hasChange() {
 		return !corToFields.isEmpty() || !idToUnits.isEmpty() || !unitsToRemove.isEmpty() || !idToHanditems.isEmpty()
-				|| !handitemsToRemove.isEmpty() || !idToButtons.isEmpty() || !buttonsToRemove.isEmpty();
+				|| !handitemsToRemove.isEmpty() || !idToButtons.isEmpty() || !buttonsToRemove.isEmpty()
+				|| showCoordinates.getVal() != null;
 	}
 
 	public UIBoard calcStateAndDiff(Player player) {
 		return new TransferBuilder(player).calcStateAndDiff();
 	}
 
-	@AllArgsConstructor
+	@RequiredArgsConstructor
 	class TransferBuilder {
 
+		@NonNull
 		private Player uiUpdateForPlayer;
 
+		private UIBoard transferStates = new UIBoard();
+
 		public UIBoard calcStateAndDiff() {
-			UIBoard transferStates = new UIBoard();
-			calcDiffBoard(transferStates);
-			calcDiffRemovedUnits(transferStates);
-			calcDiffHanditems(transferStates);
-			calcDiffButtons(transferStates);
+			calcDiffBoard();
+			calcDiffRemovedUnits();
+			calcDiffHanditems();
+			calcDiffButtons();
+			calcShowCoordinates();
 			return transferStates;
 		}
 
-		private void calcDiffButtons(UIBoard transferStates) {
+		private void calcShowCoordinates() {
+			boolean bb = uiUpdateForPlayer.getGame().getCurrentPhase().isShowCoordinates();
+			System.out.println(bb);
+			showCoordinates.diffAndUpdate(bb,
+					transferStates::setShowCoordinates);
+		}
+
+		private void calcDiffButtons() {
 			Collection<UIButton> currentButtonsToShwo = uiUpdateForPlayer.getGame().getCurrentPhase()
 					.getButtons(uiUpdateForPlayer);
 
-			calcDiffAddChangedButtons(transferStates, currentButtonsToShwo);
-			calcDiffRemoveButtons(transferStates, currentButtonsToShwo);
+			calcDiffAddChangedButtons(currentButtonsToShwo);
+			calcDiffRemoveButtons(currentButtonsToShwo);
 
 		}
 
-		private void calcDiffRemoveButtons(UIBoard transferStates, Collection<UIButton> currentButtonsToShwo) {
+		private void calcDiffRemoveButtons(Collection<UIButton> currentButtonsToShwo) {
 			for (Iterator<Map.Entry<String, UIButton>> it = uiUpdateForPlayer.getUiStates().getClientUIState()
 					.getIdToButtons().entrySet().iterator(); it.hasNext();) {
 				Map.Entry<String, UIButton> en = it.next();
@@ -81,7 +98,7 @@ public class UIBoard {
 			}
 		}
 
-		private void calcDiffAddChangedButtons(UIBoard transferStates, Collection<UIButton> buttons) {
+		private void calcDiffAddChangedButtons(Collection<UIButton> buttons) {
 			buttons.forEach(b -> {
 				UIButton state = uiUpdateForPlayer.getUiStates().getClientUIState().getIdToButtons().get(b.getId());
 				if (state == null) {
@@ -98,12 +115,12 @@ public class UIBoard {
 			});
 		}
 
-		private void calcDiffHanditems(UIBoard transferStates) {
-			calcDiffAddChangedHanditems(transferStates);
-			calcDiffRemovedHanditems(transferStates);
+		private void calcDiffHanditems() {
+			calcDiffAddChangedHanditems();
+			calcDiffRemovedHanditems();
 		}
 
-		private void calcDiffRemovedHanditems(UIBoard transferStates) {
+		private void calcDiffRemovedHanditems() {
 			for (Iterator<Map.Entry<String, UIHandItem>> it = uiUpdateForPlayer.getUiStates().getClientUIState()
 					.getIdToHanditems().entrySet().iterator(); it.hasNext();) {
 				Map.Entry<String, UIHandItem> en = it.next();
@@ -115,7 +132,7 @@ public class UIBoard {
 			}
 		}
 
-		private void calcDiffAddChangedHanditems(UIBoard transferStates) {
+		private void calcDiffAddChangedHanditems() {
 			uiUpdateForPlayer.getUnitInHand().forEach(u -> {
 				UIHandItem uiHandItem = uiUpdateForPlayer.getUiStates().getClientUIState().getIdToHanditems()
 						.get(u.getId());
@@ -133,7 +150,7 @@ public class UIBoard {
 			});
 		}
 
-		private void calcDiffRemovedUnits(UIBoard transferStates) {
+		private void calcDiffRemovedUnits() {
 			for (Iterator<Map.Entry<String, UIUnit>> it = uiUpdateForPlayer.getUiStates().getClientUIState()
 					.getIdToUnits().entrySet().iterator(); it.hasNext();) {
 				Map.Entry<String, UIUnit> en = it.next();
@@ -153,15 +170,15 @@ public class UIBoard {
 
 		}
 
-		private void calcDiffBoard(UIBoard transferStates) {
+		private void calcDiffBoard() {
 			uiUpdateForPlayer.getGame().getBoard().getFields().forEach(f -> {
-				calcDiffAddChangedFields(transferStates, f);
-				calcDiffAddStructure(transferStates, f);
-				calcDiffAddChangedUnits(transferStates, f);
+				calcDiffAddChangedFields(f);
+				calcDiffAddStructure(f);
+				calcDiffAddChangedUnits(f);
 			});
 		}
 
-		private void calcDiffAddChangedUnits(UIBoard transferStates, Field f) {
+		private void calcDiffAddChangedUnits(Field f) {
 			if (f.getUnit() != null) {
 				Unit unit = f.getUnit();
 				String unitId = unit.getId();
@@ -181,7 +198,7 @@ public class UIBoard {
 			}
 		}
 
-		private void calcDiffAddStructure(UIBoard transferStates, Field f) {
+		private void calcDiffAddStructure(Field f) {
 			if (f.getStructure() != null) {
 				Structure structure = f.getStructure();
 				String structureId = structure.getId();
@@ -196,7 +213,7 @@ public class UIBoard {
 			}
 		}
 
-		private void calcDiffAddChangedFields(UIBoard transferStates, Field f) {
+		private void calcDiffAddChangedFields(Field f) {
 			String id = (int) f.getPos().getX() + ":" + (int) f.getPos().getY();
 			UIField uiField = uiUpdateForPlayer.getUiStates().getClientUIState().getCorToFields().get(id);
 			if (uiField == null) {

@@ -69,6 +69,9 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 				$.each(jsonObj.board.buttonsToRemove, function(index, buttonId) {
 					delete globalData.board.idToButtons[buttonId];
 				});
+				if(jsonObj.board.showCoordinates !== 'undefined' && jsonObj.board.showCoordinates != null) {
+					globalData.board.showCoordinates = jsonObj.board.showCoordinates;
+				}
 			}
 			/* RESP_MYCOLOR */
 			if( typeof jsonObj.myColor !== 'undefined' ) {
