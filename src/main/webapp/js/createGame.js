@@ -10,6 +10,7 @@ requirejs([ './commons' ], function(commons) {
 			url : "./CreateGameQuery.action",
 			success : function(result) {
 				$("#gameId").html(result.gameId);
+				$("#numberOfNotifications").html(result.numberOfNotifications);
 				gameId = result.gameId;
 				playerId = result.playerId;
 				setTimeout(reload, 1000);

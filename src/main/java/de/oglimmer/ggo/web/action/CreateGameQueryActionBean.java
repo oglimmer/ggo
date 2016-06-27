@@ -23,9 +23,9 @@ public class CreateGameQueryActionBean extends BaseAction {
 		Game game = Games.INSTANCE.createGame();
 		Player player = game.createPlayer();
 		getContext().getResponse().addCookie(new Cookie("playerId", player.getId()));
-		GameNotifications.INSTANCE
+		int numberOfNotifications = GameNotifications.INSTANCE
 				.allConfirmed(rec -> EmailService.INSTANCE.notifyGameCreated(rec.getEmail(), rec.getConfirmId()));
-		return new JsonResolution(new Result(game.getId(), player.getId()));
+		return new JsonResolution(new Result(game.getId(), player.getId(), numberOfNotifications));
 	}
 
 	@Data
@@ -34,6 +34,7 @@ public class CreateGameQueryActionBean extends BaseAction {
 	class Result {
 		private String gameId;
 		private String playerId;
+		private int numberOfNotifications;
 	}
 
 }

@@ -33,19 +33,22 @@ public enum GameNotifications {
 		}
 	}
 
-	public void allConfirmed(Consumer<GameNotification> callback) {
+	public int allConfirmed(Consumer<GameNotification> callback) {
 		if (GridGameOneProperties.INSTANCE.isEmailDisabled()) {
-			return;
+			return -1;
 		}
-		execQuery(con -> {
+		return execQuery(con -> {
 			try {
 				String query = "select id,email,confirmId from game_notification where confirmed is not null";
 				try (PreparedStatement preparedStmt = con.prepareStatement(query)) {
 					try (ResultSet rs = preparedStmt.executeQuery()) {
+						int count = 0;
 						while (rs.next()) {
+							count++;
 							callback.accept(new GameNotification(rs.getInt("id"), rs.getString("email"),
 									rs.getString("confirmId")));
 						}
+						return count;
 					}
 				}
 			} catch (SQLException e) {
