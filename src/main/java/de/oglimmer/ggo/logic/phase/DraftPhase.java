@@ -10,7 +10,6 @@ import de.oglimmer.ggo.logic.MessageQueue;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.UnitType;
-import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIButton;
 
 public class DraftPhase extends BasePhase {
@@ -28,7 +27,7 @@ public class DraftPhase extends BasePhase {
 	public void init() {
 		inTurn.addAll(getGame().getPlayers());
 		getGame().getPlayers().forEach(p -> p.incCredits(CREDITS_PER_TURN));
-		getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
+		getGame().getPlayers().forEach(p -> p.getUiStates().getMessages().clearErrorInfo());
 	}
 
 	@Override
@@ -85,12 +84,12 @@ public class DraftPhase extends BasePhase {
 	@Override
 	protected void updateMessage(Player player, MessageQueue messages) {
 		if (inTurn.contains(player)) {
-			player.getUiStates().getClientMessages().setTitle(
+			player.getUiStates().getMessages().setTitle(
 					"Draft units by clicking one at the bottom. To revert click the unit in your hand. Click 'done' to finish the draft phase. The player with more money left will start the next phase.");
-			player.getUiStates().getClientMessages().setInfo("You have " + player.getCredits() + " credits.");
+			player.getUiStates().getMessages().setInfo("You have " + player.getCredits() + " credits.");
 		} else {
-			player.getUiStates().getClientMessages().setTitle("Wait for your opponent to finish the draft phase.");
-			player.getUiStates().getClientMessages()
+			player.getUiStates().getMessages().setTitle("Wait for your opponent to finish the draft phase.");
+			player.getUiStates().getMessages()
 					.setInfo("You have " + player.getCredits() + " credits left for next round.");
 		}
 	}
@@ -99,12 +98,11 @@ public class DraftPhase extends BasePhase {
 	public Collection<UIButton> getButtons(Player forPlayer) {
 		Collection<UIButton> buttons = new ArrayList<>();
 		if (inTurn.contains(forPlayer)) {
-			buttons.add(new UIButton("doneButton", "Done", null, 30, 20,
-					DiffableBoolean.create(!inTurn.contains(forPlayer))));
+			buttons.add(new UIButton("doneButton", "Done", null, 30, 20, !inTurn.contains(forPlayer)));
 
 			for (UnitType type : UnitType.values()) {
 				buttons.add(new UIButton("buy" + type.toString(), Integer.toString(type.getCost()), type.toString(), 48,
-						48, DiffableBoolean.create(forPlayer.getCredits() < type.getCost())));
+						48, forPlayer.getCredits() < type.getCost()));
 			}
 		}
 		return buttons;

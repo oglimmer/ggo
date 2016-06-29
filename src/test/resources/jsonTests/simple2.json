@@ -1,0 +1,97 @@
+[
+	{
+		"OLD": {
+			"testAttribute": {
+				"nestedAttr": 1
+			}
+		},
+		"NEW": {
+			"testAttribute": {
+				"nestedAttr": 42
+			}
+		},
+		"DIFF": {
+			"testAttribute": {
+				"nestedAttr": 42
+			}
+		}
+	},
+	{
+		"OLD": {
+			"testAttribute": {
+				"nestedAttr": 42
+			}
+		},
+		"NEW": {
+			"testAttribute": {
+				"nestedAttr": 42
+			}
+		},
+		"DIFF": null
+	},
+	{
+		"OLD": {
+			"testAttribute": {
+				"nestedAttr": 1
+			}
+		},
+		"NEW": {
+			"testAttribute": {
+				"nestedAttr": null
+			}
+		},
+		"DIFF": {
+			"testAttribute": {
+				"nestedAttr": null
+			}
+		}
+	},
+	{
+		"OLD": {
+			"testAttribute": {
+				"nestedAttr": null
+			}
+		},
+		"NEW": {
+			"testAttribute": {
+				"nestedAttr": 42
+			}
+		},
+		"DIFF": {
+			"testAttribute": {
+				"nestedAttr": 42
+			}
+		}
+	},
+	{
+		"OLD": {
+			"testAttribute": {
+				"nestedAttr": null
+			}
+		},
+		"NEW": {
+			"testAttribute": {
+				"nestedAttr": null
+			}
+		},
+		"DIFF": null
+	},
+	{
+		"OLD": {
+			"testAttribute": {
+				"nestedAttr": 42
+			}
+		},
+		"NEW": {
+			"testAttribute": {
+				"different": 42
+			}
+		},
+		"DIFF": {
+			"testAttribute": {
+				"nestedAttr": "##REMOVED##",
+				"different": 42
+			}
+		}
+	}
+]

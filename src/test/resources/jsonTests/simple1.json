@@ -1,0 +1,75 @@
+[
+	{
+		"OLD": {
+			"testAttribute": 1
+		},
+		"NEW": {
+			"testAttribute": 42
+		},
+		"DIFF": {
+			"testAttribute": 42
+		}
+	},
+	{
+		"OLD": {
+			"testAttribute": 42
+		},
+		"NEW": {
+			"testAttribute": 42
+		},
+		"DIFF": null
+	},
+	{
+		"OLD": {
+			
+		},
+		"NEW": {
+			"testAttribute": 42
+		},
+		"DIFF": {
+			"testAttribute": 42
+		}
+	},
+	{
+		"OLD": {
+			"testAttribute": null
+		},
+		"NEW": {
+			"testAttribute": 42
+		},
+		"DIFF": {
+			"testAttribute": 42
+		}
+	},
+	{
+		"OLD": {
+			"testAttribute": 42
+		},
+		"NEW": {
+			"testAttribute": null
+		},
+		"DIFF": {
+			"testAttribute": null
+		}
+	},
+	{
+		"OLD": {
+			"testAttribute": null
+		},
+		"NEW": {
+			"testAttribute": null
+		},
+		"DIFF": null
+	},
+	{
+		"OLD": {
+			"testAttribute": 42
+		},
+		"NEW": {
+			
+		},
+		"DIFF": {
+			"testAttribute": "##REMOVED##"
+		}
+	}
+]

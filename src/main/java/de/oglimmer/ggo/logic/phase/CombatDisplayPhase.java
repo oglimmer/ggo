@@ -13,7 +13,6 @@ import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.battle.CombatPhaseRoundCounter;
 import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.battle.CommandCenter;
-import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIButton;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +35,7 @@ public class CombatDisplayPhase extends BasePhase {
 	@Override
 	public void init() {
 		inTurn.addAll(getGame().getPlayers());
-		getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
+		getGame().getPlayers().forEach(p -> p.getUiStates().getMessages().clearErrorInfo());
 		ccDryRun.calcBattle();
 		infoMessages = ccDryRun.getInfoMessages();
 	}
@@ -70,9 +69,9 @@ public class CombatDisplayPhase extends BasePhase {
 			title = "Wait for your opponent to finish the turn. Round " + combatPhaseRoundCounter.getCurrentRound()
 					+ " of " + combatPhaseRoundCounter.getMaxRounds();
 		}
-		player.getUiStates().getClientMessages().setTitle(title);
+		player.getUiStates().getMessages().setTitle(title);
 
-		getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages()
+		getGame().getPlayers().forEach(p -> p.getUiStates().getMessages()
 				.setInfo(infoMessages.getOrDefault(p, new StringBuilder()).toString()));
 
 	}
@@ -106,8 +105,7 @@ public class CombatDisplayPhase extends BasePhase {
 	@Override
 	public Collection<UIButton> getButtons(Player forPlayer) {
 		Collection<UIButton> buttons = new ArrayList<>();
-		buttons.add(
-				new UIButton("doneButton", "Done", null, 30, 20, DiffableBoolean.create(!inTurn.contains(forPlayer))));
+		buttons.add(new UIButton("doneButton", "Done", null, 30, 20, !inTurn.contains(forPlayer)));
 		return buttons;
 	}
 

@@ -26,7 +26,7 @@ public class GameFinishedPhase extends BasePhase {
 
 	@Override
 	protected void updateMessage(Player player, MessageQueue messages) {
-		player.getUiStates().getClientMessages().setTitle("Game Over.");
+		player.getUiStates().getMessages().setTitle("Game Over.");
 	}
 
 	@Override

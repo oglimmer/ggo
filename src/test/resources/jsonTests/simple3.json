@@ -1,0 +1,101 @@
+[
+	{
+		"OLD": {
+			"testAttribute": {
+				"nestedAttr": [
+					1,
+					2,
+					3,
+					4,
+					5
+				]
+			}
+		},
+		"NEW": {
+			"testAttribute": {
+				"nestedAttr": [
+					1,
+					2,
+					3,
+					4,
+					5,
+					6
+				]
+			}
+		},
+		"DIFF": {
+			"testAttribute": {
+				"nestedAttr": [
+					6
+				]
+			}
+		}
+	},
+	{
+		"OLD": {
+			"testAttribute": {
+				
+			}
+		},
+		"NEW": {
+			"testAttribute": {
+				"nestedAttr": [
+					1,
+					2,
+					3,
+					4,
+					5,
+					6
+				]
+			}
+		},
+		"DIFF": {
+			"testAttribute": {
+				"nestedAttr": [
+					1,
+					2,
+					3,
+					4,
+					5,
+					6
+				]
+			}
+		}
+	},
+	{
+		"OLD": {
+			"testAttribute": {
+				"nestedAttr": [
+					1,
+					2,
+					3,
+					4,
+					5,
+					7
+				]
+			}
+		},
+		"NEW": {
+			"testAttribute": {
+				"nestedAttr": [
+					1,
+					2,
+					3,
+					4,
+					5,
+					6
+				]
+			}
+		},
+		"DIFF": {
+			"testAttribute": {
+				"nestedAttr": [
+					6
+				],
+				"nestedAttr##REMOVED##": [
+					7
+				]
+			}
+		}
+	}
+]

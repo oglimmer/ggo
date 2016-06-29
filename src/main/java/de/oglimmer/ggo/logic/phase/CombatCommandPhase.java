@@ -22,7 +22,6 @@ import de.oglimmer.ggo.logic.battle.CombatPhaseRoundCounter;
 import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.battle.CommandCenter;
 import de.oglimmer.ggo.logic.battle.CommandType;
-import de.oglimmer.ggo.ui.DiffableBoolean;
 import de.oglimmer.ggo.ui.UIButton;
 import lombok.Data;
 import lombok.NonNull;
@@ -44,7 +43,7 @@ public class CombatCommandPhase extends BasePhase {
 		this.combatPhaseRoundCounter = combatPhaseRoundCounter;
 		if (this.combatPhaseRoundCounter == null) {
 			this.combatPhaseRoundCounter = new CombatPhaseRoundCounter();
-			getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
+			getGame().getPlayers().forEach(p -> p.getUiStates().getMessages().clearErrorInfo());
 		}
 		cc = new CommandCenter(game);
 	}
@@ -55,7 +54,7 @@ public class CombatCommandPhase extends BasePhase {
 
 	@Override
 	public void init() {
-		getGame().getPlayers().forEach(p -> p.getUiStates().getClientMessages().clearErrorInfo());
+		getGame().getPlayers().forEach(p -> p.getUiStates().getMessages().clearErrorInfo());
 		if (getGame().getBoard().getTotalUnits() == 0) {
 			nextPhase();
 		} else {
@@ -68,7 +67,7 @@ public class CombatCommandPhase extends BasePhase {
 				nextPhase();
 			}
 
-			cc.setAllToFortify();			
+			cc.setAllToFortify();
 		}
 	}
 
@@ -149,7 +148,7 @@ public class CombatCommandPhase extends BasePhase {
 		Field targetField = getGame().getBoard().getField(param);
 		Set<CommandType> possibleCommandTypes = unit.getPossibleCommandTypes(cc, targetField);
 		if (possibleCommandTypes.size() == 0) {
-			player.getUiStates().getClientMessages().setError(
+			player.getUiStates().getMessages().setError(
 					"One of your own units is/will be alreay there. De-select your unit or chose another target field.");
 		} else if (possibleCommandTypes.size() == 1) {
 			cc.addCommand(unit, targetField, possibleCommandTypes.iterator().next());
@@ -191,7 +190,7 @@ public class CombatCommandPhase extends BasePhase {
 			title = "Wait for your opponent to finish the turn. Round " + combatPhaseRoundCounter.getCurrentRound()
 					+ " of " + combatPhaseRoundCounter.getMaxRounds();
 		}
-		player.getUiStates().getClientMessages().setTitle(title);
+		player.getUiStates().getMessages().setTitle(title);
 	}
 
 	@Override
@@ -220,8 +219,7 @@ public class CombatCommandPhase extends BasePhase {
 	@Override
 	public Collection<UIButton> getButtons(Player forPlayer) {
 		Collection<UIButton> buttons = new ArrayList<>();
-		buttons.add(
-				new UIButton("doneButton", "Done", null, 30, 20, DiffableBoolean.create(!inTurn.contains(forPlayer))));
+		buttons.add(new UIButton("doneButton", "Done", null, 30, 20, !inTurn.contains(forPlayer)));
 		return buttons;
 	}
 
