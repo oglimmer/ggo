@@ -1,9 +1,10 @@
 package de.oglimmer.ggo.util;
 
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,8 +16,7 @@ public enum Json {
 	INSTANCE;
 
 	/**
-	 * Returns an object with all (but only) different attributes. If both nodes
-	 * are equals returns null.
+	 * Returns an object with all (but only) different attributes. If both nodes are equals returns null.
 	 * 
 	 * @param newNode
 	 * @param oldNode
@@ -36,9 +36,8 @@ public enum Json {
 	 * @param diffNode
 	 */
 	private void checkAddedChangedAttributes(JsonNode newNode, JsonNode oldNode, ObjectNode diffNode) {
-		StreamSupport.stream(Spliterators.spliteratorUnknownSize(newNode.fields(), Spliterator.ORDERED), false)
-				.forEach(entryOfNewNode -> diffEntry(diffNode, entryOfNewNode.getKey(),
-						oldNode.get(entryOfNewNode.getKey()), entryOfNewNode.getValue()));
+		entrySetStream(newNode).forEach(entryOfNewNode -> diffEntry(diffNode, entryOfNewNode.getKey(),
+				oldNode.get(entryOfNewNode.getKey()), entryOfNewNode.getValue()));
 	}
 
 	/**
@@ -47,21 +46,15 @@ public enum Json {
 	 * @param diffNode
 	 */
 	private void checkRemovedAttributes(JsonNode newNode, JsonNode oldNode, ObjectNode diffNode) {
-		for (Iterator<Map.Entry<String, JsonNode>> it = oldNode.fields(); it.hasNext();) {
-			Map.Entry<String, JsonNode> entryOfOldNode = it.next();
-			String key = entryOfOldNode.getKey();
-			JsonNode oldValue = entryOfOldNode.getValue();
-			JsonNode newValue = newNode.get(key);
-			if (oldValue != null && newValue == null) {
-				diffNode.set(key, JsonNodeFactory.instance.textNode("##REMOVED##"));
-			}
-		}
+		entrySetStream(oldNode).filter(
+				entryOfOldNode -> entryOfOldNode.getValue() != null && newNode.get(entryOfOldNode.getKey()) == null)
+				.forEach(entryOfOldNode -> diffNode.set(entryOfOldNode.getKey(),
+						JsonNodeFactory.instance.textNode("##REMOVED##")));
 	}
 
 	/**
-	 * Checks the with the name 'key' where oldValue is the value in the oldNode
-	 * and newValue is the value in the newNode. If those value are not equals
-	 * the newValue is put into diffNode under the name 'key'
+	 * Checks the with the name 'key' where oldValue is the value in the oldNode and newValue is the value in the
+	 * newNode. If those value are not equals the newValue is put into diffNode under the name 'key'
 	 * 
 	 * @param diffNode
 	 * @param key
@@ -132,23 +125,7 @@ public enum Json {
 	 */
 	private void diffArrayRemove(ObjectNode diffNode, String attributeName, JsonNode oldValueAsArray,
 			JsonNode newValueAsArray) {
-		ArrayNode newArrayNodeRemove = JsonNodeFactory.instance.arrayNode();
-		if (oldValueAsArray != null) {
-			for (Iterator<JsonNode> it = oldValueAsArray.elements(); it.hasNext();) {
-				JsonNode elementInOldArray = it.next();
-				if (newValueAsArray == null) {
-					newArrayNodeRemove.add(elementInOldArray);
-				} else {
-					JsonNode diffNodeForOneElement = existsOrChanged(elementInOldArray, (ArrayNode) newValueAsArray);
-					if (diffNodeForOneElement != null) {
-						newArrayNodeRemove.add(diffNodeForOneElement);
-					}
-				}
-			}
-		}
-		if (newArrayNodeRemove.size() > 0) {
-			diffNode.set(attributeName + "##REMOVED##", newArrayNodeRemove);
-		}
+		diffArrayAgainstArray(diffNode, attributeName + "##REMOVED##", newValueAsArray, oldValueAsArray);
 	}
 
 	/**
@@ -159,17 +136,21 @@ public enum Json {
 	 */
 	private void diffArrayAddChange(ObjectNode diffNode, String attributeName, JsonNode oldValueAsArray,
 			JsonNode newValueAsArray) {
+		diffArrayAgainstArray(diffNode, attributeName, oldValueAsArray, newValueAsArray);
+	}
+
+	/**
+	 * @param diffNode
+	 * @param attributeName
+	 * @param previousArray
+	 * @param latestArray
+	 */
+	private void diffArrayAgainstArray(ObjectNode diffNode, String attributeName, JsonNode previousArray,
+			JsonNode latestArray) {
 		ArrayNode newArrayNode = JsonNodeFactory.instance.arrayNode();
-		for (Iterator<JsonNode> it = newValueAsArray.elements(); it.hasNext();) {
-			JsonNode elementInNewArray = it.next();
-			if (oldValueAsArray == null) {
-				newArrayNode.add(elementInNewArray);
-			} else {
-				JsonNode diffNodeForOneElement = existsOrChanged(elementInNewArray, (ArrayNode) oldValueAsArray);
-				if (diffNodeForOneElement != null) {
-					newArrayNode.add(diffNodeForOneElement);
-				}
-			}
+		if (latestArray != null) {
+			elementsStream(latestArray)
+					.forEach(elementInNewArray -> diffArraySearch(newArrayNode, previousArray, elementInNewArray));
 		}
 		if (newArrayNode.size() > 0) {
 			diffNode.set(attributeName, newArrayNode);
@@ -177,37 +158,53 @@ public enum Json {
 	}
 
 	/**
-	 * Searches for nodeToSearch in arrayToSearch. Returns null if element is
-	 * found and equals to nodeToSearch.
-	 * 
-	 * @param nodeToSearch
-	 *            might be a primitive or an object
-	 * @param arrayToSearch
-	 *            array where elements must have the same type as nodeToSearch
-	 * @return null if found, otherwise the object with all (but only) different
-	 *         attributes
+	 * @param arrayToSearchThrough
+	 * @param targetArray
+	 * @param nodeToFind
 	 */
-	private JsonNode existsOrChanged(JsonNode nodeToSearch, ArrayNode arrayToSearch) {
-		if (nodeToSearch.isObject()) {
-			for (Iterator<JsonNode> it = arrayToSearch.elements(); it.hasNext();) {
+	private void diffArraySearch(ArrayNode targetArray, JsonNode arrayToSearchThrough, JsonNode nodeToFind) {
+		if (arrayToSearchThrough == null) {
+			targetArray.add(nodeToFind);
+		} else {
+			JsonNode diffNodeForOneElement = existsOrChanged(nodeToFind, (ArrayNode) arrayToSearchThrough);
+			if (diffNodeForOneElement != null) {
+				targetArray.add(diffNodeForOneElement);
+			}
+		}
+	}
+
+	/**
+	 * Searches for nodeToSearch in arrayToSearch. Returns null if element is found and equals to nodeToSearch.
+	 * 
+	 * @param nodeToFind
+	 *            might be a primitive or an object
+	 * @param arrayToSearchThrough
+	 *            array where elements must have the same type as nodeToSearch
+	 * @return null if found, otherwise the object with all (but only) different attributes
+	 */
+	private JsonNode existsOrChanged(JsonNode nodeToFind, ArrayNode arrayToSearchThrough) {
+		if (nodeToFind.isObject()) {
+			for (Iterator<JsonNode> it = arrayToSearchThrough.elements(); it.hasNext();) {
 				JsonNode elementInArray = it.next();
 				assert elementInArray.isObject();
-				String nodeToSearchId = nodeToSearch.get("id").asText();
+				String nodeToSearchId = nodeToFind.get("id").asText();
 				String elementInArrayId = elementInArray.get("id").asText();
 				if (nodeToSearchId.equals(elementInArrayId)) {
-					return diff(nodeToSearch, elementInArray);
+					return diff(nodeToFind, elementInArray);
 				}
 			}
-			return nodeToSearch;
+			return nodeToFind;
 		} else {
-			for (Iterator<JsonNode> it = arrayToSearch.elements(); it.hasNext();) {
-				JsonNode primitiveElementInArray = it.next();
-				if (primitiveElementInArray.equals(nodeToSearch)) {
-					return null;
-				}
-			}
-			return nodeToSearch;
+			return elementsStream(arrayToSearchThrough).anyMatch(e -> e.equals(nodeToFind)) ? null : nodeToFind;
 		}
+	}
+
+	private Stream<Entry<String, JsonNode>> entrySetStream(JsonNode newNode) {
+		return StreamSupport.stream(Spliterators.spliteratorUnknownSize(newNode.fields(), Spliterator.ORDERED), false);
+	}
+
+	private Stream<JsonNode> elementsStream(JsonNode newNode) {
+		return StreamSupport.stream(newNode.spliterator(), false);
 	}
 
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.logic.Messages;
 import de.oglimmer.ggo.util.Json;
 import lombok.Getter;
 import lombok.ToString;
@@ -23,7 +24,7 @@ public class UIStates {
 		private UIBoardStateProvider boardState;
 
 		@Getter
-		private UIMessagesModel messagesState;
+		private Messages messagesState;
 
 		@Getter
 		private UIConnectionStateProvider connectionState;
@@ -34,7 +35,7 @@ public class UIStates {
 		return states.getBoardState();
 	}
 
-	public UIMessagesModel getMessagesState() {
+	public Messages getMessagesState() {
 		return states.getMessagesState();
 	}
 

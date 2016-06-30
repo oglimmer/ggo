@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.ui;
+package de.oglimmer.ggo.logic;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import lombok.Data;
  * Server and client-side model for messages
  */
 @Data
-public class UIMessagesModel {
+public class Messages {
 
 	private String score;
 	private String title;
