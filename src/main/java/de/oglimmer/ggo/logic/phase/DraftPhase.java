@@ -27,7 +27,7 @@ public class DraftPhase extends BasePhase {
 	public void init() {
 		inTurn.addAll(getGame().getPlayers());
 		getGame().getPlayers().forEach(p -> p.incCredits(CREDITS_PER_TURN));
-		getGame().getPlayers().forEach(p -> p.getUiStates().getMessages().clearErrorInfo());
+		getGame().getPlayers().forEach(p -> p.getUiStates().getMessagesState().clearErrorInfo());
 	}
 
 	@Override
@@ -84,12 +84,12 @@ public class DraftPhase extends BasePhase {
 	@Override
 	protected void updateMessage(Player player, MessageQueue messages) {
 		if (inTurn.contains(player)) {
-			player.getUiStates().getMessages().setTitle(
+			player.getUiStates().getMessagesState().setTitle(
 					"Draft units by clicking one at the bottom. To revert click the unit in your hand. Click 'done' to finish the draft phase. The player with more money left will start the next phase.");
-			player.getUiStates().getMessages().setInfo("You have " + player.getCredits() + " credits.");
+			player.getUiStates().getMessagesState().setInfo("You have " + player.getCredits() + " credits.");
 		} else {
-			player.getUiStates().getMessages().setTitle("Wait for your opponent to finish the draft phase.");
-			player.getUiStates().getMessages()
+			player.getUiStates().getMessagesState().setTitle("Wait for your opponent to finish the draft phase.");
+			player.getUiStates().getMessagesState()
 					.setInfo("You have " + player.getCredits() + " credits left for next round.");
 		}
 	}

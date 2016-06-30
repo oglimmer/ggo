@@ -23,7 +23,7 @@ public class UIStates {
 		private UIBoardStateProvider boardState;
 
 		@Getter
-		private UIMessagesModel messages;
+		private UIMessagesModel messagesState;
 
 		@Getter
 		private UIConnectionStateProvider connectionState;
@@ -34,8 +34,8 @@ public class UIStates {
 		return states.getBoardState();
 	}
 
-	public UIMessagesModel getMessages() {
-		return states.getMessages();
+	public UIMessagesModel getMessagesState() {
+		return states.getMessagesState();
 	}
 
 	public UIConnectionStateProvider getConnectionState() {
@@ -45,8 +45,8 @@ public class UIStates {
 	public UIStates(Player player) {
 		this.states = new States();
 		this.states.boardState = new UIBoardStateProvider(player);
-		this.states.messages = new UIMessagesModel();
 		this.states.connectionState = new UIConnectionStateProvider(player);
+		this.states.messagesState = player.getMessages();
 	}
 
 	public JsonNode getJSON() {

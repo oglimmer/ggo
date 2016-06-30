@@ -1,14 +1,17 @@
 package de.oglimmer.ggo.ui;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.oglimmer.ggo.logic.Player;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+/**
+ * Transforms the server-side model into client-side model
+ */
 @RequiredArgsConstructor
 @ToString
 public class UIBoardStateProvider {
@@ -18,19 +21,16 @@ public class UIBoardStateProvider {
 
 	public Map<String, UIField> getCorToFields() {
 		return forPlayer.getGame().getBoard().getFields().stream().map(f -> new UIField(f, forPlayer))
-				.collect(Collectors.toMap(UIField::getId, hi -> hi));
+				.collect(Collectors.toMap(UIField::getId, f -> f));
 	}
 
 	public Map<String, UIUnit> getIdToUnits() {
-		Map<String, UIUnit> result = new HashMap<>();
-		result.putAll(forPlayer.getGame().getBoard().getFields().stream().filter(f -> f.getUnit() != null)
-				.map(f -> new UIUnit(f.getUnit(), f.getPos().x, f.getPos().y, forPlayer))
-				.collect(Collectors.toMap(UIUnit::getId, hi -> hi)));
-		result.putAll(forPlayer.getGame().getBoard().getFields().stream()
+		Stream<UIUnit> units = forPlayer.getGame().getBoard().getFields().stream().filter(f -> f.getUnit() != null)
+				.map(f -> new UIUnit(f.getUnit(), f.getPos().x, f.getPos().y, forPlayer));
+		Stream<UIUnit> structures = forPlayer.getGame().getBoard().getFields().stream()
 				.filter(f -> f.getStructure() != null).map(f -> new UIUnit(f.getStructure(),
-						f.getStructure().getPlayer().getSide().toString(), f.getPos().x, f.getPos().y))
-				.collect(Collectors.toMap(UIUnit::getId, hi -> hi)));
-		return result;
+						f.getStructure().getPlayer().getSide().toString(), f.getPos().x, f.getPos().y));
+		return Stream.concat(units, structures).collect(Collectors.toMap(UIUnit::getId, u -> u));
 	}
 
 	public Map<String, UIHandItem> getIdToHanditems() {

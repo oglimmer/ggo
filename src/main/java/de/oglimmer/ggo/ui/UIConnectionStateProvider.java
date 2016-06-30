@@ -6,6 +6,9 @@ import de.oglimmer.ggo.logic.util.GameUtil;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 
+/**
+ * Transforms the server-side model into client-side model
+ */
 @ToString
 @AllArgsConstructor
 public class UIConnectionStateProvider {

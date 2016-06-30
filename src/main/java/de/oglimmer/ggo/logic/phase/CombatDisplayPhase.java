@@ -35,7 +35,7 @@ public class CombatDisplayPhase extends BasePhase {
 	@Override
 	public void init() {
 		inTurn.addAll(getGame().getPlayers());
-		getGame().getPlayers().forEach(p -> p.getUiStates().getMessages().clearErrorInfo());
+		getGame().getPlayers().forEach(p -> p.getUiStates().getMessagesState().clearErrorInfo());
 		ccDryRun.calcBattle();
 		infoMessages = ccDryRun.getInfoMessages();
 	}
@@ -69,9 +69,9 @@ public class CombatDisplayPhase extends BasePhase {
 			title = "Wait for your opponent to finish the turn. Round " + combatPhaseRoundCounter.getCurrentRound()
 					+ " of " + combatPhaseRoundCounter.getMaxRounds();
 		}
-		player.getUiStates().getMessages().setTitle(title);
+		player.getUiStates().getMessagesState().setTitle(title);
 
-		getGame().getPlayers().forEach(p -> p.getUiStates().getMessages()
+		getGame().getPlayers().forEach(p -> p.getUiStates().getMessagesState()
 				.setInfo(infoMessages.getOrDefault(p, new StringBuilder()).toString()));
 
 	}

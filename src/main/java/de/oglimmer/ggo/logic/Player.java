@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.oglimmer.ggo.logic.phase.BasePhase;
+import de.oglimmer.ggo.ui.UIMessagesModel;
 import de.oglimmer.ggo.ui.UIStates;
 import de.oglimmer.ggo.util.RandomString;
 import lombok.Getter;
@@ -30,6 +31,9 @@ public class Player {
 
 	@Getter
 	private List<Unit> unitInHand = new ArrayList<>();
+
+	@Getter
+	private UIMessagesModel messages;
 
 	@Getter
 	private UIStates uiStates;

@@ -66,7 +66,7 @@ abstract public class BasePhase {
 	final public void updateModalDialgs(MessageQueue messages) {
 		getGame().getPlayers().forEach(p -> updateModalDialg(p, messages));
 		getGame().getPlayers().forEach(player -> {
-			player.getUiStates().getMessages()
+			player.getUiStates().getMessagesState()
 					.setScore("Your score: " + player.getScore() + ", opponents score: "
 							+ GameUtil.getOtherPlayer(player).getScore() + " | Turn#" + getGame().getTurn() + " of "
 							+ Game.TOTAL_TURNS);

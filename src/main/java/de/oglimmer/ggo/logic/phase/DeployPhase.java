@@ -36,7 +36,7 @@ public class DeployPhase extends BasePhase {
 		Player firstActivePlayer = findFirstPlayer();
 		findActivePlayer(firstActivePlayer);
 		if (this.activePlayer != null) {
-			getGame().getPlayers().forEach(p -> p.getUiStates().getMessages().clearErrorInfo());
+			getGame().getPlayers().forEach(p -> p.getUiStates().getMessagesState().clearErrorInfo());
 			getGame().getPlayers()
 					.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
 		}
@@ -176,7 +176,7 @@ public class DeployPhase extends BasePhase {
 
 	protected void switchPlayer(Player player) {
 		boolean nextPhase = false;
-		activePlayer.getUiStates().getMessages().clearErrorInfo();
+		activePlayer.getUiStates().getMessagesState().clearErrorInfo();
 		Player nextPlayer = GameUtil.getOtherPlayer(activePlayer);
 		if (!hasMoreMoves(nextPlayer)) {
 			if (hasMoreMoves(activePlayer)) {
@@ -196,13 +196,13 @@ public class DeployPhase extends BasePhase {
 	protected void updateMessage(Player player, MessageQueue messages) {
 		if (player == activePlayer) {
 			if (selectedUnit != null) {
-				player.getUiStates().getMessages().setTitle("Select a highlighted field to deploy "
+				player.getUiStates().getMessagesState().setTitle("Select a highlighted field to deploy "
 						+ selectedUnit.getUnitType() + " or click the unit again to de-select it");
 			} else {
-				player.getUiStates().getMessages().setTitle("Select a unit from your hand to deploy it");
+				player.getUiStates().getMessagesState().setTitle("Select a unit from your hand to deploy it");
 			}
 		} else {
-			player.getUiStates().getMessages().setTitle("waiting for other player's deployment");
+			player.getUiStates().getMessagesState().setTitle("waiting for other player's deployment");
 		}
 	}
 

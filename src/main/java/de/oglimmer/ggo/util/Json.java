@@ -2,6 +2,9 @@ package de.oglimmer.ggo.util;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -33,13 +36,9 @@ public enum Json {
 	 * @param diffNode
 	 */
 	private void checkAddedChangedAttributes(JsonNode newNode, JsonNode oldNode, ObjectNode diffNode) {
-		for (Iterator<Map.Entry<String, JsonNode>> it = newNode.fields(); it.hasNext();) {
-			Map.Entry<String, JsonNode> entryOfNewNode = it.next();
-			String key = entryOfNewNode.getKey();
-			JsonNode newValue = entryOfNewNode.getValue();
-			JsonNode oldValue = oldNode.get(key);
-			diffEntry(diffNode, key, oldValue, newValue);
-		}
+		StreamSupport.stream(Spliterators.spliteratorUnknownSize(newNode.fields(), Spliterator.ORDERED), false)
+				.forEach(entryOfNewNode -> diffEntry(diffNode, entryOfNewNode.getKey(),
+						oldNode.get(entryOfNewNode.getKey()), entryOfNewNode.getValue()));
 	}
 
 	/**

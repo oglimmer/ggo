@@ -2,6 +2,9 @@ package de.oglimmer.ggo.ui;
 
 import lombok.Data;
 
+/**
+ * Server and client-side model for messages
+ */
 @Data
 public class UIMessagesModel {
 

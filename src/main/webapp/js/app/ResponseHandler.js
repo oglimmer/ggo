@@ -110,18 +110,19 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 				}
 			}
 			/* RESP_MESSAGE */
-			if( typeof jsonObj.messages !== 'undefined' ) {
-				if(typeof jsonObj.messages.score  !== 'undefined') {
-					$("#messageScore").html(jsonObj.messages.score);		
+			if( typeof jsonObj.messagesState !== 'undefined' ) {
+				var messages = jsonObj.messagesState;
+				if(typeof messages.score  !== 'undefined') {
+					$("#messageScore").html(messages.score);		
 				}
-				if(typeof jsonObj.messages.title  !== 'undefined') {
-					$("#messageTitle").html(jsonObj.messages.title);		
+				if(typeof messages.title  !== 'undefined') {
+					$("#messageTitle").html(messages.title);		
 				}
-				if(typeof jsonObj.messages.info  !== 'undefined') {
-					$("#messageInfo").html(jsonObj.messages.info);
+				if(typeof messages.info  !== 'undefined') {
+					$("#messageInfo").html(messages.info);
 				}
-				if(typeof jsonObj.messages.error  !== 'undefined') {
-					$("#messageError").html(jsonObj.messages.error);
+				if(typeof messages.error  !== 'undefined') {
+					$("#messageError").html(messages.error);
 				}
 			}
 			globalData.board.draw();
