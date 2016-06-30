@@ -1,0 +1,107 @@
+[
+	{
+		"OLD": {
+			"id": "3272A32D",
+			"color": "red",
+			"unitType": "tank",
+			"x": 5,
+			"y": 4,
+			"selectable": false,
+			"selected": false,
+			"command": {
+				"commandType": "F",
+				"x": 5,
+				"y": 4
+			}
+		},
+		"NEW": {
+			"id": "3272A32D",
+			"color": "red",
+			"unitType": "tank",
+			"x": 5,
+			"y": 4,
+			"selectable": false,
+			"selected": false,
+			"command": null
+		},
+		"DIFF": {
+			"command": null
+		}
+	},
+	{
+		"OLD": {
+			"id": "3272A32D",
+			"color": "red",
+			"unitType": "tank",
+			"x": 5,
+			"y": 4,
+			"selectable": false,
+			"selected": false,
+			"command": "simpleVal"
+		},
+		"NEW": {
+			"id": "3272A32D",
+			"color": "red",
+			"unitType": "tank",
+			"x": 5,
+			"y": 4,
+			"selectable": false,
+			"selected": false,
+			"command": null
+		},
+		"DIFF": {
+			"command": null
+		}
+	},
+	{
+		"OLD": {
+			"id": "3272A32D",
+			"color": "red",
+			"unitType": "tank",
+			"x": 5,
+			"y": 4,
+			"selectable": false,
+			"selected": false,
+			"command": null
+		},
+		"NEW": {
+			"id": "3272A32D",
+			"color": "red",
+			"unitType": "tank",
+			"x": 5,
+			"y": 4,
+			"selectable": false,
+			"selected": false,
+			"command": null
+		},
+		"DIFF": null
+	},
+	{
+		"OLD": {
+			"id": "3272A32D",
+			"color": "red",
+			"unitType": "tank",
+			"x": 5,
+			"y": 4,
+			"selectable": false,
+			"selected": false,
+			"command": {
+				"commandType": "F",
+				"x": 5,
+				"y": 4
+			}
+		},
+		"NEW": {
+			"id": "3272A32D",
+			"color": "red",
+			"unitType": "tank",
+			"x": 5,
+			"y": 4,
+			"selectable": false,
+			"selected": false
+		},
+		"DIFF": {
+			"command": "##REMOVED##"
+		}
+	}
+]

@@ -19,6 +19,7 @@ public class JsonTest {
 		processFile("/jsonTests/simple1.json");
 		processFile("/jsonTests/simple2.json");
 		processFile("/jsonTests/simple3.json");
+		processFile("/jsonTests/simple4.json");
 	}
 
 	private void processFile(String filename) throws IOException, JsonProcessingException {

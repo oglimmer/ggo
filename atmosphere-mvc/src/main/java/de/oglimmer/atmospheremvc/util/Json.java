@@ -66,6 +66,9 @@ public enum Json {
 			diffArray(diffNode, key, oldValue, newValue);
 		} else if (newValue != null && newValue.isObject()) {
 			diffObject(diffNode, key, oldValue, newValue);
+		} else if (newValue != null && newValue.isNull() && oldValue != null && !oldValue.isNull()) {
+			// special case: set object to null
+			diffNode.set(key, JsonNodeFactory.instance.nullNode());
 		} else {
 			diffPrimitive(diffNode, key, oldValue, newValue);
 		}
