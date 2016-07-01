@@ -1,6 +1,6 @@
 package de.oglimmer.ggo.web.action;
 
-import de.oglimmer.ggo.db.GameNotifications;
+import de.oglimmer.ggo.db.GameNotificationsDao;
 import lombok.Setter;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
@@ -16,7 +16,7 @@ public class UnregisterEmailActionBean extends BaseAction {
 	@DefaultHandler
 	@DontValidate
 	public Resolution show() {
-		GameNotifications.INSTANCE.unregisterEmail(confirmId);
+		GameNotificationsDao.INSTANCE.unregisterEmail(confirmId);
 		getContext().getMessages()
 				.add(new SimpleMessage("Your email address has been deleted. We hope you'll come back soon."));
 		return new RedirectResolution(LandingActionBean.class);

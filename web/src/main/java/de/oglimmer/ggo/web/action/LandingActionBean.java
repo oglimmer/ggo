@@ -3,8 +3,8 @@ package de.oglimmer.ggo.web.action;
 import javax.servlet.http.Cookie;
 
 import de.oglimmer.atmospheremvc.game.Games;
-import de.oglimmer.ggo.db.GameNotifications;
-import de.oglimmer.ggo.db.GameNotifications.GameNotification;
+import de.oglimmer.ggo.db.GameNotification;
+import de.oglimmer.ggo.db.GameNotificationsDao;
 import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -48,7 +48,7 @@ public class LandingActionBean extends BaseAction {
 
 	@DontValidate
 	public Resolution register() {
-		GameNotification rec = GameNotifications.INSTANCE.addEmail(email);
+		GameNotification rec = GameNotificationsDao.INSTANCE.addEmail(email);
 		EmailService.INSTANCE.sendConfirmation(email, rec.getId(), rec.getConfirmId());
 		email = "";
 		getContext().getMessages()

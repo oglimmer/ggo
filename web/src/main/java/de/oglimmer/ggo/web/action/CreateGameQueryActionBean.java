@@ -3,7 +3,7 @@ package de.oglimmer.ggo.web.action;
 import javax.servlet.http.Cookie;
 
 import de.oglimmer.atmospheremvc.game.Games;
-import de.oglimmer.ggo.db.GameNotifications;
+import de.oglimmer.ggo.db.GameNotificationsDao;
 import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -23,7 +23,7 @@ public class CreateGameQueryActionBean extends BaseAction {
 		Game game = Games.<Game> getGames().createGame();
 		Player player = game.createPlayer();
 		getContext().getResponse().addCookie(new Cookie("playerId", player.getId()));
-		int numberOfNotifications = GameNotifications.INSTANCE
+		int numberOfNotifications = GameNotificationsDao.INSTANCE
 				.allConfirmed(rec -> EmailService.INSTANCE.notifyGameCreated(rec.getEmail(), rec.getConfirmId()));
 		return new JsonResolution(new Result(game.getId(), player.getId(), numberOfNotifications));
 	}
