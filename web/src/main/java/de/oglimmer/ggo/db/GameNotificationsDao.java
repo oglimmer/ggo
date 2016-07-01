@@ -27,7 +27,7 @@ public enum GameNotificationsDao {
 		if (GridGameOneProperties.INSTANCE.isEmailDisabled()) {
 			return -1;
 		}
-		String query = "select id,email,confirmId from game_notification where confirmed is not null";
+		String query = "select id,email,createdOn,confirmed,confirmId from game_notification where confirmed is not null";
 		return DB.execQuery(query, rs -> convertResultSetToGameNotification(callback, rs));
 	}
 
