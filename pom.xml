@@ -3,7 +3,7 @@
 
 	<groupId>de.oglimmer</groupId>
 	<artifactId>ggo</artifactId>
-	<version>0.9</version>
+	<version>0.10-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<developers>
@@ -29,7 +29,7 @@
 		<url>https://github.com/oglimmer/ggo</url>
 		<connection>scm:git:git://github.com/oglimmer/ggo.git</connection>
 		<developerConnection>scm:git:git@github.com:oglimmer/ggo.git</developerConnection>
-		<tag>ggo-0.9</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<modules>
