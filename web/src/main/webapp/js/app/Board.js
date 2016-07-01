@@ -131,47 +131,6 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 		}
 	};	
 	
-	Board.prototype.addFields = function(fields) {
-		for ( var i = 0; i < fields.length; i++) {
-			this.addField(fields[i]);
-		}
-	};
-	Board.prototype.addField = function(field) {
-		this.corToFields[field.x + ":" + field.y] = field;
-	};
-
-	Board.prototype.addUnits = function(units) {
-		for ( var i = 0; i < units.length; i++) {
-			this.addUnit(units[i]);
-		}
-	};
-	Board.prototype.addUnit = function(unit) {
-		this.idToUnits[unit.id] = unit;
-	};
-
-	Board.prototype.addHandItems = function(handitems) {
-		for ( var i = 0; i < handitems.length; i++) {
-			this.addHandItem(handitems[i]);
-		}
-	};
-	Board.prototype.addHandItem = function(handitem) {
-		this.idToHanditems[handitem.id] = handitem;
-	};
-	Board.prototype.removeHandItem = function(handitemId) {
-		delete this.idToHanditems[handitemId];
-	};
-	Board.prototype.addButtons = function(buttons) {
-		for ( var i = 0; i < buttons.length; i++) {
-			this.addButton(buttons[i]);
-		}
-	};
-	Board.prototype.addButton = function(button) {
-		this.idToButtons[button.id] = button;
-	};
-	Board.prototype.removeButton = function(buttonId) {
-		delete this.idToButtons[buttonId];
-	};
-
 	/**
 	 * returns a Field object which is located at pos (x,y)
 	 */

@@ -26,67 +26,38 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 		}
 	}
 	
+	function processBoardStateItems(responseItemMap, itemsMap, newItemFunction) {
+		$.each(responseItemMap, function(itemId, item) {					
+			var existingItem = itemsMap[itemId];					
+			if( typeof existingItem === 'undefined' ) {
+				var newItem = newItemFunction();
+				copy(item, newItem);
+				itemsMap[itemId] = newItem;						
+			} else {
+				if(item === '##REMOVED##') {
+					delete itemsMap[itemId];
+				} else {
+					copy(item, existingItem);											
+				}
+			}
+		})
+	}
+	
 	return {
 		
 		process: function(jsonObj) {
 			console.log("GOT FROM SERVER:");
 			console.log(jsonObj);
 			/* RESP_BOARD */
-			if( typeof jsonObj.boardState !== 'undefined' ) {
-				$.each(jsonObj.boardState.corToFields, function(fieldId, field) {
-					var existingField = globalData.board.corToFields[fieldId];
-					if( typeof existingField === 'undefined' ) {
-						var newfield = new Field();
-						copy(field, newfield);
-						globalData.board.addField(newfield);						
-					} else {
-						copy(field, existingField);
-					}
-				})
-				$.each(jsonObj.boardState.idToHanditems, function(handitemId, handitem) {					
-					var existingHanditem = globalData.board.idToHanditems[handitemId];					
-					if( typeof existingHanditem === 'undefined' ) {
-						var newHandItem = new HandItem();
-						copy(handitem, newHandItem);
-						globalData.board.addHandItem(newHandItem);						
-					} else {
-						if(handitem === '##REMOVED##') {
-							delete globalData.board.idToHanditems[handitemId];
-						} else {
-							copy(handitem, existingHanditem);											
-						}
-					}
-				})
-				$.each(jsonObj.boardState.idToUnits, function(unitId, unit) {
-					var existingUnit = globalData.board.idToUnits[unitId];
-					if( typeof existingUnit === 'undefined' ) {
-						var newUnit = new Unit();
-						copy(unit, newUnit);
-						globalData.board.addUnit(newUnit);						
-					} else {
-						if(unit === '##REMOVED##') {
-							delete globalData.board.idToUnits[unitId];
-						} else {
-							copy(unit, existingUnit);
-						}
-					}
-				})
-				$.each(jsonObj.boardState.idToButtons, function(buttonId, button) {
-					var existingButton = globalData.board.idToButtons[buttonId];
-					if( typeof existingButton === 'undefined' ) {
-						var newButton = new Button();
-						copy(button, newButton);
-						globalData.board.addButton(newButton);	
-					} else {
-						if(button === '##REMOVED##') {
-							delete globalData.board.idToButtons[buttonId];
-						} else {
-							copy(button, existingButton);
-						}
-					}					
-				});
-				if(jsonObj.boardState.showCoordinates !== 'undefined' && jsonObj.boardState.showCoordinates != null) {
-					globalData.board.showCoordinates = jsonObj.boardState.showCoordinates;
+			var boardState = jsonObj.boardState;
+			if( typeof boardState !== 'undefined' ) {
+				var board = globalData.board;
+				processBoardStateItems(boardState.corToFields, board.corToFields, function() { return new Field(); });
+				processBoardStateItems(boardState.idToHanditems, board.idToHanditems, function() { return new HandItem(); });
+				processBoardStateItems(boardState.idToUnits, board.idToUnits, function() { return new Unit(); });
+				processBoardStateItems(boardState.idToButtons, board.idToButtons, function() { return new Button(); });
+				if(boardState.showCoordinates !== 'undefined' && boardState.showCoordinates != null) {
+					board.showCoordinates = boardState.showCoordinates;
 				}
 			}
 			/* RESP_MYCOLOR */
