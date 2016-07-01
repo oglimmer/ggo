@@ -14,17 +14,17 @@ public enum GameNotificationsDao {
 	INSTANCE;
 
 	private GameNotificationsDao() {
-		GridGameOneProperties.INSTANCE.registerOnReload(() -> gamePropertiesChanged());
+		GridGameOneProperties.PROPERTIES.registerOnReload(() -> gamePropertiesChanged());
 		gamePropertiesChanged();
 	}
 
 	@SneakyThrows(value = ClassNotFoundException.class)
 	private void gamePropertiesChanged() {
-		Class.forName(GridGameOneProperties.INSTANCE.getDbDriver());
+		Class.forName(GridGameOneProperties.PROPERTIES.getDbDriver());
 	}
 
 	public int allConfirmed(Consumer<GameNotification> callback) {
-		if (GridGameOneProperties.INSTANCE.isEmailDisabled()) {
+		if (GridGameOneProperties.PROPERTIES.isEmailDisabled()) {
 			return -1;
 		}
 		String query = "select id,email,createdOn,confirmed,confirmId from game_notification where confirmed is not null";

@@ -1,6 +1,6 @@
 package de.oglimmer.ggo.db;
 
-import static de.oglimmer.ggo.util.GridGameOneProperties.INSTANCE;
+import static de.oglimmer.ggo.util.GridGameOneProperties.PROPERTIES;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -73,13 +73,13 @@ public enum DBAccess {
 	}
 
 	private Connection getConnection(String url) throws SQLException {
-		return DriverManager.getConnection(url, INSTANCE.getDbUser(), INSTANCE.getDbPassword());
+		return DriverManager.getConnection(url, PROPERTIES.getDbUser(), PROPERTIES.getDbPassword());
 	}
 
 	private String buildUrl() {
-		String url = INSTANCE.getDbServerUrl() + INSTANCE.getDbSchema();
-		if (INSTANCE.getDbParameter() != null) {
-			url += "?" + INSTANCE.getDbParameter();
+		String url = PROPERTIES.getDbServerUrl() + PROPERTIES.getDbSchema();
+		if (PROPERTIES.getDbParameter() != null) {
+			url += "?" + PROPERTIES.getDbParameter();
 		}
 		return url;
 	}

@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GridGameOneProperties {
 
-	public static final GridGameOneProperties INSTANCE = new GridGameOneProperties();
+	public static final GridGameOneProperties PROPERTIES = new GridGameOneProperties();
 
 	private static final boolean DEBUG = false;
 

@@ -5,12 +5,6 @@
 
 	<display-name>grid</display-name>
 
-	<listener>
-		<display-name>GameContextListener</display-name>
-		<listener-class>de.oglimmer.ggo.servlet.GameContextListener</listener-class>
-	</listener>
-
-
 	<filter>
 		<display-name>Stripes Filter</display-name>
 		<filter-name>StripesFilter</filter-name>

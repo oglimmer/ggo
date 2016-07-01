@@ -1,10 +1,11 @@
 package de.oglimmer.ggo.web.action;
 
+import static de.oglimmer.ggo.email.EmailService.EMAIL;
+
 import javax.servlet.http.Cookie;
 
 import de.oglimmer.atmospheremvc.game.Games;
 import de.oglimmer.ggo.db.GameNotificationsDao;
-import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class CreateGameQueryActionBean extends BaseAction {
 		Player player = game.createPlayer();
 		getContext().getResponse().addCookie(new Cookie("playerId", player.getId()));
 		int numberOfNotifications = GameNotificationsDao.INSTANCE
-				.allConfirmed(rec -> EmailService.INSTANCE.notifyGameCreated(rec.getEmail(), rec.getConfirmId()));
+				.allConfirmed(rec -> EMAIL.notifyGameCreated(rec.getEmail(), rec.getConfirmId()));
 		return new JsonResolution(new Result(game.getId(), player.getId(), numberOfNotifications));
 	}
 

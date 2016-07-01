@@ -1,11 +1,12 @@
 package de.oglimmer.ggo.web.action;
 
+import static de.oglimmer.ggo.email.EmailService.EMAIL;
+
 import javax.servlet.http.Cookie;
 
 import de.oglimmer.atmospheremvc.game.Games;
 import de.oglimmer.ggo.db.GameNotification;
 import de.oglimmer.ggo.db.GameNotificationsDao;
-import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import lombok.Getter;
@@ -49,7 +50,7 @@ public class LandingActionBean extends BaseAction {
 	@DontValidate
 	public Resolution register() {
 		GameNotification rec = GameNotificationsDao.INSTANCE.addEmail(email);
-		EmailService.INSTANCE.sendConfirmation(email, rec.getId(), rec.getConfirmId());
+		EMAIL.sendConfirmation(email, rec.getId(), rec.getConfirmId());
 		email = "";
 		getContext().getMessages()
 				.add(new SimpleMessage("We sent you a confirmation email. Please look in your inbox/spam folder."));

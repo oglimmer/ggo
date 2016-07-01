@@ -2,19 +2,18 @@ package de.oglimmer.ggo.servlet;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import de.oglimmer.atmospheremvc.game.Games;
 import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.util.GridGameOneProperties;
 
-// import javax.servlet.annotation.WebListener;
-
 /**
  * Application Lifecycle Listener implementation class GameContextListener
  * 
  */
-// @WebListener
+@WebListener
 public class GameContextListener implements ServletContextListener {
 
 	@Override
@@ -24,8 +23,8 @@ public class GameContextListener implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-		GridGameOneProperties.INSTANCE.shutdown();
-		EmailService.INSTANCE.shutdown();
+		GridGameOneProperties.PROPERTIES.shutdown();
+		EmailService.EMAIL.shutdown();
 	}
 
 }
