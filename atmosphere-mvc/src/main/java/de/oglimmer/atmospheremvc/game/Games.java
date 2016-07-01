@@ -15,6 +15,7 @@ public class Games<T extends Game> {
 	private static Games<? extends Game> INSTANCE;
 
 	public static <T extends Game> void setGames(Games<T> INSTANCE) {
+		assert Games.INSTANCE == null;
 		Games.INSTANCE = INSTANCE;
 	}
 
