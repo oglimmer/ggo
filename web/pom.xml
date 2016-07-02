@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.oglimmer.ggo</groupId>
@@ -79,7 +80,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<debug>false</debug>
+					<keepServerAlive>true</keepServerAlive>
 					<specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
 					<jsSrcDir>${project.basedir}/src/main/webapp/js</jsSrcDir>
 					<jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
@@ -95,6 +96,30 @@
 						<source>webjars/requirejs/2.2.0/require.min.js</source>
 						<source>webjars/jquery/2.2.4/jquery.min.js</source>
 					</preloadSources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.timurstrekalov</groupId>
+				<artifactId>saga-maven-plugin</artifactId>
+				<version>1.5.5</version>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>coverage</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<baseDir>http://localhost:${jasmine.serverPort}</baseDir>
+					<outputDir>${project.build.directory}/coverage</outputDir>
+					<noInstrumentPatterns>
+						<pattern>.*Spec.js</pattern>
+						<pattern>.*/lib/.*</pattern>
+						<pattern>.*/webjars/.*</pattern>
+					</noInstrumentPatterns>
+					<!-- Some calls hang until the timeout kicks in. :( -->
+					<backgroundJavaScriptTimeout>5000</backgroundJavaScriptTimeout>
 				</configuration>
 			</plugin>
 
@@ -133,14 +158,9 @@
 			<artifactId>core</artifactId>
 			<version>0.12-SNAPSHOT</version>
 		</dependency>
-		<!-- this doesn't work in jasmine tests 
-		<dependency>
-			<groupId>org.atmosphere.client</groupId>
-			<artifactId>javascript</artifactId>
-			<version>2.3.2</version>
-			<type>war</type>
-		</dependency>
-		 -->
+		<!-- this doesn't work in jasmine tests <dependency> <groupId>org.atmosphere.client</groupId> 
+			<artifactId>javascript</artifactId> <version>2.3.2</version> <type>war</type> 
+			</dependency> -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
