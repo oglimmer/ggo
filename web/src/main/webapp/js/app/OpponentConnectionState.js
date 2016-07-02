@@ -1,4 +1,4 @@
-define(['jquery', './Constants', './GlobalData', 'watch'], function($, Constants, globalData, WatchJS) {
+define(['jquery', 'app/Constants', 'app/GlobalData', 'watch'], function($, Constants, globalData, WatchJS) {
 
 
 	function OpponentConnectionState() {

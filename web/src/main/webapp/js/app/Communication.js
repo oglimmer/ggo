@@ -1,4 +1,4 @@
-define(['jquery', './Constants', 'atmosphere'], function($, Constants, atmosphere) {
+define(['jquery', 'app/Constants', 'atmosphere'], function($, Constants, atmosphere) {
 	
 	var socket = atmosphere;
 	var subSocket;

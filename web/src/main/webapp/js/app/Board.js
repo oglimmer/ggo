@@ -1,4 +1,4 @@
-define(['jquery', './Constants', './Communication', './GlobalData', './CursorUtil'], function($, Constants, communication, globalData, cursorUtil) {	
+define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/CursorUtil'], function($, Constants, communication, globalData, cursorUtil) {	
 	
 	function sortById(source) {
 		var array = [];

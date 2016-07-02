@@ -1,4 +1,4 @@
-define(['./Constants', './Communication', './GlobalData', './CursorUtil'], 
+define(['app/Constants', 'app/Communication', 'app/GlobalData', 'app/CursorUtil'], 
 		function(Constants, communication, globalData, cursorUtil) {
 
 

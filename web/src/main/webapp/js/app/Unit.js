@@ -1,4 +1,4 @@
-define(['./Constants', './Communication', './GlobalData'], function(Constants, communication, globalData) {
+define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Constants, communication, globalData) {
 
 	function Unit() {
 		// immutable
