@@ -39,23 +39,23 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		
 		switch(this.unitType) {
 			case Constants.UNIT_TYPE_INFANTRY:
-				var img=document.getElementById("infantry_"+globalData.myColor);
+				var img=document.getElementById("infantry_"+globalData.model.myColor);
 				ctx.drawImage(img,this.x,this.y);
 				break;
 			case Constants.UNIT_TYPE_TANK:
-				var img=document.getElementById("tank_"+globalData.myColor);
+				var img=document.getElementById("tank_"+globalData.model.myColor);
 				ctx.drawImage(img,this.x,this.y);
 				break;
 			case Constants.UNIT_TYPE_AIRBORNE:
-				var img=document.getElementById("airborne_"+globalData.myColor);
+				var img=document.getElementById("airborne_"+globalData.model.myColor);
 				ctx.drawImage(img,this.x,this.y);
 				break;
 			case Constants.UNIT_TYPE_HELICOPTER:
-				var img=document.getElementById("helicopter_"+globalData.myColor);
+				var img=document.getElementById("helicopter_"+globalData.model.myColor);
 				ctx.drawImage(img,this.x,this.y);
 				break;
 			case Constants.UNIT_TYPE_ARTILLERY:
-				var img=document.getElementById("artillery_"+globalData.myColor);
+				var img=document.getElementById("artillery_"+globalData.model.myColor);
 				ctx.drawImage(img,this.x,this.y);
 				break;
 		}

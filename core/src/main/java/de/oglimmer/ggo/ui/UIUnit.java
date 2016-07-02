@@ -10,6 +10,9 @@ import lombok.ToString;
 public class UIUnit {
 
 	// IMMUTABLE
+	
+	@Getter
+	private String jsClass = "Unit";
 
 	@Getter
 	private String id;

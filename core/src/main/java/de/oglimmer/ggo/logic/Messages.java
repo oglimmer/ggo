@@ -18,4 +18,8 @@ public class Messages {
 		info = null;
 	}
 
+	public String getJsClass() {
+		return "Messages";
+	};
+
 }

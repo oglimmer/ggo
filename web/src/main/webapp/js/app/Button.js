@@ -30,9 +30,10 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		ctx.stroke();
 		
 		if(typeof this.graphic !== 'undefined' && this.graphic != null) {			
-			var img=document.getElementById(this.graphic+"_"+globalData.myColor);
+			var img=document.getElementById(this.graphic+"_"+globalData.model.myColor);
 			if(typeof img === 'undefined' || img == null) {
-				console.log("img = " + img + ", graphic="+ this.graphic+", globalData.myColor="+globalData.myColor);
+				console.log("img = " + img + ", graphic="+ this.graphic+", globalData.model.myColor="+globalData.model.myColor);
+				console.log(this.graphic);
 			} else {
 				ctx.drawImage(img,this.x,this.y);
 			}

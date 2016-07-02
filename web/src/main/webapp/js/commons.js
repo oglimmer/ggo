@@ -13,6 +13,7 @@ requirejs.config({
         jquery: 'jquery/2.2.4/jquery.min',
         bootstrap: 'bootstrap/3.3.6/js/bootstrap.min',
         atmosphere: '../javascript/atmosphere-min',
+        watch: '../js/lib/watch-1.3.0',
         //except, if the module ID starts with "app",
         //load it from the js/app directory. paths
         //config is relative to the baseUrl, and

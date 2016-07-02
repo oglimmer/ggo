@@ -21,13 +21,20 @@ public class UIStates extends de.oglimmer.atmospheremvc.game.UIState {
 		@Getter
 		private UIConnectionStateProvider connectionState;
 
+		@Getter
+		private String myColor;
+
+		States(Player player) {
+			this.boardState = new UIBoardStateProvider(player);
+			this.connectionState = new UIConnectionStateProvider(player);
+			this.messagesState = player.getMessages();
+			this.myColor = player.getSide().toString();
+		}
+
 	}
 
 	public UIStates(Player player) {
-		this.states = new States();
-		this.states.boardState = new UIBoardStateProvider(player);
-		this.states.connectionState = new UIConnectionStateProvider(player);
-		this.states.messagesState = player.getMessages();
+		this.states = new States(player);
 	}
 
 	public UIBoardStateProvider getBoardState() {

@@ -14,6 +14,10 @@ public class UIConnectionStateProvider {
 
 	private Player forPlayer;
 
+	public String getJsClass() {
+		return "OpponentConnectionState";
+	};
+
 	public boolean getOpponentConnectionStatus() {
 		Player opponent = forPlayer.getGame().getOtherPlayer(forPlayer);
 		if (opponent == null) {

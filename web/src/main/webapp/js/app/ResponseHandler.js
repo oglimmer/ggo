@@ -1,8 +1,65 @@
-define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalData', './Button', './ModalDialog'], 
-		function ($, Field, Unit, Constants, HandItem, globalData, Button, ModalDialog) {
+define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalData', './Button', './ModalDialog', './Messages', './OpponentConnectionState'], 
+		function ($, Field, Unit, Constants, HandItem, globalData, Button, ModalDialog, Messages, OpponentConnectionState) {
 
-	function copy(source, target) {
+	var logEnabled = false;
+	function log(obj) {
+		if(logEnabled) {
+			console.log(obj);
+		}
+	}
+	
+	function assert(statement, text) {
+		if(!statement) {
+			throw "ASSERTION FAILED!!!"+text;
+		}
+	}
+	
+	function construct(jsClass) {
+		switch(jsClass) {
+		case 'Field':
+			return new Field();
+			break;
+		case 'Unit':
+			return new Unit();
+			break;
+		case 'Button':
+			return new Button();
+			break;
+		case 'HandItem':
+			return new HandItem();
+			break;
+		case 'Messages':
+			return new Messages();
+			break;
+		case 'OpponentConnectionState':
+			return new OpponentConnectionState();
+			break;
+		default:
+			assert(false, "Illegal jsClass: "+jsClass);
+		}
+	}
+	
+	/**
+	 * source = array or object
+	 * target = array or object
+	 */
+	function copy(source, target, level) {
+		assert(typeof source === 'object' || typeof source === 'array');
+		assert(typeof target === 'object' || typeof target === 'array');
+		
+//		if(source != null && typeof source.graphic !== 'undefined' && source.graphic === null){
+		//			logEnabled = true;
+		//		}
+		
+		log(level+"------------>>>");
+		log(source);
+		log(target);
+		log(level+"<<<<");
+		
 		for(var att in source) {
+
+			log(level+" COPY "+att);
+			
 			if(source[att] === '##REMOVED##') {
 				console.log("REMOVING OBJECT ATTRIBUTE!! warning not verified.");
 				delete target[att]; 
@@ -10,37 +67,43 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 				console.log("REMOVING ARRAY ELEMENTS NOT IMPLEMENTED");
 			} else {
 				if(typeof source[att] === 'object') {
-					if(typeof target[att] === 'undefined' || target[att] === null) {
-						target[att] = source[att];
-					} else if(source[att] === null) {
+					
+					log(level+" DEEP COPY FOR OBJECT "+att);
+					log(source[att]);
+					
+					if(source[att] === null) {
+
+						log(level+" set target to null");
+						
 						target[att] = null;
+						
+					} else if(typeof target[att] === 'undefined' || target[att] === null) {
+						
+						log(level+" NEW COPY FOR OBJECT "+att);
+						
+						if(source[att] !=  null && typeof source[att].jsClass !== 'undefined') {
+							target[att] = construct(source[att].jsClass);
+						} else {
+							target[att] = {};
+						}						
+						copy(source[att], target[att], level+1);
+						
 					} else {						
-						copy(source[att], target[att]);
+						
+						log(level+" SIMPLE COPY FOR OBJECT "+att);
+						
+						copy(source[att], target[att], level+1);
 					}
 				} else if(typeof source[att] === 'array') {
 					console.log("ADDING/CHANGING ARRAY ELEMENTS NOT IMPLEMENTED");
 				} else {
+					
+					log(level+" SIMPLE ASSIGN "+att);
+					
 					target[att] = source[att];						
 				}
 			}
 		}
-	}
-	
-	function processBoardStateItems(responseItemMap, itemsMap, newItemFunction) {
-		$.each(responseItemMap, function(itemId, item) {					
-			var existingItem = itemsMap[itemId];					
-			if( typeof existingItem === 'undefined' ) {
-				var newItem = newItemFunction();
-				copy(item, newItem);
-				itemsMap[itemId] = newItem;						
-			} else {
-				if(item === '##REMOVED##') {
-					delete itemsMap[itemId];
-				} else {
-					copy(item, existingItem);											
-				}
-			}
-		})
 	}
 	
 	return {
@@ -48,22 +111,9 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 		process: function(jsonObj) {
 			console.log("GOT FROM SERVER:");
 			console.log(jsonObj);
-			/* RESP_BOARD */
-			var boardState = jsonObj.boardState;
-			if( typeof boardState !== 'undefined' ) {
-				var board = globalData.board;
-				processBoardStateItems(boardState.corToFields, board.corToFields, function() { return new Field(); });
-				processBoardStateItems(boardState.idToHanditems, board.idToHanditems, function() { return new HandItem(); });
-				processBoardStateItems(boardState.idToUnits, board.idToUnits, function() { return new Unit(); });
-				processBoardStateItems(boardState.idToButtons, board.idToButtons, function() { return new Button(); });
-				if(boardState.showCoordinates !== 'undefined' && boardState.showCoordinates != null) {
-					board.showCoordinates = boardState.showCoordinates;
-				}
-			}
-			/* RESP_MYCOLOR */
-			if( typeof jsonObj.myColor !== 'undefined' ) {
-				globalData.myColor = jsonObj.myColor;
-			}
+			
+			copy(jsonObj, globalData.model, 0);
+			
 			/* RESP_MODAL_DIALOG_EN */
 			if( typeof jsonObj.modalDialogEnable !== 'undefined' ) {
 				globalData.modalDialg = new ModalDialog(jsonObj.modalDialogEnable);
@@ -71,30 +121,6 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 			/* RESP_MODAL_DIALOG_DIS */
 			if( typeof jsonObj.modalDialogDisable !== 'undefined' ) {
 				delete globalData.modalDialg;
-			}
-			/* RESP_PLAYER_CONNECTION_STATUS */
-			if( typeof jsonObj.connectionState !== 'undefined' ) {
-				if(jsonObj.connectionState.opponentConnectionStatus) {
-					$("#messageOpponentConnectionLost").html("");
-				} else {
-					$("#messageOpponentConnectionLost").html("OPPONENT GOT DISCONNECTED!");
-				}
-			}
-			/* RESP_MESSAGE */
-			if( typeof jsonObj.messagesState !== 'undefined' ) {
-				var messages = jsonObj.messagesState;
-				if(typeof messages.score  !== 'undefined') {
-					$("#messageScore").html(messages.score);		
-				}
-				if(typeof messages.title  !== 'undefined') {
-					$("#messageTitle").html(messages.title);		
-				}
-				if(typeof messages.info  !== 'undefined') {
-					$("#messageInfo").html(messages.info);
-				}
-				if(typeof messages.error  !== 'undefined') {
-					$("#messageError").html(messages.error);
-				}
 			}
 			globalData.board.draw();
 			

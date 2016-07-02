@@ -9,6 +9,9 @@ import lombok.ToString;
 public class UIField {
 
 	// IMMUTABLE
+	
+	@Getter
+	private String jsClass = "Field";
 
 	@Getter
 	private String id;

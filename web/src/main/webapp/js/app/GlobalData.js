@@ -3,8 +3,8 @@ define([], function () {
 	
 	var globalDataObject = {
 			board : null,
-			myColor : null,
-			playerId: ggoPlayerId
+			playerId: ggoPlayerId,
+			model: {}
 	};
 	
 	return globalDataObject;

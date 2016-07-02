@@ -1,11 +1,8 @@
 package de.oglimmer.ggo.logic.phase;
 
-import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
-
 import java.util.Collection;
 import java.util.Collections;
 
-import de.oglimmer.atmospheremvc.com.Constants;
 import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
@@ -40,8 +37,7 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
 		switch (cmd) {
 		case "join":
-			player.resetUiState();
-			messages.addMessage(player, Constants.RESP_MYCOLOR, instance.textNode(player.getSide().toString()));
+			player.resetUiState();			
 			break;
 		}
 	}

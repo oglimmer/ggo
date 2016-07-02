@@ -9,6 +9,9 @@ import lombok.ToString;
 public class UIHandItem {
 
 	// IMMUTABLE
+	
+	@Getter
+	private String jsClass = "HandItem";
 
 	@Getter
 	private String id;

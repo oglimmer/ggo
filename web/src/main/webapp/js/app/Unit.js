@@ -89,7 +89,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 				ctx.strokeText(this.command.commandType,cx-2,cy+6);
 			} else {
 				var targetFieldId = this.command.x+":"+this.command.y;
-				var field = globalData.board.corToFields[targetFieldId];
+				var field = globalData.model.boardState.corToFields[targetFieldId];
 				var color;
 				switch(this.command.commandType) {
 				case "M":
@@ -118,7 +118,7 @@ define(['./Constants', './Communication', './GlobalData'], function(Constants, c
 		if(this.command != null && this.command.commandType != null) {
 			if(this.command.commandType != "F") {
 				var targetFieldId = this.command.x+":"+this.command.y;
-				var field = globalData.board.corToFields[targetFieldId];
+				var field = globalData.model.boardState.corToFields[targetFieldId];
 				var color;
 				switch(this.command.commandType) {
 				case "M":

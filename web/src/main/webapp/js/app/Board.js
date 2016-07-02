@@ -12,90 +12,84 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 	}
 	
 	function Board(elementId) {
-		var canvasBoard = document.getElementById(elementId);
-		this.ctxBoard = canvasBoard.getContext('2d');
-		// FIELDS
-		this.corToFields = {}; // map<"xCor:yCor" as string, field-object>
-		// UNITS (on board)
-		this.idToUnits = {}; // map<id,unit-object>
-		// HANDITEMS (in hand)
-		this.idToHanditems = {}; // map<id,handItem-object>
-		// BUTTON
-		this.idToButtons = {}; // map<id,button-object>
-		
-		this.showCoordinates = false;
+		this.canvasBoard = document.getElementById(elementId);
+		this.ctxBoard = this.canvasBoard.getContext('2d');
 
 		var thiz = this;
 		$(document).ready(function() {
 			$("#"+elementId).click(function(evt) {
-								
-				var relMousePos = cursorUtil.getRelativeMousePos(evt, canvasBoard);
-				
-				if(typeof globalData.modalDialg !== 'undefined') {
-					globalData.modalDialg.onSelect(relMousePos);
-					return;
-				}
-				
-				var selectedHex = thiz.getFieldByPos(relMousePos);
-				if (selectedHex != null) {
-
-					if (typeof selectedHex.onSelect !== 'undefined') {
-						selectedHex.onSelect();
-					}					
-
-					for ( var unitProp in thiz.idToUnits) {
-						var unit = thiz.idToUnits[unitProp];
-						if (unit.x == selectedHex.x && unit.y == selectedHex.y) {
-							if (typeof unit.onSelect !== 'undefined') {
-								unit.onSelect();
-							}					
-						}
-					}
-
-				} else {
-					$.each(thiz.idToHanditems, function(index, handItem) {
-						if(handItem.x <= relMousePos.x && handItem.y <= relMousePos.y 
-								&& handItem.x+handItem.width >= relMousePos.x && handItem.y+handItem.height >= relMousePos.y) {
-							if (typeof handItem.onSelect !== 'undefined' ) {
-								handItem.onSelect();
-							}	
-						}
-					})
-					$.each(thiz.idToButtons, function(index, buttonIten) {
-						if(buttonIten.x <= relMousePos.x && buttonIten.y <= relMousePos.y 
-								&& buttonIten.x+buttonIten.width >= relMousePos.x && buttonIten.y+buttonIten.height >= relMousePos.y) {
-							if (typeof buttonIten.onSelect !== 'undefined' ) {
-								buttonIten.onSelect();
-							}	
-						}
-					})
-				}
-				
+				thiz.clickHandler(evt);
 			});
-
 		});
+	}
+	
+	Board.prototype.clickHandler = function(evt) {
+		
+		var relMousePos = cursorUtil.getRelativeMousePos(evt, this.canvasBoard);
+		
+		if(typeof globalData.modalDialg !== 'undefined') {
+			globalData.modalDialg.onSelect(relMousePos);
+			return;
+		}
+		
+		var selectedHex = this.getFieldByPos(relMousePos);
+		if (selectedHex != null) {
+
+			if (typeof selectedHex.onSelect !== 'undefined') {
+				selectedHex.onSelect();
+			}					
+
+			var allUnits = globalData.model.boardState.idToUnits;
+			for ( var unitProp in allUnits) {
+				var unit = allUnits[unitProp];
+				if (unit.x == selectedHex.x && unit.y == selectedHex.y) {
+					if (typeof unit.onSelect !== 'undefined') {
+						unit.onSelect();
+					}					
+				}
+			}
+
+		} else {
+			$.each(globalData.model.boardState.idToHanditems, function(index, handItem) {
+				if(handItem.x <= relMousePos.x && handItem.y <= relMousePos.y 
+						&& handItem.x+handItem.width >= relMousePos.x && handItem.y+handItem.height >= relMousePos.y) {
+					if (typeof handItem.onSelect !== 'undefined' ) {
+						handItem.onSelect();
+					}	
+				}
+			})
+			$.each(globalData.model.boardState.idToButtons, function(index, buttonIten) {
+				if(buttonIten.x <= relMousePos.x && buttonIten.y <= relMousePos.y 
+						&& buttonIten.x+buttonIten.width >= relMousePos.x && buttonIten.y+buttonIten.height >= relMousePos.y) {
+					if (typeof buttonIten.onSelect !== 'undefined' ) {
+						buttonIten.onSelect();
+					}	
+				}
+			})
+		}
+		
 	}
 
 	Board.prototype.draw = function() {
 		// clear the field
 		this.ctxBoard.clearRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
 		// fields		
-		for ( var f in this.corToFields) {
-			this.corToFields[f].draw(this.ctxBoard, this.showCoordinates);
+		for ( var f in globalData.model.boardState.corToFields) {
+			globalData.model.boardState.corToFields[f].draw(this.ctxBoard, globalData.model.boardState.showCoordinates);
 		}
 		// units- z-level:0
-		for ( var f in this.idToUnits) {
-			var unitToDraw = this.idToUnits[f];
+		for ( var f in globalData.model.boardState.idToUnits) {
+			var unitToDraw = globalData.model.boardState.idToUnits[f];
 			unitToDraw.draw0(this.ctxBoard);
 		}
 		// units- z-level:1
-		for ( var f in this.idToUnits) {
-			var unitToDraw = this.idToUnits[f];
+		for ( var f in globalData.model.boardState.idToUnits) {
+			var unitToDraw = globalData.model.boardState.idToUnits[f];
 			unitToDraw.draw1(this.ctxBoard);
 		}
 		// units- z-level:2
-		for ( var f in this.idToUnits) {
-			var unitToDraw = this.idToUnits[f];
+		for ( var f in globalData.model.boardState.idToUnits) {
+			var unitToDraw = globalData.model.boardState.idToUnits[f];
 			unitToDraw.draw2(this.ctxBoard);
 		}
 		// hand
@@ -104,8 +98,8 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 		this.ctxBoard.fillRect(0, 470, this.ctxBoard.canvas.width-10, 57);
 		var x = 3;
 		var y = 475;
-		for ( var f in this.idToHanditems) {
-			var handitemToDraw = this.idToHanditems[f];
+		for ( var f in globalData.model.boardState.idToHanditems) {
+			var handitemToDraw = globalData.model.boardState.idToHanditems[f];
 			handitemToDraw.draw(this.ctxBoard, x, y);
 			x += Constants.size.width*.8+4;
 		}
@@ -119,7 +113,7 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 		var x = 3;
 		var y = 535;
 		var thiz = this;
-		$.each(sortById(this.idToButtons), function(buttonId, buttonToDraw) {
+		$.each(sortById(globalData.model.boardState.idToButtons), function(buttonId, buttonToDraw) {
 			if(!buttonToDraw.hidden) {
 				buttonToDraw.draw(thiz.ctxBoard, x, y);
 				x += buttonToDraw.width+4;
@@ -194,8 +188,8 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 			break;
 		}
 
-		if (this.corToFields.hasOwnProperty(hexPosX + ":" + hexPosY)) {
-			return this.corToFields[hexPosX + ":" + hexPosY];
+		if (globalData.model.boardState.corToFields.hasOwnProperty(hexPosX + ":" + hexPosY)) {
+			return globalData.model.boardState.corToFields[hexPosX + ":" + hexPosY];
 		}
 		return null;
 	};

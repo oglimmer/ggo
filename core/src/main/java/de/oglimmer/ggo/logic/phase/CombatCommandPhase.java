@@ -219,7 +219,8 @@ public class CombatCommandPhase extends BasePhase {
 	@Override
 	public Collection<UIButton> getButtons(Player forPlayer) {
 		Collection<UIButton> buttons = new ArrayList<>();
-		buttons.add(new UIButton("doneButton", "Done", null, 30, 20, !inTurn.contains(forPlayer)));
+		buttons.add(UIButton.builder().id("doneButton").text("Done").width(30).height(20)
+				.hidden(!inTurn.contains(forPlayer)).build());
 		return buttons;
 	}
 

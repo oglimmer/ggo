@@ -97,11 +97,12 @@ public class DraftPhase extends BasePhase {
 	public Collection<UIButton> getButtons(Player forPlayer) {
 		Collection<UIButton> buttons = new ArrayList<>();
 		if (inTurn.contains(forPlayer)) {
-			buttons.add(new UIButton("doneButton", "Done", null, 30, 20, !inTurn.contains(forPlayer)));
-
+			buttons.add(UIButton.builder().id("doneButton").text("Done").width(30).height(20)
+					.hidden(!inTurn.contains(forPlayer)).build());
 			for (UnitType type : UnitType.values()) {
-				buttons.add(new UIButton("buy" + type.toString(), Integer.toString(type.getCost()), type.toString(), 48,
-						48, forPlayer.getCredits() < type.getCost()));
+				buttons.add(UIButton.builder().id("buy" + type.toString()).text(Integer.toString(type.getCost()))
+						.graphic(type.toString()).width(48).height(48).hidden(forPlayer.getCredits() < type.getCost())
+						.build());
 			}
 		}
 		return buttons;
