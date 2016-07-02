@@ -10,7 +10,7 @@ import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.UnitType;
-import de.oglimmer.ggo.ui.persistent.UIButton;
+import de.oglimmer.ggo.ui.shortlife.UIButton;
 
 public class DraftPhase extends BasePhase {
 

@@ -17,7 +17,7 @@ import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.battle.CommandCenter;
 import de.oglimmer.ggo.logic.battle.CommandType;
 import de.oglimmer.ggo.ui.persistent.ModalDialog;
-import de.oglimmer.ggo.ui.persistent.UIButton;
+import de.oglimmer.ggo.ui.shortlife.UIButton;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

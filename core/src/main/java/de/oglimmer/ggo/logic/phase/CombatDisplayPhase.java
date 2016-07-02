@@ -13,7 +13,7 @@ import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.battle.CombatPhaseRoundCounter;
 import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.battle.CommandCenter;
-import de.oglimmer.ggo.ui.persistent.UIButton;
+import de.oglimmer.ggo.ui.shortlife.UIButton;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

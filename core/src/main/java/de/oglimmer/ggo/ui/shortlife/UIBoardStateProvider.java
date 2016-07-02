@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.oglimmer.ggo.logic.Player;
-import de.oglimmer.ggo.ui.persistent.UIButton;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
