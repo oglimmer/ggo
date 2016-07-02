@@ -7,6 +7,8 @@ import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.logic.phase.BasePhase;
 import de.oglimmer.ggo.logic.util.RandomString;
 import de.oglimmer.ggo.ui.UIStates;
+import de.oglimmer.ggo.ui.persistent.Messages;
+import de.oglimmer.ggo.ui.persistent.ModalDialog;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -36,6 +38,9 @@ public class Player implements de.oglimmer.atmospheremvc.game.Player {
 	private Messages messages = new Messages();
 
 	@Getter
+	private ModalDialog modalDialog = new ModalDialog();
+
+	@Getter
 	private UIStates uiStates;
 
 	public Player(Side side, Game game) {
@@ -63,12 +68,12 @@ public class Player implements de.oglimmer.atmospheremvc.game.Player {
 	}
 
 	public void updateUI() {
-		MessageQueue messages = new MessageQueue();
 		BasePhase currentPhase = game.getCurrentPhase();
 		if (currentPhase != null) {
-			currentPhase.updateMessages(messages);
-			currentPhase.updateModalDialgs(messages);
+			currentPhase.updateMessages();
+			currentPhase.updateModalDialgs();
 		}
+		MessageQueue messages = new MessageQueue();
 		messages.addUpdateUIMessages(game);
 		messages.sendMessages();
 	}

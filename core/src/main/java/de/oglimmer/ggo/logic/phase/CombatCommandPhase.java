@@ -1,7 +1,5 @@
 package de.oglimmer.ggo.logic.phase;
 
-import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,10 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import de.oglimmer.atmospheremvc.com.Constants;
 import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
@@ -22,7 +16,8 @@ import de.oglimmer.ggo.logic.battle.CombatPhaseRoundCounter;
 import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.battle.CommandCenter;
 import de.oglimmer.ggo.logic.battle.CommandType;
-import de.oglimmer.ggo.ui.UIButton;
+import de.oglimmer.ggo.ui.persistent.ModalDialog;
+import de.oglimmer.ggo.ui.persistent.UIButton;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -135,8 +130,6 @@ public class CombatCommandPhase extends BasePhase {
 			cc.addCommand(unit, targetField, commandType);
 		}
 		getState(player).clear();
-		ObjectNode root = instance.objectNode();
-		messages.addMessage(player, Constants.RESP_MODAL_DIALOG_DIS, root);
 	}
 
 	private void execTargetField(Player player, String param) {
@@ -176,7 +169,7 @@ public class CombatCommandPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player, MessageQueue messages) {
+	protected void updateMessage(Player player) {
 		String title;
 		if (inTurn.contains(player)) {
 			Unit unit = getState(player).getSelectedUnits();
@@ -194,19 +187,16 @@ public class CombatCommandPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateModalDialg(Player player, MessageQueue messages) {
+	protected void updateModalDialg(Player player) {
 		if (getState(player).getPossibleCommandTypesOptions() != null) {
-			ObjectNode root = instance.objectNode();
-			root.set("title", instance.textNode("Choose a command"));
-			ArrayNode options = instance.arrayNode();
+			player.getModalDialog().setShow(true);
+			player.getModalDialog().setTitle("Choose a command");
 			for (CommandType ct : getState(player).getPossibleCommandTypesOptions()) {
-				ObjectNode option = instance.objectNode();
-				option.set("id", instance.textNode(ct.name()));
-				option.set("description", instance.textNode(ct.name()));
-				options.add(option);
+				player.getModalDialog().getOptions().add(new ModalDialog.Option(ct.name(), ct.name()));
 			}
-			root.set("options", options);
-			messages.addMessage(player, Constants.RESP_MODAL_DIALOG_EN, root);
+			player.getModalDialog().getOptions().add(new ModalDialog.Option("Cancel", "Cancel"));
+		} else {
+			player.getModalDialog().setShow(false);
 		}
 	}
 

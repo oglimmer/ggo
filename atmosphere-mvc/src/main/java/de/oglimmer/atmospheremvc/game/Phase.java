@@ -6,8 +6,8 @@ public interface Phase {
 
 	void execCmd(Player player, String cmd, String param, MessageQueue messages);
 
-	void updateMessages(MessageQueue messages);
+	void updateMessages();
 
-	void updateModalDialgs(MessageQueue messages);
+	void updateModalDialgs();
 
 }

@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.ui;
+package de.oglimmer.ggo.ui.shortlife;
 
 import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
 import de.oglimmer.ggo.logic.Player;

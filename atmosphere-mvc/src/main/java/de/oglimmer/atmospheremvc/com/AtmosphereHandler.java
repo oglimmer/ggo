@@ -57,8 +57,8 @@ public class AtmosphereHandler {
 		}
 		MessageQueue messages = new MessageQueue();
 		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam(), messages);
-		game.getCurrentPhase().updateMessages(messages);
-		game.getCurrentPhase().updateModalDialgs(messages);
+		game.getCurrentPhase().updateMessages();
+		game.getCurrentPhase().updateModalDialgs();
 		messages.addUpdateUIMessages(game);
 		messages.sendMessages();
 	}

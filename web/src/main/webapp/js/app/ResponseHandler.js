@@ -34,6 +34,9 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 		case 'OpponentConnectionState':
 			return new OpponentConnectionState();
 			break;
+		case 'ModalDialog':
+			return new ModalDialog();
+			break;
 		default:
 			assert(false, "Illegal jsClass: "+jsClass);
 		}
@@ -111,19 +114,8 @@ define(['jquery', './Field', './Unit', './Constants', './HandItem', './GlobalDat
 		process: function(jsonObj) {
 			console.log("GOT FROM SERVER:");
 			console.log(jsonObj);
-			
 			copy(jsonObj, globalData.model, 0);
-			
-			/* RESP_MODAL_DIALOG_EN */
-			if( typeof jsonObj.modalDialogEnable !== 'undefined' ) {
-				globalData.modalDialg = new ModalDialog(jsonObj.modalDialogEnable);
-			}
-			/* RESP_MODAL_DIALOG_DIS */
-			if( typeof jsonObj.modalDialogDisable !== 'undefined' ) {
-				delete globalData.modalDialg;
-			}
 			globalData.board.draw();
-			
 		}
 		
 	};	

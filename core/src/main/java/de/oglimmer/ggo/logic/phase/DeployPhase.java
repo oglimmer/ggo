@@ -192,7 +192,7 @@ public class DeployPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player, MessageQueue messages) {
+	protected void updateMessage(Player player) {
 		if (player == activePlayer) {
 			if (selectedUnit != null) {
 				player.getMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getUnitType()

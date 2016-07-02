@@ -1,17 +1,23 @@
-define(['./Constants', './Communication', './GlobalData', './CursorUtil'], function(Constants, communication, globalData, cursorUtil) {
+define(['./Constants', './Communication', './GlobalData', './CursorUtil'], 
+		function(Constants, communication, globalData, cursorUtil) {
 
 
-	function ModalDialog(creationObj) {
+	function ModalDialog() {
 		// remote
-		this.title = creationObj.title;
-		this.options = creationObj.options;
-		if(this.options.length>0) {
-			this.options.push({
-				id: 'Cancel',
-				description: 'Cancel'
-			});
+		this.title;
+		this.options;
+		this.show = false;
+		
+		// local
+		this.rowHeight = 20;
+	}
+	
+	ModalDialog.prototype.draw = function(ctx) {
+		
+		if(!this.show) {
+			return;
 		}
-		// local		
+		
 		if(this.options.length>0) {
 			this.width = 130;
 			this.height = 100;
@@ -19,10 +25,7 @@ define(['./Constants', './Communication', './GlobalData', './CursorUtil'], funct
 			this.width = 300;
 			this.height = 200;			
 		}
-		this.rowHeight = 20;
-	}
-
-	ModalDialog.prototype.draw = function(ctx) {
+		
 		var latestCur = cursorUtil.lastCursorPos;
 		if(latestCur.x == 0) {
 			latestCur.x = 10;

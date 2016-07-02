@@ -9,7 +9,7 @@ import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.battle.Command;
-import de.oglimmer.ggo.ui.UIButton;
+import de.oglimmer.ggo.ui.persistent.UIButton;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
 		switch (cmd) {
 		case "join":
-			player.resetUiState();			
+			player.resetUiState();
 			break;
 		}
 	}
@@ -52,8 +52,14 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	 */
 	abstract protected void nextPhase();
 
-	final public void updateMessages(MessageQueue messages) {
-		getGame().getPlayers().forEach(p -> updateMessage(p, messages));
+	final public void updateMessages() {
+		getGame().getPlayers().forEach(p -> updateMessage(p));
+		getGame().getPlayers().forEach(player -> {
+			player.getMessages()
+					.setScore("Your score: " + player.getScore() + ", opponents score: "
+							+ getGame().getOtherPlayer(player).getScore() + " | Turn#" + getGame().getTurn() + " of "
+							+ Game.TOTAL_TURNS);
+		});
 	}
 
 	/**
@@ -61,16 +67,10 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	 * 
 	 * Must be idempotent
 	 */
-	abstract protected void updateMessage(Player player, MessageQueue messages);
+	abstract protected void updateMessage(Player player);
 
-	final public void updateModalDialgs(MessageQueue messages) {
-		getGame().getPlayers().forEach(p -> updateModalDialg(p, messages));
-		getGame().getPlayers().forEach(player -> {
-			player.getUiStates().getMessagesState()
-					.setScore("Your score: " + player.getScore() + ", opponents score: "
-							+ getGame().getOtherPlayer(player).getScore() + " | Turn#" + getGame().getTurn() + " of "
-							+ Game.TOTAL_TURNS);
-		});
+	final public void updateModalDialgs() {
+		getGame().getPlayers().forEach(p -> updateModalDialg(p));
 	}
 
 	/**
@@ -81,7 +81,7 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	 * @param player
 	 * @param messages
 	 */
-	protected void updateModalDialg(Player player, MessageQueue messages) {
+	protected void updateModalDialg(Player player) {
 	}
 
 	/**

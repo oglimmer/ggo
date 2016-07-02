@@ -1,11 +1,5 @@
 package de.oglimmer.ggo.logic.phase;
 
-import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import de.oglimmer.atmospheremvc.com.Constants;
-import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 
@@ -24,13 +18,12 @@ public class GameFinishedPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player, MessageQueue messages) {
+	protected void updateMessage(Player player) {
 		player.getMessages().setTitle("Game Over.");
 	}
 
 	@Override
-	protected void updateModalDialg(Player player, MessageQueue messages) {
-		ObjectNode root = instance.objectNode();
+	protected void updateModalDialg(Player player) {
 		String winningInfo;
 		if (player.getScore() > getGame().getOtherPlayer(player).getScore()) {
 			winningInfo = "You win!";
@@ -39,9 +32,8 @@ public class GameFinishedPhase extends BasePhase {
 		} else {
 			winningInfo = "It's a tie!";
 		}
-		root.set("title", instance.textNode("GAME OVER! " + winningInfo));
-		root.set("options", instance.arrayNode());
-		messages.addMessage(player, Constants.RESP_MODAL_DIALOG_EN, root);
+		player.getModalDialog().setTitle("GAME OVER! " + winningInfo);
+		player.getModalDialog().setShow(true);
 	}
 
 }

@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.ui;
+package de.oglimmer.ggo.ui.persistent;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

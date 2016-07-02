@@ -13,7 +13,7 @@ import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.battle.CombatPhaseRoundCounter;
 import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.battle.CommandCenter;
-import de.oglimmer.ggo.ui.UIButton;
+import de.oglimmer.ggo.ui.persistent.UIButton;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -60,7 +60,7 @@ public class CombatDisplayPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player, MessageQueue messages) {
+	protected void updateMessage(Player player) {
 		String title;
 		if (inTurn.contains(player)) {
 			title = "Check your and the opponents commands. Press `done` when finished. Round "

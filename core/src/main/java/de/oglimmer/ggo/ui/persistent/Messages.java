@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.logic;
+package de.oglimmer.ggo.ui.persistent;
 
 import lombok.Data;
 

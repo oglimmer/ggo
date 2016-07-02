@@ -27,8 +27,10 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 		
 		var relMousePos = cursorUtil.getRelativeMousePos(evt, this.canvasBoard);
 		
-		if(typeof globalData.modalDialg !== 'undefined') {
-			globalData.modalDialg.onSelect(relMousePos);
+		if(typeof globalData.model.modalDialogState !== 'undefined' 
+			&& globalData.model.modalDialogState != null
+			&& globalData.model.modalDialogState.show) {
+			globalData.model.modalDialogState.onSelect(relMousePos);
 			return;
 		}
 		
@@ -120,8 +122,8 @@ define(['jquery', './Constants', './Communication', './GlobalData', './CursorUti
 			}
 		});
 		// modalDialog
-		if(typeof globalData.modalDialg !== 'undefined') {
-			globalData.modalDialg.draw(this.ctxBoard);
+		if(typeof globalData.model.modalDialogState !== 'undefined' && globalData.model.modalDialogState != null) {
+			globalData.model.modalDialogState.draw(this.ctxBoard);
 		}
 	};	
 	

@@ -1,10 +1,11 @@
-package de.oglimmer.ggo.ui;
+package de.oglimmer.ggo.ui.shortlife;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.ui.persistent.UIButton;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

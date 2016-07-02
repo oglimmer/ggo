@@ -10,7 +10,7 @@ import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.UnitType;
-import de.oglimmer.ggo.ui.UIButton;
+import de.oglimmer.ggo.ui.persistent.UIButton;
 
 public class DraftPhase extends BasePhase {
 
@@ -27,7 +27,7 @@ public class DraftPhase extends BasePhase {
 	public void init() {
 		inTurn.addAll(getGame().getPlayers());
 		getGame().getPlayers().forEach(p -> p.incCredits(CREDITS_PER_TURN));
-		getGame().getPlayers().forEach(p -> p.getUiStates().getMessagesState().clearErrorInfo());
+		getGame().getPlayers().forEach(p -> p.getMessages().clearErrorInfo());
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class DraftPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player, MessageQueue messages) {
+	protected void updateMessage(Player player) {
 		if (inTurn.contains(player)) {
 			player.getMessages().setTitle(
 					"Draft units by clicking one at the bottom. To revert click the unit in your hand. Click 'done' to finish the draft phase. The player with more money left will start the next phase.");
