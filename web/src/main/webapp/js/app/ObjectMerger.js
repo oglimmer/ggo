@@ -136,9 +136,22 @@ define([ 'jquery', 'app/Field', 'app/Unit', 'app/Constants', 'app/HandItem',
 	function isFound(oneElement, arrayOfElements) {
 		assert($.type(arrayOfElements) === 'array', "val="
 				+ $.type(arrayOfElements));
+		assert($.type(oneElement) !== 'object'
+				|| $.type(oneElement.id) !== 'undefined',
+				"oneElement is an object but doesn't have attribute 'id'");
+
 		for (var i = 0; i < arrayOfElements.length; i++) {
-			if (arrayOfElements[i] == oneElement) {
-				return i;
+			var arrayElement = arrayOfElements[i];
+			if ($.type(arrayElement) === 'object') {
+				assert($.type(arrayElement.id) !== 'undefined',
+						"arrayElement is object, but doesn't have an id");
+				if (arrayElement.id == oneElement.id) {
+					return i;
+				}
+			} else {
+				if (arrayElement == oneElement) {
+					return i;
+				}
 			}
 		}
 		return -1;

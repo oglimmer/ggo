@@ -56,6 +56,42 @@ define([ 'app/ObjectMerger' ], function(objectMerger) {
 				"test" : [ 1, 2, 3 ]
 			});
 		});
-
+		it("remove one object attribute to existing", function() {
+			var source = {
+				"modalDialogState" : {
+					"options##REMOVED##" : [ {
+						"id" : 1,
+						"desc" : "what-not-1"
+					} ],
+					"options" : [ {
+						"id" : 4,
+						"desc" : "what-not-3"
+					} ]
+				}
+			};
+			var target = {
+				"modalDialogState" : {
+					"options" : [ {
+						"id" : 1,
+						"desc" : "what-not-1"
+					}, {
+						"id" : 2,
+						"desc" : "what-not-2"
+					} ]
+				}
+			};
+			objectMerger.merge(source, target);
+			expect(target).toEqual({
+				"modalDialogState" : {
+					"options" : [ {
+						"id" : 2,
+						"desc" : "what-not-2"
+					}, {
+						"id" : 4,
+						"desc" : "what-not-3"
+					} ]
+				}
+			});
+		});
 	});
 });

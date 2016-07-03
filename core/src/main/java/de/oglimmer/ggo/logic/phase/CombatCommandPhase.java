@@ -191,6 +191,7 @@ public class CombatCommandPhase extends BasePhase {
 		if (getState(player).getPossibleCommandTypesOptions() != null) {
 			player.getModalDialog().setShow(true);
 			player.getModalDialog().setTitle("Choose a command");
+			player.getModalDialog().getOptions().clear();
 			for (CommandType ct : getState(player).getPossibleCommandTypesOptions()) {
 				player.getModalDialog().getOptions().add(new ModalDialog.Option(ct.name(), ct.name()));
 			}

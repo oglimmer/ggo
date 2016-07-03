@@ -103,5 +103,51 @@
 		"DIFF": {
 			"command": "##REMOVED##"
 		}
+	},
+	{
+		"OLD": {
+			"modalDialogState": {
+				"options": [
+					{
+						"id": 1,
+						"desc": "what-not-1"
+					},
+					{
+						"id": 2,
+						"desc": "what-not-2"
+					}
+				]
+			}
+		},
+		"NEW": {
+			"modalDialogState": {
+				"options": [
+					{
+						"id": 2,
+						"desc": "what-not-2"
+					},
+					{
+						"id": 4,
+						"desc": "what-not-3"
+					}
+				]
+			}
+		},
+		"DIFF": {
+			"modalDialogState": {
+				"options##REMOVED##": [
+					{
+						"id": 1,
+						"desc": "what-not-1"
+					}
+				],
+				"options": [
+					{
+						"id": 4,
+						"desc": "what-not-3"
+					}
+				]
+			}
+		}
 	}
 ]
