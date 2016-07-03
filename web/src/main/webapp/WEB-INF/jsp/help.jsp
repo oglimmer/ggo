@@ -27,6 +27,8 @@
 		Each player drafts (or you could say 'buys') units. Each round a player gets 1,000 additional credits. Credits you don't spend
 		this turn, will be kept for next turn. A unit is drafted by clicking on its icon at the bottom. If you want to undo the draft
 		click on the unit in your hand. Drafting is done for both players in parallel. 
+		The deploy phase is started by the player having more credits left, or at a tie the player with less units, or at a tie
+		by random.  
 	</p>
 	<h2>Deploy phase</h2>
 	<p>
@@ -38,7 +40,8 @@
 	<h2>Combat / move phase</h2>
 	<p>
 		Each combat / move phase has 3 rounds. For each round a player can give each unit one command. When all units have the
-		desired command press the 'done' button to let the computer carry out the move/attacks. All movements and attacks are 
+		desired command press the 'done' button to see all commands issues by your and your opponent.
+		To let the computer carry out the move/attacks press done again. All movements and attacks are 
 		then executed in parallel. 
 	</p>
 	<h3>Command: Fortify</h3>
@@ -56,6 +59,7 @@
 	<h3>Command: Support</h3>
 	<p>
 		A unit can support another friendly and adjacent unit. The other unit gets +1 strength. A yellow arrow indicates a move command.
+		Note: A unit getting support from another unit cannot move into a field which is not adjacent to the supporting unit.
 	</p>
 	<h3>Command: Bombard</h3>
 	<p>
