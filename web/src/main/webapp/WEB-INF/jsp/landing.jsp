@@ -9,7 +9,7 @@
 	   <div class="container">
 	     <h1>Welcome to Grid Game One</h1>
 	     <p>A 2 player hex-field based, no-luck, strategy game.</p>
-	     <img src="images/portal_overview.png" />
+	     <iframe width="420" height="315" src="https://www.youtube.com/embed/kCPBiaSKDY4" frameborder="0" allowfullscreen></iframe>
 	     <p>
 	     <p>	     	
 	     	<stripes:link class="btn btn-primary btn-lg" beanclass="de.oglimmer.ggo.web.action.CreateGameActionBean">
