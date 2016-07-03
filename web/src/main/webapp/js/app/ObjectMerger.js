@@ -1,100 +1,158 @@
-define(['jquery', 'app/Field', 'app/Unit', 'app/Constants', 'app/HandItem', 'app/GlobalData', 'app/Button', 'app/ModalDialog', 'app/Messages', 'app/OpponentConnectionState'], 
-		function($, Field, Unit, Constants, HandItem, globalData, Button, ModalDialog, Messages, OpponentConnectionState) {
-	
-	
+define([ 'jquery', 'app/Field', 'app/Unit', 'app/Constants', 'app/HandItem',
+		'app/GlobalData', 'app/Button', 'app/ModalDialog', 'app/Messages',
+		'app/OpponentConnectionState', 'app/TypeUtil' ], function($, Field,
+		Unit, Constants, HandItem, globalData, Button, ModalDialog, Messages,
+		OpponentConnectionState, typeUtil) {
+
+	var REMOVE_TOKEN = "##REMOVED##";
+
 	var classNameToConstructor = {};
 	$.each(arguments, function(index, ctor) {
-		if(typeof ctor.name !=='undefined' && ctor.name != null) {
+		if ($.type(ctor.name) !== 'undefined' && ctor.name != null) {
 			classNameToConstructor[ctor.name] = ctor;
 		}
 	});
-	
+
 	var logEnabled = false;
-	function log(obj) {
-		if(logEnabled) {
+	// $.post("http://localhost:9999", { data : log + "\r\n" });
+	var log = "";
+	function writeLog(obj) {
+		if (logEnabled) {
 			console.log(obj);
-		}
-	}
-	
-	function assert(statement, text) {
-		if(!statement) {
-			throw new String("ASSERTION FAILED!!!"+text);
-		}
-	}
-	
-	function construct(jsClass) {
-		var ctor = classNameToConstructor[jsClass];
-		assert(ctor!=null, "No constructor for "+jsClass);
-		return new (ctor.bind.apply(ctor))();
-	}
-	
-	function copy(source, target, level) {
-		// source and target need to be of same type 'object' or 'array' or null
-		assert(!(typeof source === 'object' && typeof target === 'array'));
-		assert(!(typeof source === 'array' && typeof target === 'object'));
-		
-		if(typeof source === 'object' || typeof target === 'object') {
-			copyObject(source, target, level);
-		} else if(typeof source === 'array' || typeof target === 'array') {
-			copyArray(source, target, level);
-		} else {
-			assert(source === null && target === null);
-		}
-		
-	}
-	
-	function copyObject(source, target) {
-		assert((typeof source === 'object' && typeof target === 'object') 
-				|| (typeof source === 'array' && typeof target === 'array'), "copyObject requires source and target are either both object or both array, but source="+typeof source+", target="+typeof target);
-		
-		for(var attKey in source) {
-			var val = source[attKey];
-			if(val === '##REMOVED##') {
-				// attribute got removed
-				delete target[attKey];
-			} else {				
-				if(typeof val === 'object' || typeof val === 'array') {
-					if(val === null) {
-						// set attribute of type object/array to null
-						target[attKey] = null;						
-					} else { 
-						if(typeof target[attKey] === 'undefined' || target[attKey] === null) {
-							// old value was undefined/null, thus create new object
-							if(val !=  null && typeof val.jsClass !== 'undefined') {
-								target[attKey] = construct(val.jsClass);
-							} else {
-								target[attKey] = {};
-							}		
-						}
-						// deep-copy
-						copy(val, target[attKey]);
-					}
-				} else {
-					// set attribute of type string,number,boolean,'null' to new val (incl. null)
-					target[attKey] = val;						
-				}
-			}
-		}
-	}
-	
-	function copyArray(source, target, level) {
-		assert(typeof source === 'array' || typeof target === 'array');
-		
-		for(var att in source) {
-			if(typeof source[att] === 'array' && att.indexOf("##REMOVED##") > 0 ) {
-				console.log("REMOVING ARRAY ELEMENTS NOT IMPLEMENTED");
+			if ($.type(obj) === 'object') {
+				log = log + " \r\n " + JSON.stringify(obj);
 			} else {
-				if(typeof source[att] === 'array') {
-					console.log("ADDING/CHANGING ARRAY ELEMENTS NOT IMPLEMENTED");
-				} else {
-					target[att] = source[att];						
-				}
+				log = log + " \r\n " + obj;
 			}
 		}
 	}
 
+	function assert(statement, text) {
+		if (!statement) {
+			throw new String("ASSERTION FAILED!!!" + text);
+		}
+	}
+
+	function construct(jsClass) {
+		var ctor = classNameToConstructor[jsClass];
+		assert(ctor != null, "No constructor for " + jsClass);
+		return new (ctor.bind.apply(ctor))();
+	}
+
+	function mergeRoot(source, target) {
+		mergeObject(source, target);
+	}
+
+	function mergeObject(source, target) {
+		assert(typeUtil.allowedTypes(source, "object", "null"),
+				"mergeObject requires source to be object or null, but source="
+						+ $.type(source));
+		assert(typeUtil.allowedTypes(target, "object", "null", "undefined"),
+				"mergeObject requires target to be object/null/undefined, but target="
+						+ $.type(target));
+		assert(typeUtil.compatibleType(source, target),
+				"mergeObject requires compatible types, but source="
+						+ $.type(source) + ", target=" + $.type(target));
+
+		for ( var attKey in source) {
+			var newVal = element(attKey, source[attKey], getTargetValue(attKey,
+					target));
+			if (newVal === REMOVE_TOKEN) {
+				delete target[attKey];
+			} else if ($.type(newVal) !== 'undefined') {
+				target[attKey] = newVal;
+			}
+		}
+	}
+
+	function element(key, val, targetVal) {
+		writeLog("element:" + key + " of type " + $.type(val));
+		if (val === REMOVE_TOKEN) {
+			// attribute got removed
+			return REMOVE_TOKEN;
+		} else {
+			if ($.type(val) === 'null') {
+				// set attribute of type object/array to null
+				return null;
+			} else if ($.type(val) === 'object') {
+				return elementObject(key, val, targetVal);
+			} else if ($.type(val) === 'array') {
+				return elementArray(key, val, targetVal);
+			} else {
+				// set attribute of type string,number,boolean
+				assert(typeUtil
+						.allowedTypes(val, "string", "boolean", "number"),
+						"val=" + $.type(val));
+				return val;
+			}
+		}
+	}
+
+	function elementObject(key, val, targetVal) {
+		var newVal;
+		if ($.type(targetVal) === 'undefined' || targetVal === null) {
+			// old value was undefined/null, thus create new object
+			if (val != null && $.type(val.jsClass) !== 'undefined') {
+				newVal = construct(val.jsClass);
+			} else {
+				newVal = {};
+			}
+		} else {
+			newVal = targetVal;
+		}
+		// deep-copy
+		mergeObject(val, newVal);
+		return newVal;
+	}
+
+	function elementArray(key, val, targetVal) {
+		assert($.type(val) === 'array', "val=" + $.type(val));
+
+		if (key.indexOf(REMOVE_TOKEN) > 0) {
+			for (var i = 0; i < val.length; i++) {
+				var arrayElemenet = val[i];
+				var pos = isFound(arrayElemenet, targetVal);
+				if (pos !== -1) {
+					targetVal.splice(pos, 1);
+				}
+			}
+			return undefined;
+		} else {
+			var objectCreated = false;
+			if ($.type(targetVal) === 'undefined' || targetVal === null) {
+				targetVal = [];
+				objectCreated = true;
+			}
+			for (var i = 0; i < val.length; i++) {
+				var arrayElemenet = val[i];
+				if (isFound(arrayElemenet, targetVal) === -1) {
+					targetVal.push(arrayElemenet);
+				}
+			}
+			return objectCreated ? targetVal : undefined;
+		}
+	}
+
+	function isFound(oneElement, arrayOfElements) {
+		assert($.type(arrayOfElements) === 'array', "val="
+				+ $.type(arrayOfElements));
+		for (var i = 0; i < arrayOfElements.length; i++) {
+			if (arrayOfElements[i] == oneElement) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	function getTargetValue(attKey, target) {
+		if (attKey.indexOf(REMOVE_TOKEN) > 0) {
+			attKey = attKey.substring(0, attKey.indexOf(REMOVE_TOKEN));
+		}
+		return target[attKey];
+	}
+
 	return {
-		merge: copy
+		merge : mergeRoot
 	};
 
 });
