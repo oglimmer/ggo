@@ -1,6 +1,19 @@
 define(['app/Constants', 'app/Communication', 'app/GlobalData', 'app/CursorUtil'], 
 		function(Constants, communication, globalData, cursorUtil) {
 
+	function sortCancelToEnd(array) {
+		array.sort(function(a,b){
+			if(a.id === b.id) {
+				return 0;
+			} else if(a.id === 'Cancel') {
+				return 1;
+			} else if(b.id === 'Cancel') {
+				return -1;
+			}
+			return a.id < b.id ? -1 : 1;
+		});
+		return array;
+	}
 
 	function ModalDialog() {
 		// remote
@@ -51,7 +64,7 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData', 'app/CursorUtil'
 		ctx.fillText(this.title, latestCur.x+3, y);
 		y += this.rowHeight;
 		var thiz = this;
-		$.each(this.options, function(index, options) {
+		$.each(sortCancelToEnd(this.options), function(index, options) {
 			var xDraw = latestCur.x+8
 			var yDraw = y;
 			options.x = latestCur.x;
