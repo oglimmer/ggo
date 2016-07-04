@@ -3,7 +3,6 @@ package de.oglimmer.ggo.logic.phase;
 import java.util.Collection;
 import java.util.Collections;
 
-import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -22,8 +21,8 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	private Game game;
 
 	@Override
-	public void execCmd(de.oglimmer.atmospheremvc.game.Player player, String cmd, String param, MessageQueue messages) {
-		execCmd((Player) player, cmd, param, messages);
+	public void execCmd(de.oglimmer.atmospheremvc.game.Player player, String cmd, String param) {
+		execCmd((Player) player, cmd, param);
 	}
 
 	/**
@@ -34,7 +33,7 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	 * @param param
 	 * @param messages
 	 */
-	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
+	public void execCmd(Player player, String cmd, String param) {
 		switch (cmd) {
 		case "join":
 			player.resetUiState();

@@ -73,9 +73,8 @@ public class Player implements de.oglimmer.atmospheremvc.game.Player {
 			currentPhase.updateMessages();
 			currentPhase.updateModalDialgs();
 		}
-		MessageQueue messages = new MessageQueue();
-		messages.addUpdateUIMessages(game);
-		messages.sendMessages();
+		MessageQueue messages = new MessageQueue(game);
+		messages.process();
 	}
 
 	public String toString() {

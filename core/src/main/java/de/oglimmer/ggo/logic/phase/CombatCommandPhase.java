@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -87,8 +86,8 @@ public class CombatCommandPhase extends BasePhase {
 	}
 
 	@Override
-	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
-		super.execCmd(player, cmd, param, messages);
+	public void execCmd(Player player, String cmd, String param) {
+		super.execCmd(player, cmd, param);
 		switch (cmd) {
 		case "selectUnit":
 			execSelectUnit(player, param);
@@ -97,7 +96,7 @@ public class CombatCommandPhase extends BasePhase {
 			execTargetField(player, param);
 			break;
 		case "selectModalDialog":
-			execModalDialog(player, param, messages);
+			execModalDialog(player, param);
 			break;
 		case "button":
 			if ("doneButton".equals(param)) {
@@ -114,7 +113,7 @@ public class CombatCommandPhase extends BasePhase {
 		}
 	}
 
-	private void execModalDialog(Player player, String param, MessageQueue messages) {
+	private void execModalDialog(Player player, String param) {
 		Unit unit = getState(player).getSelectedUnits();
 		if (unit == null) {
 			log.error("execTargetField but no unit was selected");

@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -122,8 +121,8 @@ public class DeployPhase extends BasePhase {
 	}
 
 	@Override
-	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
-		super.execCmd(player, cmd, param, messages);
+	public void execCmd(Player player, String cmd, String param) {
+		super.execCmd(player, cmd, param);
 		switch (cmd) {
 		case "selectHandCard":
 			execSelectHandCard(player, param);

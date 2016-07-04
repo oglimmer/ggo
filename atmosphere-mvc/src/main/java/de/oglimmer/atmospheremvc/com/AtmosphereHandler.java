@@ -55,12 +55,11 @@ public class AtmosphereHandler {
 		if ("join".equals(message.getCmd())) {
 			AtmosphereResourceCache.INSTANCE.registerPlayer(player, r.uuid());
 		}
-		MessageQueue messages = new MessageQueue();
-		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam(), messages);
+		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam());
 		game.getCurrentPhase().updateMessages();
 		game.getCurrentPhase().updateModalDialgs();
-		messages.addUpdateUIMessages(game);
-		messages.sendMessages();
+		MessageQueue messages = new MessageQueue(game);
+		messages.process();
 	}
 
 }

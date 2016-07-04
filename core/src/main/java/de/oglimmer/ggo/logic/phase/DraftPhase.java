@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
@@ -31,8 +30,8 @@ public class DraftPhase extends BasePhase {
 	}
 
 	@Override
-	public void execCmd(Player player, String cmd, String param, MessageQueue messages) {
-		super.execCmd(player, cmd, param, messages);
+	public void execCmd(Player player, String cmd, String param) {
+		super.execCmd(player, cmd, param);
 		switch (cmd) {
 		case "selectHandCard":
 			execSelectHandCard(player, param);
