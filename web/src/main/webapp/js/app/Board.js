@@ -10,7 +10,8 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 		});
 		return array;
 	}
-	
+
+	/*private class Board*/
 	function Board(elementId) {
 		this.canvasBoard = document.getElementById(elementId);
 		this.ctxBoard = this.canvasBoard.getContext('2d');
@@ -22,63 +23,78 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 			});
 		});
 	}
-	
-	Board.prototype.clickHandler = function(evt) {
+
+	/*private*/ Board.prototype.clickHandler = function(evt) {
 		
 		var relMousePos = cursorUtil.getRelativeMousePos(evt, this.canvasBoard);
 		
-		if(typeof globalData.model.modalDialogState !== 'undefined' 
-			&& globalData.model.modalDialogState != null
-			&& globalData.model.modalDialogState.show) {
-			globalData.model.modalDialogState.onSelect(relMousePos);
+		if(this.clickHandlerModalDialog(relMousePos)) {
 			return;
 		}
 		
 		var selectedHex = this.getFieldByPos(relMousePos);
 		if (selectedHex != null) {
-
-			if (typeof selectedHex.onSelect !== 'undefined') {
-				selectedHex.onSelect();
-			}					
-
-			var allUnits = globalData.model.boardState.idToUnits;
-			for ( var unitProp in allUnits) {
-				var unit = allUnits[unitProp];
-				if (unit.x == selectedHex.x && unit.y == selectedHex.y) {
-					if (typeof unit.onSelect !== 'undefined') {
-						unit.onSelect();
-					}					
-				}
-			}
-
+			this.clickHandlerFieldUnit(selectedHex);
 		} else {
-			$.each(globalData.model.boardState.idToHanditems, function(index, handItem) {
-				if(handItem.x <= relMousePos.x && handItem.y <= relMousePos.y 
-						&& handItem.x+handItem.width >= relMousePos.x && handItem.y+handItem.height >= relMousePos.y) {
-					if (typeof handItem.onSelect !== 'undefined' ) {
-						handItem.onSelect();
-					}	
-				}
-			})
-			$.each(globalData.model.boardState.idToButtons, function(index, buttonIten) {
-				if(buttonIten.x <= relMousePos.x && buttonIten.y <= relMousePos.y 
-						&& buttonIten.x+buttonIten.width >= relMousePos.x && buttonIten.y+buttonIten.height >= relMousePos.y) {
-					if (typeof buttonIten.onSelect !== 'undefined' ) {
-						buttonIten.onSelect();
-					}	
-				}
-			})
+			this.clickHandlerHandItemButtons(relMousePos);
 		}
 		
 	}
+	
+	/*private*/ Board.prototype.clickHandlerModalDialog = function(relMousePos) {
+		if(typeof globalData.model.modalDialogState !== 'undefined' 
+			&& globalData.model.modalDialogState != null
+			&& globalData.model.modalDialogState.show) {
+			globalData.model.modalDialogState.onSelect(relMousePos);
+			return true;
+		}
+		return false;
+	}
+	/*private*/ Board.prototype.clickHandlerFieldUnit = function(selectedHex) {
+		if (typeof selectedHex.onSelect !== 'undefined') {
+			selectedHex.onSelect();
+		}					
 
-	Board.prototype.draw = function() {
-		// clear the field
+		var allUnits = globalData.model.boardState.idToUnits;
+		for ( var unitProp in allUnits) {
+			var unit = allUnits[unitProp];
+			if (unit.x == selectedHex.x && unit.y == selectedHex.y) {
+				if (typeof unit.onSelect !== 'undefined') {
+					unit.onSelect();
+				}					
+			}
+		}
+	}
+	/*private*/ Board.prototype.clickHandlerHandItemButtons = function(relMousePos) {
+		function check(items) {
+			$.each(items, function(index, item) {
+				if(item.x <= relMousePos.x && item.y <= relMousePos.y 
+						&& item.x+item.width >= relMousePos.x && item.y+item.height >= relMousePos.y) {
+					if (typeof item.onSelect !== 'undefined' ) {
+						item.onSelect();
+					}	
+				}
+			})
+		}
+		check(globalData.model.boardState.idToHanditems);
+		check(globalData.model.boardState.idToButtons);
+	}
+
+	/*public*/ Board.prototype.draw = function() {		
 		this.ctxBoard.clearRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
-		// fields		
+		this.drawFields();
+		this.drawUnits();
+		this.drawHand();
+		this.drawButtons();
+		this.drawModalDialog();
+	};	
+	
+	/*private*/ Board.prototype.drawFields = function() {
 		for ( var f in globalData.model.boardState.corToFields) {
 			globalData.model.boardState.corToFields[f].draw(this.ctxBoard, globalData.model.boardState.showCoordinates);
 		}
+	}
+	/*private*/ Board.prototype.drawUnits = function() {
 		// units- z-level:0
 		for ( var f in globalData.model.boardState.idToUnits) {
 			var unitToDraw = globalData.model.boardState.idToUnits[f];
@@ -94,7 +110,8 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 			var unitToDraw = globalData.model.boardState.idToUnits[f];
 			unitToDraw.draw2(this.ctxBoard);
 		}
-		// hand
+	}
+	/*private*/ Board.prototype.drawHand = function() {
 		this.ctxBoard.beginPath();
 		this.ctxBoard.fillStyle = "#dddddd";
 		this.ctxBoard.fillRect(0, 470, this.ctxBoard.canvas.width-10, 57);
@@ -111,7 +128,9 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 			this.ctxBoard.fillStyle = "black";
 			this.ctxBoard.fillText("No units in hand.",x,y+28);
 		}
-		// buttons
+
+	}
+	/*private*/ Board.prototype.drawButtons = function() {
 		var x = 3;
 		var y = 535;
 		var thiz = this;
@@ -121,16 +140,19 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 				x += buttonToDraw.width+4;
 			}
 		});
-		// modalDialog
+
+	}
+	/*private*/ Board.prototype.drawModalDialog = function() {
 		if(typeof globalData.model.modalDialogState !== 'undefined' && globalData.model.modalDialogState != null) {
 			globalData.model.modalDialogState.draw(this.ctxBoard);
 		}
-	};	
+	}
+	
 	
 	/**
 	 * returns a Field object which is located at pos (x,y)
 	 */
-	Board.prototype.getFieldByPos = function(pos) {
+	/*private*/Board.prototype.getFieldByPos = function(pos) {
 		// x,y base coordinate
 		var hexPosY = Math.floor(pos.y / (Constants.size.height * 0.75));
 		var hexPosX = Math.floor(pos.x / Constants.size.width);
@@ -195,7 +217,12 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 		}
 		return null;
 	};
-
-	return Board;
+	
+	return function(elementId) {
+		var board = new Board(elementId);	
+		this.draw = function() {
+			board.draw();
+		}
+	};
 	
 });
