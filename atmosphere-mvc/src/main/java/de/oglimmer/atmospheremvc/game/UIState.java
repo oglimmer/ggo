@@ -1,5 +1,8 @@
 package de.oglimmer.atmospheremvc.game;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,8 +13,8 @@ import de.oglimmer.atmospheremvc.util.Json;
 abstract public class UIState implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
-	private JsonNode lastSendData;
+
+	private transient JsonNode lastSendData;
 
 	abstract protected Object getState();
 
@@ -28,4 +31,15 @@ abstract public class UIState implements Serializable {
 		return diff;
 	}
 
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+		ObjectMapper mapper = new ObjectMapper();
+		oos.writeUTF(mapper.writeValueAsString(lastSendData));
+	}
+
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+		ois.defaultReadObject();
+		ObjectMapper mapper = new ObjectMapper();
+		lastSendData = mapper.readTree(ois.readUTF());
+	}
 }

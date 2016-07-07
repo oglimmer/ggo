@@ -1,6 +1,10 @@
 package de.oglimmer.ggo.logic.battle;
 
-public class CombatPhaseRoundCounter {
+import java.io.Serializable;
+
+public class CombatPhaseRoundCounter implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private static final int MAX_ROUNDS = 3;
 
