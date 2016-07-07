@@ -36,6 +36,9 @@ public enum EmailService {
 	}
 
 	public void gameNeedsYourAction(Player p) {
+		if (p.getEmail() == null || p.getEmail().trim().isEmpty()) {
+			return;
+		}
 		if (p.isFirstEmail()) {
 			p.setFirstEmail(false);
 			this.send(p.getEmail(), "[GridGameOne] Game invite",
