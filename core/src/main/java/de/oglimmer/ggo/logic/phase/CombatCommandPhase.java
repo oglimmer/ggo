@@ -25,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CombatCommandPhase extends BasePhase {
 
+	private static final long serialVersionUID = 1L;
+
 	private CombatPhaseRoundCounter combatPhaseRoundCounter;
 
 	private Map<Player, State> states = new HashMap<>();
@@ -55,6 +57,7 @@ public class CombatCommandPhase extends BasePhase {
 			getGame().getPlayers().forEach(p -> {
 				if (getGame().getBoard().getTotalUnits(p) > 0) {
 					inTurn.add(p);
+					notifyPlayer(p);
 				}
 			});
 			if (inTurn.isEmpty()) {

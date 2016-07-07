@@ -13,6 +13,8 @@ import de.oglimmer.ggo.ui.shortlife.UIButton;
 
 public class DraftPhase extends BasePhase {
 
+	private static final long serialVersionUID = 1L;
+	
 	private static final int CREDITS_PER_TURN = 1000;
 
 	private Set<Player> inTurn = new HashSet<>();
@@ -25,6 +27,7 @@ public class DraftPhase extends BasePhase {
 	@Override
 	public void init() {
 		inTurn.addAll(getGame().getPlayers());
+		notifyPlayers();
 		getGame().getPlayers().forEach(p -> p.incCredits(CREDITS_PER_TURN));
 		getGame().getPlayers().forEach(p -> p.getMessages().clearErrorInfo());
 	}

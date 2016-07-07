@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 
+import de.oglimmer.ggo.logic.Player;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -32,6 +33,21 @@ public enum EmailService {
 				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne.\n\nThis just happened.\n\n"
 						+ "Now go to our website and join this game:\nhttp://" + PROPERTIES.getDomain()
 						+ "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
+	}
+
+	public void gameNeedsYourAction(Player p) {
+		if (p.isFirstEmail()) {
+			p.setFirstEmail(false);
+			this.send(p.getEmail(), "[GridGameOne] Game invite",
+					"Hi,\n\nyou have been invited to a game of GridGameOne.\n\n"
+							+ "Click here to do your first turn:\nhttp://" + PROPERTIES.getDomain()
+							+ PROPERTIES.getUrlPath() + "/Board.action?playerId=" + p.getId() + "\n\n\nRegards,\nOliZ");
+		} else {
+			this.send(p.getEmail(), "[GridGameOne] Game needs your command",
+					"Hi,\n\na game of GridGameOne needs your command.\n\n"
+							+ "Click here to get back to the board:\nhttp://" + PROPERTIES.getDomain()
+							+ PROPERTIES.getUrlPath() + "/Board.action?playerId=" + p.getId() + "\n\n\nRegards,\nOliZ");
+		}
 	}
 
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();

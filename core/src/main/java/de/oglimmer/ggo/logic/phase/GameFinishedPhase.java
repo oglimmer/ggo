@@ -5,12 +5,15 @@ import de.oglimmer.ggo.logic.Player;
 
 public class GameFinishedPhase extends BasePhase {
 
+	private static final long serialVersionUID = 1L;
+	
 	public GameFinishedPhase(Game game) {
 		super(game);
 	}
 
 	@Override
 	public void init() {
+		notifyPlayers();
 	}
 
 	@Override

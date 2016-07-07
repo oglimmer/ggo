@@ -10,7 +10,7 @@ import de.oglimmer.ggo.ui.UIStates;
 import de.oglimmer.ggo.ui.persistent.Messages;
 import de.oglimmer.ggo.ui.persistent.ModalDialog;
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.Setter;
 
 public class Player implements de.oglimmer.atmospheremvc.game.Player {
 
@@ -20,11 +20,15 @@ public class Player implements de.oglimmer.atmospheremvc.game.Player {
 	private String id = RandomString.getRandomStringHex(8);
 
 	@Getter
-	@NonNull
 	private Side side;
 
 	@Getter
-	@NonNull
+	private String email;
+	@Getter
+	@Setter
+	private boolean firstEmail;
+
+	@Getter
 	private Game game;
 
 	@Getter
@@ -45,11 +49,13 @@ public class Player implements de.oglimmer.atmospheremvc.game.Player {
 	@Getter
 	private UIStates uiStates;
 
-	public Player(Side side, Game game) {
+	public Player(Side side, String email, Game game) {
 		this.side = side;
 		this.game = game;
+		this.email = email;
 		uiStates = new UIStates(this);
 		game.getBoard().addCities(this);
+		firstEmail = true;
 	}
 
 	public void resetUiState() {

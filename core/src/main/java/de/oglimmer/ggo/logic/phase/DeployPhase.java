@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DeployPhase extends BasePhase {
 
+	private static final long serialVersionUID = 1L;
+	
 	private Player activePlayer;
 
 	private Unit selectedUnit;
@@ -34,6 +36,7 @@ public class DeployPhase extends BasePhase {
 		Player firstActivePlayer = findFirstPlayer();
 		findActivePlayer(firstActivePlayer);
 		if (this.activePlayer != null) {
+			notifyPlayer(activePlayer);
 			getGame().getPlayers().forEach(p -> p.getMessages().clearErrorInfo());
 			getGame().getPlayers()
 					.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
@@ -187,6 +190,7 @@ public class DeployPhase extends BasePhase {
 			nextPhase();
 		} else {
 			activePlayer = nextPlayer;
+			notifyPlayer(activePlayer);
 		}
 	}
 

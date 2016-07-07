@@ -53,7 +53,8 @@ requirejs([ 'commons' ], function(commons) {
 		}
 		
 		$("#btnByEmail").click(function() {
-			document.location.href="CreateGameByEmail.action";
+			$("#divChooseType").hide();
+			$("#divEnterEmails").show();
 		})
 		$("#btnRealTime").click(function() {
 			createGame();

@@ -58,6 +58,10 @@ public class Game implements de.oglimmer.atmospheremvc.game.Game {
 	}
 
 	public Player createPlayer() {
+		return createPlayer(null);
+	}
+
+	public Player createPlayer(String email) {
 		Side side;
 		if (players.size() == 0) {
 			side = Side.GREEN;
@@ -66,7 +70,7 @@ public class Game implements de.oglimmer.atmospheremvc.game.Game {
 		} else {
 			throw new RuntimeException();
 		}
-		Player newPlayer = new Player(side, this);
+		Player newPlayer = new Player(side, email, this);
 		players.add(newPlayer);
 		return newPlayer;
 	}

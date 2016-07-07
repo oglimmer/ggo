@@ -5,10 +5,19 @@
   <stripes:layout-component name="head">	 
 	 <div class="jumbotron">
 	   <div class="container">
-	     <h3>Your game is <span id="gameId"></span></h3>
-	     <p>Waiting for other player <span id="waitingProgress"></span></p>
-	     <p>(We have informed <span id="numberOfNotifications"></span> by email about your new game, if eventually 
-	     no one joins this new game, you can add yourself to the email notification system on the portal page as well.)
+	   	<div id="divWaitingForOtherPlayer" style="display:none">
+			<h3>Your game is <span id="gameId"></span></h3>
+			<p>Waiting for other player <span id="waitingProgress"></span></p>
+			<p>(We have informed <span id="numberOfNotifications"></span> by email about your new game, if eventually 
+			no one joins this new game, you can add yourself to the email notification system on the portal page as well.)
+	   	</div>
+	   	<div id="divChooseType">
+		   	<h3>Choose a gaming type ...</h3>
+		   	<p>
+		   		<button id="btnByEmail" class="btn btn-primary btn-lg">Play by e-mail</button>
+		   		<button id="btnRealTime" class="btn btn-primary btn-lg">Real-time game</button>
+		   	</p>
+	   	</div>
 	   </div>
 	 </div>
   </stripes:layout-component>

@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CombatDisplayPhase extends BasePhase {
 
+	private static final long serialVersionUID = 1L;
+	
 	private CombatPhaseRoundCounter combatPhaseRoundCounter;
 	private CommandCenter ccDryRun;
 	private CommandCenter cc;
@@ -34,6 +36,7 @@ public class CombatDisplayPhase extends BasePhase {
 	@Override
 	public void init() {
 		inTurn.addAll(getGame().getPlayers());
+		notifyPlayers();
 		getGame().getPlayers().forEach(p -> p.getMessages().clearErrorInfo());
 		ccDryRun.calcBattle();
 		infoMessages = ccDryRun.getInfoMessages();

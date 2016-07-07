@@ -3,6 +3,8 @@ package de.oglimmer.ggo.logic.phase;
 import java.util.Collection;
 import java.util.Collections;
 
+import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
+import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -17,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Getter
 	@NonNull
 	private Game game;
@@ -52,6 +54,17 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	 * Moves the game to the next phase
 	 */
 	abstract protected void nextPhase();
+
+	protected void notifyPlayers() {
+		getGame().getPlayers().forEach(this::notifyPlayer);
+	}
+
+	protected void notifyPlayer(Player p) {
+		AtmosphereResourceCache.Item item = AtmosphereResourceCache.INSTANCE.getItem(p);
+		if (item == null || item.isDisconnected()) {
+			EmailService.EMAIL.gameNeedsYourAction(p);
+		}
+	}
 
 	final public void updateMessages() {
 		getGame().getPlayers().forEach(p -> updateMessage(p));

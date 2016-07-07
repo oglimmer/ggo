@@ -137,7 +137,7 @@ public enum AtmosphereResourceCache {
 		return null;
 	}
 
-	private Item getItem(Player player) {
+	public Item getItem(Player player) {
 		Optional<Item> findFirst = items.stream().filter(i -> i.getPlayer() == player).findFirst();
 		if (findFirst.isPresent()) {
 			return findFirst.get();
