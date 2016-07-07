@@ -1,5 +1,6 @@
 package de.oglimmer.ggo.ui.shortlife;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,7 +15,9 @@ import lombok.ToString;
  */
 @RequiredArgsConstructor
 @ToString
-public class UIBoardStateProvider {
+public class UIBoardStateProvider implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@NonNull
 	private Player forPlayer;

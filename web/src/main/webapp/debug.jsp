@@ -1,11 +1,10 @@
-<%@page import="de.oglimmer.ggo.com.AtmosphereResourceCache"%>
+<%@page import="de.oglimmer.atmospheremvc.game.Games"%>
+<%@page import="de.oglimmer.atmospheremvc.com.AtmosphereResourceCache"%>
 <%@page import="java.util.Collection"%>
-<%@page import="de.oglimmer.ggo.ui.UIBoard"%>
 <%@page import="de.oglimmer.ggo.logic.Unit"%>
 <%@page import="de.oglimmer.ggo.logic.Player"%>
 <%@page import="de.oglimmer.ggo.logic.Field"%>
 <%@page import="de.oglimmer.ggo.logic.Game"%>
-<%@page import="de.oglimmer.ggo.logic.Games"%>
 <h1>debug</h1>
 
 <%
@@ -15,7 +14,7 @@
 	}
 
 
-	Collection<Game> games = Games.INSTANCE.getAllGames();
+	Collection<Game> games = Games.<Game>getGames().getAllGames();
 
 	for(Game game : games) {
 
@@ -34,11 +33,7 @@
 				out.println(u + "<br/>");
 			}
 			out.println("<hr/>");
-			out.println(p.getUiStates().getClientUIState() + "<br/>");
-			out.println("<hr/>");
-			out.println(p.getUiStates().getClientMessages() + "<br/>");
-			out.println("<hr/>");
-			out.println(p.getUiStates().getConnected() + "<br/>");
+			out.println(p.getUiStates() + "<br/>");
 			out.println("<hr/>");
 	
 		}

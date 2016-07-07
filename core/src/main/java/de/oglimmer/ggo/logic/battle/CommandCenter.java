@@ -1,5 +1,6 @@
 package de.oglimmer.ggo.logic.battle;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Slf4j
-public class CommandCenter {
+public class CommandCenter implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@NonNull
 	private Game game;

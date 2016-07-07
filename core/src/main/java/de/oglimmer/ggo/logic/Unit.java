@@ -2,6 +2,7 @@ package de.oglimmer.ggo.logic;
 
 import static com.fasterxml.jackson.databind.node.JsonNodeFactory.instance;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,7 +21,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @RequiredArgsConstructor
-public class Unit {
+public class Unit implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Getter
 	private String id = RandomString.getRandomStringHex(8);
@@ -89,7 +92,8 @@ public class Unit {
 
 	private Set<Field> getSupportableFields(CommandCenter cc) {
 		/*
-		 * A unit can support a neighbor if an own unit is currently there and not moving away.
+		 * A unit can support a neighbor if an own unit is currently there and
+		 * not moving away.
 		 */
 		Set<Field> mf = new HashSet<>();
 		for (Field f : deployedOn.getNeighbors()) {
@@ -112,7 +116,8 @@ public class Unit {
 
 	private Set<Field> getMovableFields(CommandCenter cc) {
 		/*
-		 * A unit can move to all neighbors if no own unit has a FORTIFY or MOVE on/to this field
+		 * A unit can move to all neighbors if no own unit has a FORTIFY or MOVE
+		 * on/to this field
 		 */
 		Set<Field> mf = new HashSet<>();
 		for (Field f : deployedOn.getNeighbors()) {
@@ -146,7 +151,8 @@ public class Unit {
 
 	private Set<Field> getTargetableFields() {
 		/*
-		 * A unit can target a neighbor if an enemy unit is on that field (don't care about enemy commands)
+		 * A unit can target a neighbor if an enemy unit is on that field (don't
+		 * care about enemy commands)
 		 */
 		Set<Field> possibleTargetableFields = new HashSet<>(deployedOn.getNeighbors());
 		if (unitType == UnitType.ARTILLERY) {

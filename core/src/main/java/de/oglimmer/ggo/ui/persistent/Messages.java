@@ -1,12 +1,16 @@
 package de.oglimmer.ggo.ui.persistent;
 
+import java.io.Serializable;
+
 import lombok.Data;
 
 /**
  * Server and client-side model for messages
  */
 @Data
-public class Messages {
+public class Messages implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String score;
 	private String title;

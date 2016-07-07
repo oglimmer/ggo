@@ -1,5 +1,7 @@
 package de.oglimmer.ggo.ui;
 
+import java.io.Serializable;
+
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.ui.persistent.Messages;
 import de.oglimmer.ggo.ui.persistent.ModalDialog;
@@ -11,9 +13,13 @@ import lombok.ToString;
 @ToString
 public class UIStates extends de.oglimmer.atmospheremvc.game.UIState {
 
+	private static final long serialVersionUID = 1L;
+
 	private States states;
 
-	class States {
+	class States implements Serializable {
+
+		private static final long serialVersionUID = 1L;
 
 		@Getter
 		private ModalDialog modalDialogState;

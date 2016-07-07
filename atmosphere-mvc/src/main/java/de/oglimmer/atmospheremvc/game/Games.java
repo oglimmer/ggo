@@ -1,5 +1,11 @@
 package de.oglimmer.atmospheremvc.game;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,8 +14,10 @@ import java.util.stream.Collectors;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
+@Slf4j
 public class Games<T extends Game> {
 
 	private static Games<? extends Game> INSTANCE;
@@ -69,6 +77,29 @@ public class Games<T extends Game> {
 		Game game = games.get(gameId);
 		if (game != null && game.getPlayers().size() != 2) {
 			games.remove(gameId);
+		}
+	}
+
+	public void saveAll() {
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/tmp/all-games.ser"));
+			oos.writeObject(games);
+			oos.close();
+		} catch (IOException e) {
+			log.error("Failed to save all games", e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void loadAll() {
+		try {
+			if (new File("/tmp/all-games.ser").exists()) {
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream("/tmp/all-games.ser"));
+				games = (Map<String, T>) ois.readObject();
+				ois.close();
+			}
+		} catch (IOException | ClassNotFoundException e) {
+			log.error("Failed to load all games", e);
 		}
 	}
 }

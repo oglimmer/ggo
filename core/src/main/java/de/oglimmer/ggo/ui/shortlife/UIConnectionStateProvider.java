@@ -1,5 +1,7 @@
 package de.oglimmer.ggo.ui.shortlife;
 
+import java.io.Serializable;
+
 import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
 import de.oglimmer.ggo.logic.Player;
 import lombok.AllArgsConstructor;
@@ -10,7 +12,9 @@ import lombok.ToString;
  */
 @ToString
 @AllArgsConstructor
-public class UIConnectionStateProvider {
+public class UIConnectionStateProvider implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private Player forPlayer;
 

@@ -1,5 +1,6 @@
 package de.oglimmer.ggo.ui.persistent;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
 
-public class ModalDialog {
+public class ModalDialog implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Getter
 	@Setter
@@ -25,7 +28,9 @@ public class ModalDialog {
 	};
 
 	@Value
-	public static class Option {
+	public static class Option implements Serializable {
+
+		private static final long serialVersionUID = 1L;
 
 		private String id;
 		private String description;
@@ -35,6 +40,7 @@ public class ModalDialog {
 }
 
 /*
- * STATE proper server-side model, useful for real game objects other states availabe on the server (like conn status)
- * UI ELEMENTS (messages, dialogs) needs own data
+ * STATE proper server-side model, useful for real game objects other states
+ * availabe on the server (like conn status) UI ELEMENTS (messages, dialogs)
+ * needs own data
  */

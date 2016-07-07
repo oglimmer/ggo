@@ -1,8 +1,9 @@
 package de.oglimmer.atmospheremvc.game;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface Game {
+public interface Game extends Serializable {
 
 	String getId();
 

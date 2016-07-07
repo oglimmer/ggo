@@ -19,10 +19,12 @@ public class GameContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		Games.setGames(new Games<>(Game.class));
+		Games.getGames().loadAll();
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
+		Games.getGames().saveAll();
 		GridGameOneProperties.PROPERTIES.shutdown();
 		EmailService.EMAIL.shutdown();
 	}

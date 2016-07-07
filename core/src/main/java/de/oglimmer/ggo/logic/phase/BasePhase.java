@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase {
 
+	private static final long serialVersionUID = 1L;
+	
 	@Getter
 	@NonNull
 	private Game game;

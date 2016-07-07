@@ -1,6 +1,7 @@
 package de.oglimmer.ggo.logic;
 
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,7 +10,9 @@ import de.oglimmer.ggo.logic.util.FieldUtil;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Field {
+public class Field implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Getter
 	private String id;

@@ -14,6 +14,8 @@ import lombok.NonNull;
 
 public class Player implements de.oglimmer.atmospheremvc.game.Player {
 
+	private static final long serialVersionUID = 1L;
+
 	@Getter
 	private String id = RandomString.getRandomStringHex(8);
 

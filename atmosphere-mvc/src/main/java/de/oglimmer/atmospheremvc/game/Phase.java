@@ -1,6 +1,8 @@
 package de.oglimmer.atmospheremvc.game;
 
-public interface Phase {
+import java.io.Serializable;
+
+public interface Phase extends Serializable {
 
 	void execCmd(Player player, String cmd, String param);
 

@@ -12,6 +12,8 @@ import lombok.Setter;
 
 public class Game implements de.oglimmer.atmospheremvc.game.Game {
 
+	private static final long serialVersionUID = 1L;
+
 	public static final int TOTAL_TURNS = 5;
 
 	@Getter
