@@ -58,7 +58,7 @@
 	</p>
 	<h3>Command: Support</h3>
 	<p>
-		A unit can support another friendly and adjacent unit. The other unit gets +1 strength. A yellow arrow indicates a move command.
+		A unit can support another friendly and adjacent unit. The other unit gets +1 strength. A yellow arrow indicates a support command.
 		Note: A unit getting support from another unit cannot move into a field which is not adjacent to the supporting unit.
 	</p>
 	<h3>Command: Bombard</h3>
