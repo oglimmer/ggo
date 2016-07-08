@@ -52,4 +52,11 @@ public enum GameNotificationsDao {
 		DB.executeUpdate(query, confirmId);
 	}
 
+	public GameNotification getByConfirmId(String confirmId) {
+		String query = "select id,email,createdOn,confirmed,confirmId from game_notification where confirmId = ?";
+		GameNotification[] retObj = new GameNotification[1];
+		DB.execQuery(query, rs -> convertResultSetToGameNotification(gm -> retObj[0] = gm, rs), confirmId);
+		return retObj[0];
+	}
+
 }

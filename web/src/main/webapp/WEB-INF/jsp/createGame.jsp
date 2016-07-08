@@ -9,7 +9,8 @@
 			<h3>Your game is <span id="gameId"></span></h3>
 			<p>Waiting for other player <span id="waitingProgress"></span></p>
 			<p>(We have informed <span id="numberOfNotifications"></span> by email about your new game, if eventually 
-			no one joins this new game, you can add yourself to the email notification system on the portal page as well.)
+			no one joins this new game, you could either add yourself to the email notification system on the portal page or
+			create a play-by-email game with an opponent from the database.)
 	   	</div>
 	   	<div id="divChooseType">
 		   	<h3>Choose a gaming type ...</h3>

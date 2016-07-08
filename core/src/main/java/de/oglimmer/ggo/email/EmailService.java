@@ -28,11 +28,19 @@ public enum EmailService {
 						+ "\n\n\nRegards,\nOliZ\n\n\n\n\nBtw, we will always give you the chance to delete your email address (completely) from our system.");
 	}
 
-	public void notifyGameCreated(String email, String confirmId) {
+	public void notifyGameCreatedRealtime(String email, String confirmId) {
 		this.send(email, "[GridGameOne] Game created notification",
 				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne.\n\nThis just happened.\n\n"
-						+ "Now go to our website and join this game:\nhttp://" + PROPERTIES.getDomain()
-						+ "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
+						+ "The game is a real-time game. If you want to join go to our website and do so:\nhttp://"
+						+ PROPERTIES.getDomain() + "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
+	}
+
+	public void notifyGameCreatedByEmail(String email, String confirmId, String gameId) {
+		this.send(email, "[GridGameOne] Game created notification",
+				"Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne.\n\nThis just happened.\n\n"
+						+ "The game is a play-by-email. If you want to join that, please click here:\nhttp://"
+						+ PROPERTIES.getDomain() + PROPERTIES.getUrlPath() + "/JoinPlayByEmail.action?gameId=" + gameId
+						+ "&confirmId=" + confirmId + "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
 	}
 
 	public void gameNeedsYourAction(Player p) {

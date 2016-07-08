@@ -3,6 +3,8 @@ package de.oglimmer.ggo.web.action;
 import javax.servlet.http.Cookie;
 
 import de.oglimmer.atmospheremvc.game.Games;
+import de.oglimmer.ggo.db.GameNotification;
+import de.oglimmer.ggo.db.GameNotificationsDao;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import lombok.Setter;
@@ -14,22 +16,25 @@ import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.SimpleMessage;
 
 @Slf4j
-public class JoinGameActionBean extends BaseAction {
+public class JoinPlayByEmailActionBean extends BaseAction {
 
 	@Setter
 	private String gameId;
+	@Setter
+	private String confirmId;
 
 	@DefaultHandler
 	@DontValidate
 	public Resolution join() {
 		Game game = Games.<Game> getGames().getGameById(gameId);
 		if (game.getPlayers().size() == 1) {
-			Player player = game.createPlayer();
-			game.startGame();
-			getContext().getResponse().addCookie(new Cookie("playerId", player.getId()));
-			RedirectResolution redirect = new RedirectResolution(BoardActionBean.class);
-			redirect.addParameter("playerId", player.getId());
-			return redirect;
+			GameNotification gameNoti = GameNotificationsDao.INSTANCE.getByConfirmId(confirmId);
+			if (gameNoti != null) {
+				Player player = game.createPlayer(gameNoti.getEmail());
+				game.startGame();
+				getContext().getResponse().addCookie(new Cookie("playerId", player.getId()));
+				return new RedirectResolution(BoardActionBean.class).addParameter("playerId", player.getId());
+			}
 		}
 		getContext().getMessages().add(new SimpleMessage("Someone else was faster! The game has already 2 players!"));
 		log.error("Join game called but game already had 2 player. GameId={}", gameId);

@@ -8,12 +8,28 @@
 	     	<h3>Enter e-mail addresses</h3>
 	     	
 	     	<stripes:errors />
+
+			<stripes:form beanclass="de.oglimmer.ggo.web.action.CreateGameByEmailActionBean">
+	            <fieldset>
+	                <div class="row form-group">
+	                    <div class="col-sm-12">
+	                        Your email address:<stripes:text name="email1" class="form-control"></stripes:text>
+	                    </div>
+	                </div>
+	                <div class="row form-group">
+	                    <div class="col-sm-12">
+	                        Opponent's email address:<stripes:text id="email2" name="email2" class="form-control"></stripes:text>
+	                        <stripes:checkbox name="searchForOne" id="searchForOne" /> I don't have an opponent, use player's database
+	                    </div>
+	                </div>
+	                <div class="row form-group">
+	                    <div class="col-sm-12">
+	                        <stripes:submit name="createEmail" class="btn btn-primary">Create game</stripes:submit>
+	                    </div>
+	                </div>
+	            </fieldset>
+	        </stripes:form>	     	
 	     	
-		   	<stripes:form beanclass="de.oglimmer.ggo.web.action.CreateGameByEmailActionBean">
-		   		Email player 1:<stripes:text name="email1"></stripes:text><br/>
-		   		Email player 2:<stripes:text name="email2"></stripes:text><br/>
-		   		<stripes:submit name="createEmail">Create game</stripes:submit>
-		   	</stripes:form>
 	   </div>
 	 </div>
   </stripes:layout-component>
