@@ -45,7 +45,8 @@ public class CreateGameByEmailActionBean extends BaseAction {
 	public void validateSomething(ValidationErrors errors) {
 		if (!searchForOne && (email2 == null || email2.trim().isEmpty())) {
 			if (!errors.containsKey("email2")) {
-				errors.add("email2", new SimpleError("Either you need to add an opponent's email or check "));
+				errors.add("email2", new SimpleError(
+						"Either you need to add an opponent''s email or select the checkbox to use the player''s database"));
 			}
 		}
 	}

@@ -12,6 +12,7 @@ import lombok.Setter;
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.Before;
+import net.sourceforge.stripes.controller.LifecycleStage;
 
 public abstract class BaseAction implements ActionBean {
 
@@ -25,7 +26,7 @@ public abstract class BaseAction implements ActionBean {
 	@Setter
 	private String longVersion;
 
-	@Before
+	@Before(stages = LifecycleStage.BindingAndValidation)
 	public void retrieveVersion() {
 		if (longVersionCache == null) {
 			String commit;

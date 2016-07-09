@@ -25,6 +25,7 @@
 	                <div class="row form-group">
 	                    <div class="col-sm-12">
 	                        <stripes:submit name="createEmail" class="btn btn-primary">Create game</stripes:submit>
+	                        <stripes:link class="btn btn-primary" beanclass="de.oglimmer.ggo.web.action.LandingActionBean">Cancel</stripes:link>
 	                    </div>
 	                </div>
 	            </fieldset>
