@@ -36,8 +36,8 @@
 	<p>
 		<stripes:form beanclass="de.oglimmer.ggo.web.action.LandingActionBean">
 			Put your email address here to get a notification if someone hits the 'create game' button.
-			<stripes:text name="email" />
-			<stripes:submit name="register" value="Register" />
+			<stripes:text class="form-control" name="email" style="width:250px;display:inline-block;" />
+			<stripes:submit class="btn btn-primary" name="register" value="Register" />
 		</stripes:form>
 	</p>
   
