@@ -49,17 +49,21 @@ public class AtmosphereHandler {
 	@Message(encoders = { JacksonEncoder.class }, decoders = { JacksonDecoder.class })
 	public void onMessage(CommandMessage message) throws IOException {
 		log.debug("onMessage: {}", message);
-		Game game = Games.<Game> getGames().getGameByPlayerId(message.getPid());
-		Player player = game.getPlayerById(message.getPid());
-		assert player != null;
-		if ("join".equals(message.getCmd())) {
-			AtmosphereResourceCache.INSTANCE.registerPlayer(player, r.uuid());
+		Game game = Games.<Game>getGames().getGameByPlayerId(message.getPid());
+		if (game == null) {
+			// @TODO: send 'game not exists'
+		} else {
+			Player player = game.getPlayerById(message.getPid());
+			assert player != null;
+			if ("join".equals(message.getCmd())) {
+				AtmosphereResourceCache.INSTANCE.registerPlayer(player, r.uuid());
+			}
+			game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam());
+			game.getCurrentPhase().updateMessages();
+			game.getCurrentPhase().updateModalDialgs();
+			MessageQueue messages = new MessageQueue(game);
+			messages.process();
 		}
-		game.getCurrentPhase().execCmd(player, message.getCmd(), message.getParam());
-		game.getCurrentPhase().updateMessages();
-		game.getCurrentPhase().updateModalDialgs();
-		MessageQueue messages = new MessageQueue(game);
-		messages.process();
 	}
 
 }

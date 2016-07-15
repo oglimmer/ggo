@@ -177,6 +177,7 @@ public class Unit implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Unit [player=" + player.getSide() + ", type=" + unitType + ", on=" + deployedOn.getId() + "]";
+		return "Unit [player=" + player.getSide() + ", type=" + unitType + ", on="
+				+ (deployedOn != null ? deployedOn.getId() : null) + "]";
 	}
 }

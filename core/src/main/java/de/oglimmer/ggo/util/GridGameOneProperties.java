@@ -1,11 +1,34 @@
 package de.oglimmer.ggo.util;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
+import de.oglimmer.ggo.logic.util.RandomString;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class GridGameOneProperties extends AbstractProperties {
 
 	public static final GridGameOneProperties PROPERTIES = new GridGameOneProperties();
 
+	protected JsonObject createExtraInitAttributes() {
+		if (getJson().getString("runtime.password", null) == null) {
+			JsonObjectBuilder job = Json.createObjectBuilder();
+			String randomStringHex = RandomString.getRandomStringHex(8);
+			job.add("runtime.password", randomStringHex);
+			log.info("Created random runtime.password: " + randomStringHex);
+			return merge(getJson(), job.build());
+		}
+		return getJson();
+	}
+
 	protected GridGameOneProperties() {
 		super("ggo.properties");
+	}
+
+	public String getRuntimePassword() {
+		return getJson().getString("runtime.password");
 	}
 
 	public String getSmtpUser() {

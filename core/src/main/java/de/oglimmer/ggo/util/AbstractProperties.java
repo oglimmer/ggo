@@ -51,6 +51,10 @@ public class AbstractProperties {
 		init();
 	}
 
+	protected JsonObject createExtraInitAttributes() {
+		return json;
+	}
+
 	private void init() {
 		loadDefaultProperties();
 		sourceLocation = System.getProperty(systemPropertiesKey);
@@ -74,6 +78,7 @@ public class AbstractProperties {
 				log.error("Failed to load properties file " + sourceLocation, e);
 			}
 		}
+		json = createExtraInitAttributes();
 		if (DEBUG) {
 			System.out.println("Used config: " + prettyPrint(json));
 		}
@@ -107,7 +112,7 @@ public class AbstractProperties {
 		}
 	}
 
-	private JsonObject merge(JsonObject base, JsonObject toOverwrite) {
+	protected JsonObject merge(JsonObject base, JsonObject toOverwrite) {
 		JsonObjectBuilder job = Json.createObjectBuilder();
 		for (Entry<String, JsonValue> entry : base.entrySet()) {
 			String key = entry.getKey();
@@ -116,6 +121,12 @@ public class AbstractProperties {
 			} else {
 				job.add(key, entry.getValue());
 			}
+		}
+		for (Entry<String, JsonValue> entry : toOverwrite.entrySet()) {
+			String key = entry.getKey();
+			// if JsonObjectBuilder would have a containsKey we could skip all
+			// already existing keys
+			job.add(key, toOverwrite.get(key));
 		}
 		return job.build();
 	}
@@ -148,7 +159,8 @@ public class AbstractProperties {
 					while (running) {
 						final WatchKey wk = watchService.take();
 						for (WatchEvent<?> event : wk.pollEvents()) {
-							// we only register "ENTRY_MODIFY" so the context is always a Path.
+							// we only register "ENTRY_MODIFY" so the context is
+							// always a Path.
 							final Path changed = (Path) event.context();
 							if (changed.endsWith(toWatch.getName())) {
 								log.debug("{} changed => reload", toWatch.getAbsolutePath());
