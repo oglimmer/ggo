@@ -13,8 +13,9 @@
     <!--<logger name="org.atmosphere.cpr.AtmosphereResourceImpl" level="DEBUG"/>-->
     <!--<logger name="org.atmosphere.cpr.AsyncSupportListenerAdapter" level="INFO"/>-->
 
-    <logger name="de.oglimmer.ggo.com.AtmosphereHandler" level="INFO"/>
-    <logger name="de.oglimmer.ggo.com.AtmosphereResourceCache" level="INFO"/>
+    <logger name="de.oglimmer.atmospheremvc.com.AtmosphereHandler" level="INFO"/>
+    <logger name="de.oglimmer.atmospheremvc.com.AtmosphereResourceCache" level="INFO"/>
+    <logger name="de.oglimmer.atmospheremvc.com.MessageQueue" level="ERROR"/>
 
     <root>
         <level value="DEBUG"/>

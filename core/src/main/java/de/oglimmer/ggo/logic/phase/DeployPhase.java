@@ -13,6 +13,7 @@ import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Side;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.UnitType;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -210,12 +211,18 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase() {
-		getGame().setCurrentPhase(new CombatCommandPhase(getGame(), null));
+		assert getGame().setCurrentPhase(new CombatCommandPhase(getGame(), null));
 		getGame().getCurrentPhase().init();
 	}
 
 	private boolean hasMoreMoves(Player p) {
 		return !p.getUnitInHand().isEmpty();
+	}
+
+	@Override
+	public String toString() {
+		return "DeployPhase [activePlayer = " + activePlayer.getSide() + ", selectedUnit="
+				+ (selectedUnit != null ? selectedUnit.getUnitType() : "null") + "]";
 	}
 
 }

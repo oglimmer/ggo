@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -19,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CombatDisplayPhase extends BasePhase {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private CombatPhaseRoundCounter combatPhaseRoundCounter;
 	private CommandCenter ccDryRun;
 	private CommandCenter cc;
@@ -91,14 +92,14 @@ public class CombatDisplayPhase extends BasePhase {
 					});
 
 			if (getGame().getTurn() < Game.TOTAL_TURNS) {
-				getGame().setCurrentPhase(new DraftPhase(getGame()));
+				assert getGame().setCurrentPhase(new DraftPhase(getGame()));
 				getGame().getCurrentPhase().init();
 			} else {
-				getGame().setCurrentPhase(new GameFinishedPhase(getGame()));
+				assert getGame().setCurrentPhase(new GameFinishedPhase(getGame()));
 				getGame().getCurrentPhase().init();
 			}
 		} else {
-			getGame().setCurrentPhase(new CombatCommandPhase(getGame(), combatPhaseRoundCounter));
+			assert getGame().setCurrentPhase(new CombatCommandPhase(getGame(), combatPhaseRoundCounter));
 			getGame().getCurrentPhase().init();
 
 		}
@@ -120,5 +121,11 @@ public class CombatDisplayPhase extends BasePhase {
 	@Override
 	public Boolean isShowCoordinates() {
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "CombatDisplayPhase [inTurn="
+				+ inTurn.stream().map(p -> p.getSide().toString()).collect(Collectors.joining(",")) + "]";
 	}
 }

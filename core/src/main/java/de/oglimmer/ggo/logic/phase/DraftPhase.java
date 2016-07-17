@@ -4,19 +4,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.UnitType;
 import de.oglimmer.ggo.ui.shortlife.UIButton;
+import lombok.AccessLevel;
+import lombok.Getter;
 
 public class DraftPhase extends BasePhase {
 
 	private static final long serialVersionUID = 1L;
-	
-	private static final int CREDITS_PER_TURN = 1000;
 
+	public static final int CREDITS_PER_TURN = 1000;
+
+	@Getter(value = AccessLevel.PROTECTED)
 	private Set<Player> inTurn = new HashSet<>();
 
 	public DraftPhase(Game game) {
@@ -79,7 +83,7 @@ public class DraftPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase() {
-		getGame().setCurrentPhase(new DeployPhase(getGame()));
+		assert getGame().setCurrentPhase(new DeployPhase(getGame()));
 		getGame().getCurrentPhase().init();
 	}
 
@@ -108,5 +112,11 @@ public class DraftPhase extends BasePhase {
 			}
 		}
 		return buttons;
+	}
+
+	@Override
+	public String toString() {
+		return "DraftPhase [inTurn=" + inTurn.stream().map(p -> p.getSide().toString()).collect(Collectors.joining(","))
+				+ "]";
 	}
 }

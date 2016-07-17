@@ -60,6 +60,14 @@ requirejs([ 'commons' ], function(commons) {
 			$("#divChooseType").hide();
 			$("#divWaitingForOtherPlayer").show();
 		})
+		$("#btnTutorial").click(function() {
+			$.ajax({
+				url : "./CreateTutorialQuery.action",
+				success : function(result) {
+					document.location.href="Board.action?playerId="+result.playerId;
+				}
+			});
+		})
 
 		
 	});

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
@@ -205,7 +206,7 @@ public class CombatCommandPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase() {
-		getGame().setCurrentPhase(new CombatDisplayPhase(getGame(), combatPhaseRoundCounter, cc));
+		assert getGame().setCurrentPhase(new CombatDisplayPhase(getGame(), combatPhaseRoundCounter, cc));
 		getGame().getCurrentPhase().init();
 	}
 
@@ -224,6 +225,12 @@ public class CombatCommandPhase extends BasePhase {
 			return command;
 		}
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return "CombatCommandPhase [inTurn="
+				+ inTurn.stream().map(p -> p.getSide().toString()).collect(Collectors.joining(",")) + "]";
 	}
 
 	@RequiredArgsConstructor

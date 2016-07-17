@@ -1,0 +1,132 @@
+package de.oglimmer.ggo.logic.phase;
+
+import java.util.Collection;
+
+import de.oglimmer.ggo.logic.Field;
+import de.oglimmer.ggo.logic.Game;
+import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.logic.Unit;
+import de.oglimmer.ggo.logic.battle.Command;
+import de.oglimmer.ggo.ui.shortlife.UIButton;
+import lombok.Getter;
+import lombok.Setter;
+
+public class TutorialDelegateBasePhase extends BasePhase {
+
+	private static final long serialVersionUID = 1L;
+
+	@Getter
+	protected BasePhase delegate;
+
+	public void setDelegate(BasePhase delegate) {
+		assert delegate != null;
+		assert !(delegate instanceof TutorialDelegateBasePhase) : "Illegal class " + delegate.getClass().getName();
+		this.delegate = delegate;
+	}
+
+	@Setter
+	private String title;
+
+	@Setter
+	private TutorialDelegateBasePhase nextPhase;
+
+	@Setter
+	@Getter
+	private boolean autoEnd;
+
+	public TutorialDelegateBasePhase(Game game) {
+		super(game);
+	}
+
+	@Override
+	public void init() {
+		delegate.init();
+	}
+
+	public void initTutorialStep() {
+		if (autoEnd) {
+			nextPhase();
+		}
+	}
+
+	@Override
+	protected void nextPhase() {
+		if (getGame().setCurrentPhase(nextPhase)) {
+			getGame().getCurrentPhase().init();
+		}
+		((TutorialDelegateBasePhase) getGame().getCurrentPhase()).initTutorialStep();
+	}
+
+	@Override
+	protected void updateMessage(Player player) {
+		delegate.updateMessage(player);
+		player.getMessages().setTitle(title);
+	}
+
+	@Override
+	public void execCmd(Player player, String cmd, String param) {
+		delegate.execCmd(player, cmd, param);
+	}
+
+	@Override
+	public boolean isHighlighted(Field field, Player player) {
+		return delegate.isHighlighted(field, player);
+	}
+
+	@Override
+	public boolean isSelected(Unit unit, Player forPlayer) {
+		return delegate.isSelected(unit, forPlayer);
+	}
+
+	@Override
+	public boolean isSelectable(Field field, Player player) {
+		return delegate.isSelectable(field, player);
+	}
+
+	@Override
+	public boolean isSelectable(Unit unit, Player forPlayer) {
+		return delegate.isSelectable(unit, forPlayer);
+	}
+
+	@Override
+	public Collection<UIButton> getButtons(Player forPlayer) {
+		return delegate.getButtons(forPlayer);
+	}
+
+	@Override
+	public Command getCommand(Unit unit, Player forPlayer) {
+		return delegate.getCommand(unit, forPlayer);
+	}
+
+	@Override
+	public Boolean isShowCoordinates() {
+		return delegate.isShowCoordinates();
+	}
+
+	@Override
+	protected void notifyPlayers() {
+		delegate.notifyPlayers();
+	}
+
+	@Override
+	protected void notifyPlayer(Player p) {
+		delegate.notifyPlayer(p);
+	}
+
+	@Override
+	protected void updateScoreMessages() {
+		delegate.updateScoreMessages();
+	}
+
+	@Override
+	protected void updateModalDialg(Player player) {
+		delegate.updateModalDialg(player);
+	}
+
+	@Override
+	public String toString() {
+		return "TutorialDelegateBasePhase [delegate=" + delegate + ", title=" + title + ", nextPhase=" + nextPhase
+				+ ", autoEnd=" + autoEnd + "]";
+	}
+
+}

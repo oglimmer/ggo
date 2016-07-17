@@ -25,6 +25,9 @@
 		}
 	
 		out.println("<hr/>");
+		out.println("<h3>Phase</h3>");
+		out.println(game.getCurrentPhase() + "<br/>");
+		out.println("<hr/>");
 		
 		for (Player p : game.getPlayers()) {
 			out.println("<hr/>");

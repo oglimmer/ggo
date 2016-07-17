@@ -17,6 +17,7 @@
 		   	<p>
 		   		<button id="btnByEmail" class="btn btn-primary btn-lg">Play by e-mail</button>
 		   		<button id="btnRealTime" class="btn btn-primary btn-lg">Real-time game</button>
+		   		<button id="btnTutorial" class="btn btn-primary btn-lg">Tutorial</button>
 		   	</p>
 	   	</div>
 	   </div>

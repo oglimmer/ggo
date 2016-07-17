@@ -1,0 +1,47 @@
+package de.oglimmer.ggo.logic.phase;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import de.oglimmer.ggo.logic.Game;
+import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.ui.shortlife.UIButton;
+
+public class TutorialDelegateTextPhase extends TutorialDelegateBasePhase {
+
+	private static final long serialVersionUID = 1L;
+
+	public TutorialDelegateTextPhase(Game game) {
+		super(game);
+	}
+
+	@Override
+	public Collection<UIButton> getButtons(Player forPlayer) {
+		Collection<UIButton> buttons = new ArrayList<UIButton>();
+		buttons.add(UIButton.builder().id("doneButton").text("Done").width(60).height(20).hidden(false).build());
+		return buttons;
+	}
+
+	@Override
+	public void execCmd(Player player, String cmd, String param) {
+		super.execCmd(player, cmd, param);
+		switch (cmd) {
+		case "button":
+			if ("doneButton".equals(param)) {
+				nextPhase();
+			}
+			break;
+		}
+
+	}
+
+	@Override
+	public String toString() {
+		return "TutorialDelegateTextPhase [] extends " + super.toString();
+	}
+
+	// @Override
+	// protected void updateScoreMessages() {
+	// }
+
+}

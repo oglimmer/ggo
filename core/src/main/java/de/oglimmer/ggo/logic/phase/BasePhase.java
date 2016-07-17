@@ -66,8 +66,13 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 		}
 	}
 
+	@Override
 	final public void updateMessages() {
 		getGame().getPlayers().forEach(p -> updateMessage(p));
+		updateScoreMessages();
+	}
+
+	protected void updateScoreMessages() {
 		getGame().getPlayers().forEach(player -> {
 			player.getMessages()
 					.setScore("Your score: " + player.getScore() + ", opponents score: "
@@ -83,6 +88,7 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	 */
 	abstract protected void updateMessage(Player player);
 
+	@Override
 	final public void updateModalDialgs() {
 		getGame().getPlayers().forEach(p -> updateModalDialg(p));
 	}
@@ -159,4 +165,5 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	public Boolean isShowCoordinates() {
 		return false;
 	}
+
 }

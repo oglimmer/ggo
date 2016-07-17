@@ -126,7 +126,7 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 			this.ctxBoard.beginPath();
 			this.ctxBoard.font = "16px Arial";
 			this.ctxBoard.fillStyle = "black";
-			this.ctxBoard.fillText("No units in hand.",x,y+28);
+			this.ctxBoard.fillText("No units at hand.",x,y+28);
 		}
 
 	}
