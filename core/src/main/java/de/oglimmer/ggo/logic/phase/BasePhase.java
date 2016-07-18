@@ -68,8 +68,17 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 
 	@Override
 	final public void updateMessages() {
-		getGame().getPlayers().forEach(p -> updateMessage(p));
 		updateScoreMessages();
+		updateInfoMessages();
+		updateTitleMessages();
+	}
+
+	protected void updateTitleMessages() {
+		getGame().getPlayers().forEach(p -> updateTitleMessage(p));
+	}
+
+	protected void updateInfoMessages() {
+		getGame().getPlayers().forEach(p -> updateInfoMessage(p));
 	}
 
 	protected void updateScoreMessages() {
@@ -82,11 +91,19 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	}
 
 	/**
-	 * Set on screen text message for a player
+	 * Set on screen title message for a player
 	 * 
 	 * Must be idempotent
 	 */
-	abstract protected void updateMessage(Player player);
+	abstract protected void updateTitleMessage(Player player);
+
+	/**
+	 * Set on screen info message for a player
+	 * 
+	 * Must be idempotent
+	 */
+	protected void updateInfoMessage(Player player) {
+	}
 
 	@Override
 	final public void updateModalDialgs() {

@@ -172,7 +172,7 @@ public class CombatCommandPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player) {
+	protected void updateTitleMessage(Player player) {
 		String title;
 		if (inTurn.contains(player)) {
 			Unit unit = getState(player).getSelectedUnits();

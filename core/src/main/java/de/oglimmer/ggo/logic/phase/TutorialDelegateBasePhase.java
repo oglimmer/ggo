@@ -58,9 +58,13 @@ public class TutorialDelegateBasePhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player) {
-		delegate.updateMessage(player);
+	protected void updateTitleMessage(Player player) {
 		player.getMessages().setTitle(title);
+	}
+
+	@Override
+	protected void updateInfoMessage(Player player) {
+		delegate.updateInfoMessage(player);
 	}
 
 	@Override

@@ -63,7 +63,7 @@ public class CombatDisplayPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player) {
+	protected void updateTitleMessage(Player player) {
 		String title;
 		if (inTurn.contains(player)) {
 			title = "Check your and the opponents commands. Press `done` when finished. Round "
@@ -73,10 +73,12 @@ public class CombatDisplayPhase extends BasePhase {
 					+ " of " + combatPhaseRoundCounter.getMaxRounds();
 		}
 		player.getMessages().setTitle(title);
+	}
 
+	@Override
+	protected void updateInfoMessage(Player player) {
 		getGame().getPlayers()
 				.forEach(p -> p.getMessages().setInfo(infoMessages.getOrDefault(p, new StringBuilder()).toString()));
-
 	}
 
 	@Override

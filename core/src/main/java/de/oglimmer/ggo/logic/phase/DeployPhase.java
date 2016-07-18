@@ -13,14 +13,13 @@ import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Side;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.UnitType;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DeployPhase extends BasePhase {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Player activePlayer;
 
 	private Unit selectedUnit;
@@ -110,7 +109,7 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	public boolean isSelectable(Field field, Player forPlayer) {
-		return isHighlighted(field, forPlayer);
+		return getGame().getCurrentPhase().isHighlighted(field, forPlayer);
 	}
 
 	@Override
@@ -196,7 +195,7 @@ public class DeployPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player) {
+	protected void updateTitleMessage(Player player) {
 		if (player == activePlayer) {
 			if (selectedUnit != null) {
 				player.getMessages().setTitle("Select a highlighted field to deploy " + selectedUnit.getUnitType()

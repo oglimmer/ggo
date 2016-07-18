@@ -11,6 +11,7 @@ import de.oglimmer.ggo.logic.phase.BasePhase;
 import de.oglimmer.ggo.logic.phase.DraftPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateBasePhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateCodeExecPhase;
+import de.oglimmer.ggo.logic.phase.TutorialDelegateCombatPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateDeployPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateDraftPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateTextPhase;
@@ -34,30 +35,31 @@ public class TutorialStepFactory {
 						+ "play this game."
 						+ " Keep in mind that a summary of the rules are always available from the 'Instructions' "
 						+ "link on the top right. Now click the 'Done' button at the bottom.")
-				.end()
+				.setHideScore(true).setHideInfo(true).end()
 
 				.newPhase(TextBuilder.class)
 				.setTitle("The goal of the game to score the most points in 5 turns, where each turn has 3 phases:"
 						+ " Draft, "
 						+ "Deploy and Combat/Move. Let's start with the first phase in the first turn: Draft units. "
 						+ "Click the done button.")
-				.end()
+				.setHideScore(true).setHideInfo(true).end()
 
 				/* Draft */
 
 				.newPhase(DraftBuilder.class)
 				.setTitle("For each turn you get plus " + DraftPhase.CREDITS_PER_TURN
 						+ " credits. You can spend or save them. Let's start with drafting an infantery unit for "
-						+ UnitType.INFANTERY.getCost() + " by clicking on the icon at the bottom.")
+						+ UnitType.INFANTERY.getCost() + " credits by clicking on the icon at the bottom.")
 				.setUnitType(UnitType.INFANTERY).end()
 
 				.newPhase(DraftBuilder.class)
 				.setTitle("You got 1 infantry unit into your hand. Now let's buy a tank unit. Tank units are very "
-						+ "similar to infantries, but stronger in strength. We'll talk about strength later.")
+						+ "similar to infantries, but stronger in strength. We'll talk about strength later."
+						+ " Click on the tank icon and buy a tank unit for " + UnitType.TANK.getCost() + " credits.")
 				.setUnitType(UnitType.TANK).end()
 
 				.newPhase(DraftBuilder.class)
-				.setTitle("Now buy a helicopter unit. Helicopters have a strongth of 1, but can also bombard "
+				.setTitle("Now buy a helicopter unit. Helicopters have a strength of 1, but can also bombard "
 						+ "enemy units within the range of 1 field.")
 				.setUnitType(UnitType.HELICOPTER).end()
 
@@ -66,8 +68,9 @@ public class TutorialStepFactory {
 						+ "within a range of 2 fields.")
 				.setUnitType(UnitType.ARTILLERY).end()
 
-				.newPhase(TextBuilder.class)
-				.setTitle("As you have spent all your credits now, press done to complete your draft phase.").end()
+				.newPhase(TextBuilder.class).setTitle("You don't have enough credits left to buy another unit."
+						+ " Press done to complete your draft phase.")
+				.end()
 
 				.newPhase(CodeExecBuilder.class).exec(() -> {
 					BasePhase currentPhase = game.getCurrentPhase();
@@ -88,21 +91,70 @@ public class TutorialStepFactory {
 				}).end()
 
 				.newPhase(DeployBuilder.class)
-				.setTitle("The deploy phase has stared and the opponent started to put a unit on the board. "
-						+ "In this phase every player deploys one unit at a time. So it is your turn now. Deploy the "
-						+ "infantry. Click on the unit.")
+				.setTitle("The deploy phase was started by your opponent, who put an infantry on the board. "
+						+ "While the draft phase was played in parallel by both players, in the deploy phase every "
+						+ "player deploys one unit at a time. So it is your turn now. Deploy the "
+						+ "infantry! Click on the unit.")
 				.setUnitType(UnitType.INFANTERY).end()
 
 				.newPhase(DeployBuilder.class)
-				.setTitle("You can deploy a unit to all fields on your side of the board. For this tutorial deploy it"
-						+ " on the one highlighted field.")
+				.setTitle("You can deploy a unit to all fields on your side of the board. For this tutorial deploy the"
+						+ " infantry on the one highlighted field to oppose the enemy infantry.")
 				.setField(game.getBoard().getField("4:5")).end()
 
-				.newPhase(TextBuilder.class).setTitle("Now the enemy player deploys a unit.").end()
+				.newPhase(TextBuilder.class)
+				.setTitle("Now the enemy player deploys a second unit. Press done to see what the opponent does.").end()
+
+				.newPhase(CodeExecBuilder.class).exec(() -> {
+					Player opponent = game.getPlayers().get(1);
+					game.getCurrentPhase().execCmd(opponent, "selectHandCard", opponent.getUnitInHand().get(0).getId());
+					game.getCurrentPhase().execCmd(opponent, "selectTargetField", "5:4");
+				}).end()
 
 				.newPhase(DeployBuilder.class)
-				.setTitle("Now deploy your second unit. This time deploy the " + "tank. Click on the unit.")
+				.setTitle("The opponent deployed a tank next to his infantry. "
+						+ "It's time for you to deploy your second unit. Click on the tank.")
 				.setUnitType(UnitType.TANK).end()
+
+				.newPhase(DeployBuilder.class).setTitle("Deploy your tank to the highlighted field.")
+				.setField(game.getBoard().getField("4:4")).end()
+
+				.newPhase(CodeExecBuilder.class).exec(() -> {
+					Player opponent = game.getPlayers().get(1);
+					game.getCurrentPhase().execCmd(opponent, "selectHandCard", opponent.getUnitInHand().get(0).getId());
+					game.getCurrentPhase().execCmd(opponent, "selectTargetField", "5:3");
+				}).end()
+
+				.newPhase(DeployBuilder.class).setTitle("Click on the helicopter.").setUnitType(UnitType.HELICOPTER)
+				.end()
+
+				.newPhase(DeployBuilder.class).setTitle("Deploy this helicopter to the highlighted field.")
+				.setField(game.getBoard().getField("4:3")).end()
+
+				.newPhase(DeployBuilder.class)
+				.setTitle(
+						"The opponent didn't buy a 4th unit. So you can deploy your last unit right away. Click on the artillary.")
+				.setUnitType(UnitType.ARTILLERY).end()
+
+				.newPhase(DeployBuilder.class).setTitle("Deploy this artillary to the highlighted field.")
+				.setField(game.getBoard().getField("3:5")).end()
+
+				/* Combat */
+
+				.newPhase(CombatBuilder.class)
+				.setTitle("After the last unit is deployed the game proceeds to the combat/move phase. "
+						+ "This phase is devided into 3 turns. Each turn has a command and a view part."
+						+ "In the command part you can give each unit one of up to 4 commands: fortify, move/attack, support or bombarb."
+						+ "While every unit has fortify and move, not every unit has attack, support or bombarb. "
+						+ "Let's start with giving a command to the infatry unit. Click the infantry unit.")
+				.setUnit(game.getBoard().getField("4:5")).end()
+
+				.newPhase(CombatBuilder.class)
+				.setTitle("To command the infantry 'move into the left field' -"
+						+ " where the enemy infantry is currently located - click on that highlighted field.")
+				.setField(game.getBoard().getField("5:5")).end()
+
+				.newPhase(TextBuilder.class).setTitle("END.").end()
 
 				.getFirst();
 	}
@@ -164,13 +216,29 @@ abstract class BaseBuilder<T extends BaseBuilder<?>> {
 
 class TextBuilder extends BaseBuilder<TextBuilder> {
 
+	private boolean hideScore;
+	private boolean hideInfo;
+
 	public TextBuilder(Builder build) {
 		super(build);
 	}
 
+	public TextBuilder setHideScore(boolean hideScore) {
+		this.hideScore = hideScore;
+		return this;
+	}
+
+	public TextBuilder setHideInfo(boolean hideInfo) {
+		this.hideInfo = hideInfo;
+		return this;
+	}
+
 	@Override
 	protected <M extends TutorialDelegateBasePhase> Builder endIntern() {
-		return endIntern(TutorialDelegateTextPhase.class, null);
+		return endIntern(TutorialDelegateTextPhase.class, p -> {
+			p.setHideScore(this.hideScore);
+			p.setHideInfo(this.hideInfo);
+		});
 	}
 
 }
@@ -220,6 +288,35 @@ class DeployBuilder extends BaseBuilder<DeployBuilder> {
 	protected <M extends TutorialDelegateBasePhase> Builder endIntern() {
 		return endIntern(TutorialDelegateDeployPhase.class, p -> {
 			p.setUnitType(this.unitType);
+			p.setField(this.field);
+		});
+	}
+
+}
+
+class CombatBuilder extends BaseBuilder<CombatBuilder> {
+
+	private Field unit;
+	private Field field;
+
+	public CombatBuilder(Builder build) {
+		super(build);
+	}
+
+	public CombatBuilder setField(Field field) {
+		this.field = field;
+		return this;
+	}
+
+	public CombatBuilder setUnit(Field unit) {
+		this.unit = unit;
+		return this;
+	}
+
+	@Override
+	protected <M extends TutorialDelegateBasePhase> Builder endIntern() {
+		return endIntern(TutorialDelegateCombatPhase.class, p -> {
+			p.setUnit(this.unit);
 			p.setField(this.field);
 		});
 	}

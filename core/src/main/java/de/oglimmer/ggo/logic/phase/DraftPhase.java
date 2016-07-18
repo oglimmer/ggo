@@ -88,13 +88,21 @@ public class DraftPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player) {
+	protected void updateTitleMessage(Player player) {
 		if (inTurn.contains(player)) {
-			player.getMessages().setTitle(
-					"Draft units by clicking one at the bottom. To revert click the unit in your hand. Click 'done' to finish the draft phase. The player with more money left will start the next phase.");
-			player.getMessages().setInfo("You have " + player.getCredits() + " credits.");
+			player.getMessages()
+					.setTitle("Draft units by clicking one at the bottom. To revert click the unit in your hand."
+							+ " Click 'done' to finish the draft phase. The player with more money left will start the next phase.");
 		} else {
 			player.getMessages().setTitle("Wait for your opponent to finish the draft phase.");
+		}
+	}
+
+	@Override
+	protected void updateInfoMessage(Player player) {
+		if (inTurn.contains(player)) {
+			player.getMessages().setInfo("You have " + player.getCredits() + " credits.");
+		} else {
 			player.getMessages().setInfo("You have " + player.getCredits() + " credits left for next round.");
 		}
 	}

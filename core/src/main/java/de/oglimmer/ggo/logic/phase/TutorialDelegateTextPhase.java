@@ -6,10 +6,17 @@ import java.util.Collection;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.ui.shortlife.UIButton;
+import lombok.Setter;
 
 public class TutorialDelegateTextPhase extends TutorialDelegateBasePhase {
 
 	private static final long serialVersionUID = 1L;
+
+	@Setter
+	private boolean hideScore;
+
+	@Setter
+	private boolean hideInfo;
 
 	public TutorialDelegateTextPhase(Game game) {
 		super(game);
@@ -36,12 +43,22 @@ public class TutorialDelegateTextPhase extends TutorialDelegateBasePhase {
 	}
 
 	@Override
+	protected void updateScoreMessages() {
+		if (!hideScore) {
+			super.updateScoreMessages();
+		}
+	}
+
+	@Override
+	protected void updateInfoMessage(Player player) {
+		if (!hideInfo) {
+			super.updateInfoMessage(player);
+		}
+	}
+
+	@Override
 	public String toString() {
 		return "TutorialDelegateTextPhase [] extends " + super.toString();
 	}
-
-	// @Override
-	// protected void updateScoreMessages() {
-	// }
 
 }

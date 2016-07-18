@@ -6,7 +6,7 @@ import de.oglimmer.ggo.logic.Player;
 public class GameFinishedPhase extends BasePhase {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public GameFinishedPhase(Game game) {
 		super(game);
 	}
@@ -21,7 +21,7 @@ public class GameFinishedPhase extends BasePhase {
 	}
 
 	@Override
-	protected void updateMessage(Player player) {
+	protected void updateTitleMessage(Player player) {
 		player.getMessages().setTitle("Game Over.");
 	}
 

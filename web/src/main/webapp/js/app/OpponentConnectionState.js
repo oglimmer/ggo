@@ -7,11 +7,12 @@ define(['jquery', 'app/Constants', 'app/GlobalData', 'watch', 'app/Communication
 
 	function OpponentConnectionState() {
 		this.opponentConnectionStatus = true;
+		this.opponentConnectionStatusIgnore = false;
 
 		function update() {
 			var text = "";
 			if(communication.connectedToServer) {
-				if(!thiz.opponentConnectionStatus) {
+				if(!thiz.opponentConnectionStatus && !thiz.opponentConnectionStatusIgnore) {
 					text = "OPPONENT GOT DISCONNECTED!";
 				}
 			} else {
