@@ -23,7 +23,8 @@ public class CreateTutorialQueryActionBean extends BaseAction {
 		Game game = Games.<Game> getGames().createGame();
 		TutorialDelegateBasePhase bp = new TutorialStepFactory().build(game);
 		bp.setDelegate(game.getCurrentPhase());
-		assert !game.setCurrentPhase(bp);
+		boolean initShouldBeCalled = game.setCurrentPhase(bp);
+		assert !initShouldBeCalled;
 		Player player = game.createPlayer();
 		game.createPlayer();
 		game.getCurrentPhase().init();

@@ -210,7 +210,8 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase() {
-		assert getGame().setCurrentPhase(new CombatCommandPhase(getGame(), null));
+		boolean initShouldBeCalled = getGame().setCurrentPhase(new CombatCommandPhase(getGame(), null));
+		assert initShouldBeCalled;
 		getGame().getCurrentPhase().init();
 	}
 

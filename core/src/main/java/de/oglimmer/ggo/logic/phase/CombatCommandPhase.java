@@ -206,7 +206,8 @@ public class CombatCommandPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase() {
-		assert getGame().setCurrentPhase(new CombatDisplayPhase(getGame(), combatPhaseRoundCounter, cc));
+		boolean initShouldBeCalled = getGame().setCurrentPhase(new CombatDisplayPhase(getGame(), combatPhaseRoundCounter, cc));
+		assert initShouldBeCalled;
 		getGame().getCurrentPhase().init();
 	}
 

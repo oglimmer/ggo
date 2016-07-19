@@ -83,7 +83,8 @@ public class DraftPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase() {
-		assert getGame().setCurrentPhase(new DeployPhase(getGame()));
+		boolean initShouldBeCalled = getGame().setCurrentPhase(new DeployPhase(getGame()));
+		assert initShouldBeCalled;
 		getGame().getCurrentPhase().init();
 	}
 

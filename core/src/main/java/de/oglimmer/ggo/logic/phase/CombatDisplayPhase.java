@@ -94,14 +94,17 @@ public class CombatDisplayPhase extends BasePhase {
 					});
 
 			if (getGame().getTurn() < Game.TOTAL_TURNS) {
-				assert getGame().setCurrentPhase(new DraftPhase(getGame()));
+				boolean initShouldBeCalled = getGame().setCurrentPhase(new DraftPhase(getGame()));
+				assert initShouldBeCalled;
 				getGame().getCurrentPhase().init();
 			} else {
-				assert getGame().setCurrentPhase(new GameFinishedPhase(getGame()));
+				boolean initShouldBeCalled = getGame().setCurrentPhase(new GameFinishedPhase(getGame()));
+				assert initShouldBeCalled;
 				getGame().getCurrentPhase().init();
 			}
 		} else {
-			assert getGame().setCurrentPhase(new CombatCommandPhase(getGame(), combatPhaseRoundCounter));
+			boolean initShouldBeCalled = getGame().setCurrentPhase(new CombatCommandPhase(getGame(), combatPhaseRoundCounter));
+			assert initShouldBeCalled;
 			getGame().getCurrentPhase().init();
 
 		}
