@@ -31,7 +31,7 @@ public class TutorialDelegateDraftPhase extends TutorialDelegateBasePhase {
 		super.execCmd(player, cmd, param);
 		switch (cmd) {
 		case "button":
-			if (param.startsWith("buy") && !isAutoEnd()) {
+			if (param.startsWith("buy")) {
 				nextPhase();
 			}
 			break;

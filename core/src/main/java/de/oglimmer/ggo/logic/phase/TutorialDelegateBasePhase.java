@@ -30,10 +30,6 @@ public class TutorialDelegateBasePhase extends BasePhase {
 	@Setter
 	private TutorialDelegateBasePhase nextPhase;
 
-	@Setter
-	@Getter
-	private boolean autoEnd;
-
 	public TutorialDelegateBasePhase(Game game) {
 		super(game);
 	}
@@ -44,9 +40,6 @@ public class TutorialDelegateBasePhase extends BasePhase {
 	}
 
 	public void initTutorialStep() {
-		if (autoEnd) {
-			nextPhase();
-		}
 	}
 
 	@Override
@@ -130,7 +123,7 @@ public class TutorialDelegateBasePhase extends BasePhase {
 	@Override
 	public String toString() {
 		return "TutorialDelegateBasePhase [delegate=" + delegate + ", title=" + title + ", nextPhase=" + nextPhase
-				+ ", autoEnd=" + autoEnd + "]";
+				+ "]";
 	}
 
 }

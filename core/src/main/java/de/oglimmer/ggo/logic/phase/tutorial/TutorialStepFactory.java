@@ -14,8 +14,8 @@ import de.oglimmer.ggo.logic.phase.TutorialDelegateCodeExecPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateCombatPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateDeployPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateDraftPhase;
+import de.oglimmer.ggo.logic.phase.TutorialDelegateEndPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateTextPhase;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -141,6 +141,8 @@ public class TutorialStepFactory {
 
 				/* Combat */
 
+				/* --round:1 */
+
 				.newPhase(CombatBuilder.class)
 				.setTitle("After the last unit is deployed the game proceeds to the combat/move phase. "
 						+ "This phase is devided into 3 turns. Each turn has a command and a view part."
@@ -154,7 +156,116 @@ public class TutorialStepFactory {
 						+ " where the enemy infantry is currently located - click on that highlighted field.")
 				.setField(game.getBoard().getField("5:5")).end()
 
-				.newPhase(TextBuilder.class).setTitle("END.").end()
+				.newPhase(TextBuilder.class)
+				.setTitle("The red arrow indicates that a unit will move to another field."
+						+ " A battle will take place on that target field if it has two opposing "
+						+ "units after the movements are done. So no battle occur if the enemy player moves his unit away."
+						+ " All units showing an 'F' will fortify. That means they will get +1 strength. "
+						+ "Press the done button to finish your command round.")
+				.end()
+
+				.newPhase(CodeExecBuilder.class).exec(() -> {
+					Player opponent = game.getPlayers().get(1);
+					BasePhase currentPhase = game.getCurrentPhase();
+					currentPhase.execCmd(opponent, "selectUnit", game.getBoard().getField("5:5").getUnit().getId());
+					currentPhase.execCmd(opponent, "selectTargetField", "4:5");
+
+					currentPhase.execCmd(opponent, "button", "doneButton");
+				}).end()
+
+				.newPhase(TextBuilder.class)
+				.setTitle("After both players finsihed their command round, you will see your and the"
+						+ " opponents commands. In this game the opponent only commanded his infantry to move towards your infantry."
+						+ " This leads to the only situation where to units battle each other while not ending up on the same field."
+						+ " That means crossing an enemy unit will also let those units battle each other. As both units have a strength"
+						+ " of 1, they both get killed and thus removed from play. Press the done button to proceed to combat round 2.")
+				.end()
+
+				.newPhase(CodeExecBuilder.class).exec(() -> {
+					Player opponent = game.getPlayers().get(1);
+					BasePhase currentPhase = game.getCurrentPhase();
+					currentPhase.execCmd(opponent, "button", "doneButton");
+				}).end()
+
+				/* --round:2 */
+
+				.newPhase(CombatBuilder.class)
+				.setTitle("Before we give our commands for the second round, let's have a look at the score resulting "
+						+ "round 1. You can see that both players scored 10 points. A player scores 10 points when"
+						+ "a unit moves to another field and kills an enemy unit. A player socres 5 points for "
+						+ "each bombardment. A player scores 25 points for occupying a city at the end of a turn. "
+						+ "In the second round we will use the bombard ability from the artillery to destroy the "
+						+ "enemy tank. Click the artillery unit.")
+				.setUnit(game.getBoard().getField("3:5")).end()
+
+				.newPhase(CombatBuilder.class)
+				.setTitle("Bombardments will always destroy the enemy unit. Select the enemy tank as the destination.")
+				.setField(game.getBoard().getField("5:4")).end()
+
+				.newPhase(CodeExecBuilder.class).exec(() -> {
+					game.getCurrentPhase().execCmd(game.getPlayers().get(0), "button", "doneButton");
+					game.getCurrentPhase().execCmd(game.getPlayers().get(1), "button", "doneButton");
+				}).end()
+
+				.newPhase(TextBuilder.class)
+				.setTitle("The opponent didn't give any command to an emeny unit. As a result"
+						+ " of this round only the enemy tank got destroyed.")
+				.end()
+
+				.newPhase(CodeExecBuilder.class).exec(() -> {
+					Player opponent = game.getPlayers().get(1);
+					BasePhase currentPhase = game.getCurrentPhase();
+					currentPhase.execCmd(opponent, "button", "doneButton");
+				}).end()
+
+				/* --round:3 */
+
+				.newPhase(CombatBuilder.class)
+				.setTitle("Round 3 of the combat phase. Let's have a look at the last command: "
+						+ "support. All units except for the artillery can support another unit. Supporting another "
+						+ "unit will give the supported unit +1 strength. Let's try that. Click the tank.")
+				.setUnit(game.getBoard().getField("4:4")).end()
+
+				.newPhase(CombatBuilder.class)
+				.setTitle("Now click the helicopter to support it. As a helicopter has a strength of 1"
+						+ ", with the support from the tank and its own fortify command, the helicopter has a total strength of 3.")
+				.setField(game.getBoard().getField("4:3")).end()
+
+				.newPhase(CodeExecBuilder.class).exec(() -> {
+					Player opponent = game.getPlayers().get(1);
+					BasePhase currentPhase = game.getCurrentPhase();
+					currentPhase.execCmd(opponent, "selectUnit", game.getBoard().getField("5:3").getUnit().getId());
+					currentPhase.execCmd(opponent, "selectTargetField", "4:3");
+					currentPhase.execCmd(opponent, "selectModalDialog", "BOMBARD");
+
+					game.getCurrentPhase().execCmd(game.getPlayers().get(0), "button", "doneButton");
+					game.getCurrentPhase().execCmd(game.getPlayers().get(1), "button", "doneButton");
+				}).end()
+
+				.newPhase(TextBuilder.class)
+				.setTitle("The opponent commanded his helicopter to bombard your helicopter. As a bombard "
+						+ "always results in defeading a unit, your helicopter is lost. Maybe it would have been wiser"
+						+ " to give your helicopter also a bombard command to the enemy helicopter.")
+				.end()
+
+				.newPhase(CodeExecBuilder.class).exec(() -> {
+					Player opponent = game.getPlayers().get(1);
+					BasePhase currentPhase = game.getCurrentPhase();
+					currentPhase.execCmd(opponent, "button", "doneButton");
+				}).end()
+
+				/* Draft */
+
+				.newPhase(EndBuilder.class)
+				.setTitle("At this point the second turn has started. Once again you"
+						+ " get additional 1000 credits to draft new units, which you will deploy on the board, which"
+						+ " will end up moving/supporting/bombarding/fortifying. Before you close this and create a real game"
+						+ " against a human opponent, keep in mind that the instructions are always available via the top right"
+						+ " link 'instructions'. Also remember that you win a game by scoring more points than your opponent -"
+						+ " not having more units or surviving longer.")
+				.end()
+
+				.newPhase(EndBuilder.class).setTitle("NEVER REACHABLE.").end()
 
 				.getFirst();
 	}
@@ -170,18 +281,10 @@ abstract class BaseBuilder<T extends BaseBuilder<?>> {
 
 	private String title;
 
-	@Setter(value = AccessLevel.PACKAGE)
-	private boolean autoEnd;
-
 	@SuppressWarnings("unchecked")
 	public T setTitle(String title) {
 		this.title = title;
 		return (T) this;
-	}
-
-	public Builder autoEnd() {
-		this.autoEnd = true;
-		return endIntern();
 	}
 
 	public Builder end() {
@@ -192,23 +295,22 @@ abstract class BaseBuilder<T extends BaseBuilder<?>> {
 
 	@SneakyThrows
 	protected <M extends TutorialDelegateBasePhase> Builder endIntern(Class<M> clazz, Consumer<M> cons) {
-		M p = clazz.getConstructor(Game.class).newInstance(build.getGame());
+		M tutorialPhase = clazz.getConstructor(Game.class).newInstance(build.getGame());
 
 		if (build.getFirst() == null) {
-			build.setFirst(p);
+			build.setFirst(tutorialPhase);
 		}
 		if (build.getLast() != null) {
-			build.getLast().setNextPhase(p);
+			build.getLast().setNextPhase(tutorialPhase);
 		}
 
-		p.setTitle(title);
-		p.setAutoEnd(autoEnd);
+		tutorialPhase.setTitle(title);
 
 		if (cons != null) {
-			cons.accept(p);
+			cons.accept(tutorialPhase);
 		}
 
-		build.setLast(p);
+		build.setLast(tutorialPhase);
 		return build;
 	}
 
@@ -323,13 +425,25 @@ class CombatBuilder extends BaseBuilder<CombatBuilder> {
 
 }
 
+class EndBuilder extends BaseBuilder<EndBuilder> {
+
+	public EndBuilder(Builder build) {
+		super(build);
+	}
+
+	@Override
+	protected <M extends TutorialDelegateBasePhase> Builder endIntern() {
+		return endIntern(TutorialDelegateEndPhase.class, null);
+	}
+
+}
+
 class CodeExecBuilder extends BaseBuilder<CodeExecBuilder> {
 
 	private Runnable execCode;
 
 	public CodeExecBuilder(Builder build) {
 		super(build);
-		setAutoEnd(true);
 	}
 
 	public CodeExecBuilder exec(Runnable execCode) {

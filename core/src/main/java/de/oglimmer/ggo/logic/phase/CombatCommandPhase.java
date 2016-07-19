@@ -76,7 +76,7 @@ public class CombatCommandPhase extends BasePhase {
 
 	@Override
 	public boolean isSelectable(Field field, Player forPlayer) {
-		return isHighlighted(field, forPlayer);
+		return getGame().getCurrentPhase().isHighlighted(field, forPlayer);
 	}
 
 	@Override
@@ -206,7 +206,8 @@ public class CombatCommandPhase extends BasePhase {
 
 	@Override
 	protected void nextPhase() {
-		boolean initShouldBeCalled = getGame().setCurrentPhase(new CombatDisplayPhase(getGame(), combatPhaseRoundCounter, cc));
+		boolean initShouldBeCalled = getGame()
+				.setCurrentPhase(new CombatDisplayPhase(getGame(), combatPhaseRoundCounter, cc));
 		assert initShouldBeCalled;
 		getGame().getCurrentPhase().init();
 	}

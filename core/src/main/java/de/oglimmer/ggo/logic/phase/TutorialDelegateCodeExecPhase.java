@@ -17,7 +17,7 @@ public class TutorialDelegateCodeExecPhase extends TutorialDelegateBasePhase {
 	@Override
 	public void initTutorialStep() {
 		execCode.run();
-		super.initTutorialStep();
+		nextPhase();
 	}
 
 	@Override
