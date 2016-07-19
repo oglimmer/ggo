@@ -38,9 +38,8 @@ public class TutorialStepFactory {
 				.setHideScore(true).setHideInfo(true).end()
 
 				.newPhase(TextBuilder.class)
-				.setTitle("The goal of the game to score the most points in 5 turns, where each turn has 3 phases:"
-						+ " Draft, "
-						+ "Deploy and Combat/Move. Let's start with the first phase in the first turn: Draft units. "
+				.setTitle("The goal of the game is to score the most points in 5 turns, where each turn has 3 phases:"
+						+ " Draft, Deploy and Combat/Move. Let's start with the first phase in the first turn: Draft units. "
 						+ "Click the done button.")
 				.setHideScore(true).setHideInfo(true).end()
 
