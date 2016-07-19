@@ -61,6 +61,6 @@ cd ../../server/ansible
 sed -i -e 's/'$PROJECT_NAME'_version.*/'$PROJECT_NAME'_version: '$PROJECT_NAME'-'$RELEASE'/g' roles/$PROJECT_NAME/vars/main.yml
 
 echo "Version in the UI:"
-grep $PROJECT_NAME_version roles/$PROJECT_NAME/vars/main.yml
+grep "$PROJECT_NAME_version" roles/$PROJECT_NAME/vars/main.yml
 
 ./deploy.sh -d production $PROJECT_NAME
