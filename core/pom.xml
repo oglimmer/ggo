@@ -3,14 +3,14 @@
 
 	<groupId>de.oglimmer.ggo</groupId>
 	<artifactId>core</artifactId>
-	<version>0.22</version>
+	<version>0.23-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<scm>
 		<url>https://github.com/oglimmer/ggo</url>
 		<connection>scm:git:git://github.com/oglimmer/ggo.git</connection>
 		<developerConnection>scm:git:git@github.com:oglimmer/ggo.git</developerConnection>
-		<tag>ggo-0.22</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<properties>
@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>de.oglimmer.ggo</groupId>
 			<artifactId>atmosphere-mvc</artifactId>
-			<version>0.22</version>
+			<version>0.23-SNAPSHOT</version>
 		</dependency>
 
 		<!-- EmailService -->
