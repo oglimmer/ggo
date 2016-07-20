@@ -46,27 +46,27 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 		switch(this.unitType) {
 			case Constants.UNIT_TYPE_INFANTRY:
 				var img=document.getElementById("infantry_"+this.color);
-				ctx.drawImage(img,cx-width/4+7,cy - height/2+5);
+				ctx.drawImage(img,cx-img.width*.5,cy - img.height*.5);
 				break;
 			case Constants.UNIT_TYPE_TANK:
 				var img=document.getElementById("tank_"+this.color);
-				ctx.drawImage(img,cx-width/4-10,cy - height/2+14);
+				ctx.drawImage(img,cx-img.width*.5,cy - img.height*.5);
 				break;
 			case Constants.UNIT_TYPE_AIRBORNE:
 				var img=document.getElementById("airborne_"+this.color);
-				ctx.drawImage(img,cx-width/4-10,cy - height/2+14);
+				ctx.drawImage(img,cx-img.width*.5,cy - img.height*.5);
 				break;
 			case Constants.UNIT_TYPE_HELICOPTER:
 				var img=document.getElementById("helicopter_"+this.color);
-				ctx.drawImage(img,cx-width/4-3,cy - height/2+8);
+				ctx.drawImage(img,cx-img.width*.5,cy - img.height*.5);
 				break;
 			case Constants.UNIT_TYPE_ARTILLERY:
 				var img=document.getElementById("artillery_"+this.color);
-				ctx.drawImage(img,cx-width/4-10,cy - height/2+14);
+				ctx.drawImage(img,cx-img.width*.5,cy - img.height*.5);
 				break;
 			case Constants.UNIT_TYPE_CITY:
 				var img=document.getElementById("city_"+this.color);
-				ctx.drawImage(img,cx-width/4-10,cy - height/2+5);
+				ctx.drawImage(img,cx-img.width*.5,cy - img.height*.5);
 				break;
 		}	
 	};

@@ -21,6 +21,14 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 		this.height = null;
 	}
 
+	HandItem.prototype.getWidth = function() {
+		return this.width;
+	}
+	
+	HandItem.prototype.getHeight = function() {
+		return this.height;
+	}
+	
 	/*
 	 * draws the HandItem
 	 */

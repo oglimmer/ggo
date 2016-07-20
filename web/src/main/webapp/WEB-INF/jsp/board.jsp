@@ -1,45 +1,67 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" session="false"%>
 <%@ taglib prefix="stripes" uri="http://stripes.sourceforge.net/stripes.tld"%>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>GridGameOne</title>
+	<link rel="stylesheet" href="css/styles.css" />	
+	<link rel="stylesheet" href="webjars/bootstrap/3.3.6/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="webjars/bootstrap/3.3.6/css/bootstrap-theme.min.css" />
 
-<stripes:layout-render name="/WEB-INF/jsp/common.jsp">
-	<stripes:layout-component name="head">
-	</stripes:layout-component>
-	<stripes:layout-component name="center">
+</head>
+<body>
+
+	<nav class="navbar navbar-inverse navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">GridGameOne</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="Help.action" target="_blank">Instructions</a></li>
+			</ul>          
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
 
 
-		<div class="row">
-			<div class="col-md-10 col-md-offset-2">
-				<div id="messageOpponentConnectionLost"></div>
-				<div id="messageScore">Your score: 0, opponents score: 0</div>
-				<div id="messageTitle">waiting for server message ...</div>
-				<div id="messageInfo"></div>
-				<div id="messageError"></div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-10 col-md-offset-2">
-				<canvas id="board" width="650" height="590"></canvas>
-			</div>
-		</div>
+	<div id="messageOpponentConnectionLost"></div>
+	<div id="messageScore">Your score: 0, opponents score: 0</div>
+	<div id="messageTitle">waiting for server message ...</div>
+	<div id="messageInfo"></div>
+	<div id="messageError"></div>
 
-		<!-- resources -->
-		<img id="infantry_red" src="images/infantry_red.png" style="display: none" />
-		<img id="infantry_green" src="images/infantry_green.png" style="display: none" />
-		<img id="tank_green" src="images/tank_green.png" style="display: none" />
-		<img id="tank_red" src="images/tank_red.png" style="display: none" />
-		<img id="airborne_green" src="images/airborne_green.png" style="display: none" />
-		<img id="airborne_red" src="images/airborne_red.png" style="display: none" />
-		<img id="helicopter_green" src="images/helicopter_green.png" style="display: none" />
-		<img id="helicopter_red" src="images/helicopter_red.png" style="display: none" />
-		<img id="artillery_green" src="images/artillery_green.png" style="display: none" />
-		<img id="artillery_red" src="images/artillery_red.png" style="display: none" />
-		<img id="city_red" src="images/city_red.png" style="display: none" />
-		<img id="city_green" src="images/city_green.png" style="display: none" />
+	<div id="boardDiv"></div>
 
-		<script>
-			var ggoPlayerId = "<%=request.getParameter("playerId")%>";
-		</script>
-		<script data-main="js/board.js" src="webjars/requirejs/2.2.0/require.min.js"></script>
+	<!-- resources -->
+	<img id="infantry_red" src="images/infantry_red.png" style="display: none" />
+	<img id="infantry_green" src="images/infantry_green.png" style="display: none" />
+	<img id="tank_green" src="images/tank_green.png" style="display: none" />
+	<img id="tank_red" src="images/tank_red.png" style="display: none" />
+	<img id="airborne_green" src="images/airborne_green.png" style="display: none" />
+	<img id="airborne_red" src="images/airborne_red.png" style="display: none" />
+	<img id="helicopter_green" src="images/helicopter_green.png" style="display: none" />
+	<img id="helicopter_red" src="images/helicopter_red.png" style="display: none" />
+	<img id="artillery_green" src="images/artillery_green.png" style="display: none" />
+	<img id="artillery_red" src="images/artillery_red.png" style="display: none" />
+	<img id="city_red" src="images/city_red.png" style="display: none" />
+	<img id="city_green" src="images/city_green.png" style="display: none" />
 
-	</stripes:layout-component>
-</stripes:layout-render>
+	<script>
+		var ggoPlayerId = "<%=request.getParameter("playerId")%>";
+	</script>
+	<script data-main="js/board.js" src="webjars/requirejs/2.2.0/require.min.js"></script>
+
+
+
+     <p>${actionBean.longVersion } - Created by oglimmer.de <!-- - Impressum/Kontakt/Datenschutz&nbsp; --> </p>
+</body>
+</html>
+

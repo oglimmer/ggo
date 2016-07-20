@@ -18,6 +18,14 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 		this.y = null;
 	}
 
+	Button.prototype.getWidth = function() {
+		return this.width/60*Constants.size.width;
+	}
+	
+	Button.prototype.getHeight = function() {
+		return this.height/60*Constants.size.height;
+	}
+	
 	Button.prototype.draw = function(ctx, x, y) {
 		this.x = x;
 		this.y = y;
@@ -26,7 +34,7 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "black";
 		ctx.fillStyle = "black";
-		ctx.rect(x, y, this.width, this.height);
+		ctx.rect(x, y, this.getWidth(), this.getHeight());
 		ctx.stroke();
 		
 		if(typeof this.graphic !== 'undefined' && this.graphic != null) {			
@@ -37,11 +45,11 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 			} else {
 				ctx.drawImage(img,this.x,this.y);
 			}
-			ctx.font = "10px Arial";
-			ctx.fillText(this.text,x+30,y+46);
+			ctx.font = ""+parseInt(0.167*Constants.size.width)+"px Arial";
+			ctx.fillText(this.text,x+.5*Constants.size.width,y+.767*Constants.size.height);
 		} else {
-			ctx.font = "10px Arial";
-			ctx.fillText(this.text,x+2,y+12);
+			ctx.font = ""+parseInt(0.167*Constants.size.width)+"px Arial";
+			ctx.fillText(this.text,x+0.033*Constants.size.width,y+.2*Constants.size.height);
 		}
 	};
 	

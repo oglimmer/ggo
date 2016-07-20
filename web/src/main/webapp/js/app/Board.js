@@ -13,12 +13,17 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 
 	/*private class Board*/
 	function Board(elementId) {
-		this.canvasBoard = document.getElementById(elementId);
+		this.elementId = elementId;
+	}
+	
+	/*public*/ Board.prototype.init = function(evt) {
+		console.log(this.elementId);
+		this.canvasBoard = document.getElementById(this.elementId);
 		this.ctxBoard = this.canvasBoard.getContext('2d');
 
 		var thiz = this;
 		$(document).ready(function() {
-			$("#"+elementId).click(function(evt) {
+			$("#"+thiz.elementId).click(function(evt) {
 				thiz.clickHandler(evt);
 			});
 		});
@@ -69,7 +74,7 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 		function check(items) {
 			$.each(items, function(index, item) {
 				if(item.x <= relMousePos.x && item.y <= relMousePos.y 
-						&& item.x+item.width >= relMousePos.x && item.y+item.height >= relMousePos.y) {
+						&& item.x+item.getWidth() >= relMousePos.x && item.y+item.getHeight() >= relMousePos.y) {
 					if (typeof item.onSelect !== 'undefined' ) {
 						item.onSelect();
 					}	
@@ -114,9 +119,9 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 	/*private*/ Board.prototype.drawHand = function() {
 		this.ctxBoard.beginPath();
 		this.ctxBoard.fillStyle = "#dddddd";
-		this.ctxBoard.fillRect(0, 470, this.ctxBoard.canvas.width-10, 57);
+		this.ctxBoard.fillRect(0, Constants.size.height*10*.8, Constants.size.width*10.5, .95*Constants.size.height);
 		var x = 3;
-		var y = 475;
+		var y = Constants.size.height*10*.8+5;
 		for ( var f in globalData.model.boardState.idToHanditems) {
 			var handitemToDraw = globalData.model.boardState.idToHanditems[f];
 			handitemToDraw.draw(this.ctxBoard, x, y);
@@ -124,20 +129,20 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 		}
 		if(x == 3) {
 			this.ctxBoard.beginPath();
-			this.ctxBoard.font = "16px Arial";
+			this.ctxBoard.font = ""+parseInt(.267*Constants.size.height)+"px Arial";
 			this.ctxBoard.fillStyle = "black";
-			this.ctxBoard.fillText("No units at hand.",x,y+28);
+			this.ctxBoard.fillText("No units at hand.",x,y + (.5*Constants.size.height));
 		}
 
 	}
 	/*private*/ Board.prototype.drawButtons = function() {
 		var x = 3;
-		var y = 535;
+		var y = Constants.size.height*10*.8 + .95*Constants.size.height + 10;
 		var thiz = this;
 		$.each(sortById(globalData.model.boardState.idToButtons), function(buttonId, buttonToDraw) {
 			if(!buttonToDraw.hidden) {
 				buttonToDraw.draw(thiz.ctxBoard, x, y);
-				x += buttonToDraw.width+4;
+				x += buttonToDraw.getWidth() + .0667*Constants.size.width;
 			}
 		});
 
@@ -222,6 +227,9 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 		var board = new Board(elementId);	
 		this.draw = function() {
 			board.draw();
+		}
+		this.init = function() {
+			board.init();
 		}
 	};
 	

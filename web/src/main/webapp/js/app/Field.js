@@ -63,11 +63,11 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 		
 		if(showCoordinates) {
 			ctx.save();
-			ctx.translate(cx-9,cy-15);
+			ctx.translate(cx-.15*Constants.size.width,cy-.25*Constants.size.height);
 			ctx.rotate(-Math.PI/7);
 			ctx.textAlign = "center";
 			ctx.fillStyle = "#222222";
-			ctx.font = "8px Arial";
+			ctx.font = ""+parseInt(.133*Constants.size.width)+"px Arial";
 			ctx.fillText(this.x+":"+this.y,0,0);
 			ctx.restore();
 		}		 
