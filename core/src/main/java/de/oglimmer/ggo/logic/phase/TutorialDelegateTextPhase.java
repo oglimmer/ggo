@@ -3,8 +3,10 @@ package de.oglimmer.ggo.logic.phase;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.ui.shortlife.UIButton;
 import lombok.Setter;
 
@@ -54,6 +56,16 @@ public class TutorialDelegateTextPhase extends TutorialDelegateBasePhase {
 		if (!hideInfo) {
 			super.updateInfoMessage(player);
 		}
+	}
+
+	@Override
+	public boolean isSelectable(Field field, Player player) {
+		return false;
+	}
+
+	@Override
+	public boolean isSelectable(Unit unit, Player forPlayer) {
+		return false;
 	}
 
 	@Override
