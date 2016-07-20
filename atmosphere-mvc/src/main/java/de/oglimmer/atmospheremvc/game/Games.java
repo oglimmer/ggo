@@ -102,4 +102,8 @@ public class Games<T extends Game> {
 			log.error("Failed to load all games", e);
 		}
 	}
+
+	public void removeGame(String gameId) {
+		games.remove(gameId);
+	}
 }

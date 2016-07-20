@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebListener;
 import de.oglimmer.atmospheremvc.game.Games;
 import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Game;
+import de.oglimmer.ggo.util.GameCleaner;
 import de.oglimmer.ggo.util.GridGameOneProperties;
 
 /**
@@ -20,6 +21,7 @@ public class GameContextListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent sce) {
 		Games.setGames(new Games<>(Game.class));
 		Games.getGames().loadAll();
+		GameCleaner.INSTANCE.start();
 	}
 
 	@Override
@@ -27,6 +29,7 @@ public class GameContextListener implements ServletContextListener {
 		Games.getGames().saveAll();
 		GridGameOneProperties.PROPERTIES.shutdown();
 		EmailService.EMAIL.shutdown();
+		GameCleaner.INSTANCE.stop();
 	}
 
 }
