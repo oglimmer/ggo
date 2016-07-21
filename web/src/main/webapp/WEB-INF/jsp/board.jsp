@@ -32,13 +32,17 @@
     </nav>
 
 
-	<div id="messageOpponentConnectionLost"></div>
-	<div id="messageScore">Your score: 0, opponents score: 0</div>
-	<div id="messageTitle">waiting for server message ...</div>
-	<div id="messageInfo"></div>
-	<div id="messageError"></div>
-
-	<div id="boardDiv"></div>
+	<div style="display: table;margin: 0 auto;">
+		<div id="messageDiv">
+			<div id="messageOpponentConnectionLost"></div>
+			<div id="messageScore">Your score: 0, opponents score: 0</div>
+			<div id="messageTitle">waiting for server message ...</div>
+			<div id="messageInfo"></div>
+			<div id="messageError"></div>
+		</div>
+	
+		<div id="boardDiv"></div>
+	</div>
 
 	<!-- resources -->
 	<img id="infantry_red" src="images/infantry_red.png" style="display: none" />
