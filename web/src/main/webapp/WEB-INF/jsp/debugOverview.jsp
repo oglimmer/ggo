@@ -9,6 +9,18 @@
 	<stripes:layout-component name="head">
 	</stripes:layout-component>
 	<stripes:layout-component name="center">
+	
+		<stripes:link beanclass="de.oglimmer.ggo.web.action.DebugActionBean" class="btn btn-primary">
+			<stripes:param name="pass">${actionBean.pass}</stripes:param>
+			Refresh
+		</stripes:link>
+		
+		<stripes:link beanclass="de.oglimmer.ggo.web.action.DebugActionBean" event="resetGame" class="btn btn-primary">
+			<stripes:param name="pass">${actionBean.pass}</stripes:param>
+			Reset all games
+		</stripes:link>
+
+	
 		<h3>AtmosphereResources</h3>
 		<ul>
 			<c:forEach var="item" items="${actionBean.atmosphereResources}">

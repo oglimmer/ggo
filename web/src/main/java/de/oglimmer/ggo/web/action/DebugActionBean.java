@@ -40,10 +40,15 @@ public class DebugActionBean extends BaseAction {
 		}
 	}
 
+	public Resolution resetGame() {
+		Games.<Game> getGames().reset();
+		return show();
+	}
+
 	@DefaultHandler
 	public Resolution show() {
 		atmosphereResources = AtmosphereResourceCache.INSTANCE.getItems();
-		games = Games.<Game>getGames().getAllGames();
+		games = Games.<Game> getGames().getAllGames();
 		return new ForwardResolution(VIEW_OVERVIEW);
 	}
 

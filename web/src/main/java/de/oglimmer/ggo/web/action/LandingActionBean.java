@@ -57,10 +57,4 @@ public class LandingActionBean extends BaseAction {
 		return show();
 	}
 
-	@DontValidate
-	public Resolution resetGame() {
-		getContext().getMessages().add(new SimpleMessage("All games reseted"));
-		Games.<Game> getGames().reset();
-		return show();
-	}
 }
