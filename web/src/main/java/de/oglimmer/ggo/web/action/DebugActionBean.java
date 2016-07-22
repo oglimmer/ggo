@@ -1,5 +1,12 @@
 package de.oglimmer.ggo.web.action;
 
+import java.util.Collection;
+import java.util.List;
+
+import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
+import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache.Item;
+import de.oglimmer.atmospheremvc.game.Game;
+import de.oglimmer.atmospheremvc.game.Games;
 import de.oglimmer.ggo.util.GridGameOneProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +27,12 @@ public class DebugActionBean extends BaseAction {
 	@Validate(required = true)
 	private String pass;
 
+	@Getter
+	private List<Item> atmosphereResources;
+
+	@Getter
+	private Collection<Game> games;
+
 	@ValidationMethod
 	public void validate(ValidationErrors errors) {
 		if (!GridGameOneProperties.PROPERTIES.getRuntimePassword().equals(pass)) {
@@ -29,6 +42,8 @@ public class DebugActionBean extends BaseAction {
 
 	@DefaultHandler
 	public Resolution show() {
+		atmosphereResources = AtmosphereResourceCache.INSTANCE.getItems();
+		games = Games.<Game>getGames().getAllGames();
 		return new ForwardResolution(VIEW_OVERVIEW);
 	}
 

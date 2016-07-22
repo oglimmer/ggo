@@ -1,44 +1,51 @@
-<%@page import="de.oglimmer.atmospheremvc.game.Games"%>
-<%@page import="de.oglimmer.atmospheremvc.com.AtmosphereResourceCache"%>
-<%@page import="java.util.Collection"%>
-<%@page import="de.oglimmer.ggo.logic.Unit"%>
-<%@page import="de.oglimmer.ggo.logic.Player"%>
-<%@page import="de.oglimmer.ggo.logic.Field"%>
-<%@page import="de.oglimmer.ggo.logic.Game"%>
-<h1>debug</h1>
+<%@ page contentType="text/html;charset=UTF-8" language="java"
+	session="false"%>
+<%@ taglib prefix="stripes"
+	uri="http://stripes.sourceforge.net/stripes.tld"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<%
+<stripes:layout-render name="/WEB-INF/jsp/common.jsp">
+	<stripes:layout-component name="head">
+	</stripes:layout-component>
+	<stripes:layout-component name="center">
 
-	for ( AtmosphereResourceCache.Item item : AtmosphereResourceCache.INSTANCE.getItems()) {
-		out.println(item+"<br/>");
-	}
+		<h1>debug</h1>
+
+		<c:forEach var="item" items="${actionBean.atmosphereResources}">
+			${item} <br />
+		</c:forEach>
+
+		<c:forEach var="game" items="${actionBean.games }">
+
+			<hr />
+
+			<c:forEach var="field" items="${game.board.fields }">
+				${field } <br />
+			</c:forEach>
+
+			<hr />
+
+			<h3>Phase</h3>
+			
+			${game.currentPhase } <br />
+
+			<hr />
+
+			<c:forEach var="p" items="${game.players }">
+				<hr />
+				<h2>${p.id }/${p.side }</h2>
+				<c:forEach var="u" items="${p.unitInHand }">
+					${u } <br />
+				</c:forEach>
+				<hr />
+				${p.uiStates } <br />
+				<hr />
+			</c:forEach>
+
+		</c:forEach>
 
 
-	Collection<Game> games = Games.<Game>getGames().getAllGames();
+	</stripes:layout-component>
+</stripes:layout-render>
 
-	for(Game game : games) {
-
-		out.println("<hr/>");
-		
-		for (Field f : game.getBoard().getFields()) {
-			out.println(f + "<br/>");
-		}
-	
-		out.println("<hr/>");
-		out.println("<h3>Phase</h3>");
-		out.println(game.getCurrentPhase() + "<br/>");
-		out.println("<hr/>");
-		
-		for (Player p : game.getPlayers()) {
-			out.println("<hr/>");
-			out.println("<h2>"+p.getId()+"/" + p.getSide() + "</h2>");
-			for (Unit u : p.getUnitInHand()) {
-				out.println(u + "<br/>");
-			}
-			out.println("<hr/>");
-			out.println(p.getUiStates() + "<br/>");
-			out.println("<hr/>");
-	
-		}
-	}
-%>
