@@ -16,6 +16,8 @@ import net.sourceforge.stripes.controller.LifecycleStage;
 
 public abstract class BaseAction implements ActionBean {
 
+	private static final int DATEFORMAT = DateFormat.FULL;
+
 	private static String longVersionCache;
 
 	@Getter
@@ -30,24 +32,27 @@ public abstract class BaseAction implements ActionBean {
 	public void retrieveVersion() {
 		if (longVersionCache == null) {
 			String commit;
+			String gitUrl;
 			String version;
 			String creationDate;
 			try (InputStream is = new FileInputStream(
 					getContext().getServletContext().getRealPath("/META-INF/MANIFEST.MF"))) {
 				Manifest mf = new Manifest(is);
 				Attributes attr = mf.getMainAttributes();
-				commit = attr.getValue("GIT-buildNumber");
+				commit = attr.getValue("git-commit");
+				gitUrl = attr.getValue("git-url");
 				version = attr.getValue("GGO-Version");
 				long time = Long.parseLong(attr.getValue("Creation-Date"));
-				creationDate = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
-						.format(new Date(time));
+				creationDate = DateFormat.getDateTimeInstance(DATEFORMAT, DATEFORMAT).format(new Date(time));
 			} catch (Exception e) {
 				commit = "?";
-				creationDate = "?";
+				gitUrl = "?";
+				creationDate = DateFormat.getDateTimeInstance(DATEFORMAT, DATEFORMAT).format(new Date());
 				version = "?";
 			}
 
-			longVersionCache = "V" + version + " [Commit#" + commit + "] build " + creationDate;
+			longVersionCache = "V" + version + " [<a href='" + gitUrl + "/commits/ggo-" + version + "'>Commit#" + commit
+					+ "</a>] build " + creationDate;
 		}
 
 		longVersion = longVersionCache;

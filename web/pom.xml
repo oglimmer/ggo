@@ -59,7 +59,8 @@
 					<archiveClasses>true</archiveClasses>
 					<archive>
 						<manifestEntries>
-							<GIT-buildNumber>${buildNumber}</GIT-buildNumber>
+							<git-commit>${buildNumber}</git-commit>
+							<git-url>${project.scm.url}</git-url>
 							<Creation-Date>${timestamp}</Creation-Date>
 							<GGO-Version>${project.version}</GGO-Version>
 						</manifestEntries>
