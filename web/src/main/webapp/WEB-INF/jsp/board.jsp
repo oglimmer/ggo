@@ -32,7 +32,7 @@
     </nav>
 
 
-	<div style="display: table;margin: 0 auto;">
+	<div id="boardContainer">
 		<div id="messageDiv">
 			<div id="messageOpponentConnectionLost"></div>
 			<div id="messageScore">Your score: 0, opponents score: 0</div>

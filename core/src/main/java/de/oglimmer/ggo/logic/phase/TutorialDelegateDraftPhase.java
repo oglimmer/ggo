@@ -7,6 +7,7 @@ import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
 import de.oglimmer.ggo.logic.UnitType;
+import de.oglimmer.ggo.logic.util.Strings;
 import de.oglimmer.ggo.ui.shortlife.UIButton;
 import lombok.Setter;
 
@@ -49,8 +50,8 @@ public class TutorialDelegateDraftPhase extends TutorialDelegateBasePhase {
 	}
 
 	@Override
-	public String toString() {
-		return "TutorialDelegateDraftPhase [unitType=" + unitType + "] extends " + super.toString();
+	public String toString(int lvl) {
+		return "<br/>" + Strings.repeat("&nbsp;", lvl * 2) + "TutorialDelegateDraftPhase [unitType=" + unitType + "] extends " + super.toString(lvl);
 	}
 
 }

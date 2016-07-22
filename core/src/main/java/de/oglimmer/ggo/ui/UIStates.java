@@ -17,6 +17,7 @@ public class UIStates extends de.oglimmer.atmospheremvc.game.UIState {
 
 	private States states;
 
+	@ToString
 	class States implements Serializable {
 
 		private static final long serialVersionUID = 1L;

@@ -9,38 +9,34 @@
 	<stripes:layout-component name="head">
 	</stripes:layout-component>
 	<stripes:layout-component name="center">
-
-		<h1>debug</h1>
-
-		<c:forEach var="item" items="${actionBean.atmosphereResources}">
-			${item} <br />
-		</c:forEach>
+		<h3>AtmosphereResources</h3>
+		<ul>
+			<c:forEach var="item" items="${actionBean.atmosphereResources}">
+				<li>UUID={${item.uuid}}, disconnected={${item.disconnected }}, Player={<a href="#player${item.player.id}">${item.player.id}</a>, ${item.player.side}}</li>
+			</c:forEach>
+		</ul>
 
 		<c:forEach var="game" items="${actionBean.games }">
 
-			<hr />
+			<h2>${game.id }</h2>
 
+			<h3>Fields</h3>
 			<c:forEach var="field" items="${game.board.fields }">
 				${field } <br />
 			</c:forEach>
 
-			<hr />
-
 			<h3>Phase</h3>
 			
-			${game.currentPhase } <br />
+			${game.currentPhase.toString(0) } <br />
 
-			<hr />
+			<h3>Players</h3>
 
 			<c:forEach var="p" items="${game.players }">
-				<hr />
-				<h2>${p.id }/${p.side }</h2>
+				<h4><a name="player${p.id }">${p.id }/${p.side }</a></h4>
 				<c:forEach var="u" items="${p.unitInHand }">
 					${u } <br />
 				</c:forEach>
-				<hr />
 				${p.uiStates } <br />
-				<hr />
 			</c:forEach>
 
 		</c:forEach>

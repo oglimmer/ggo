@@ -6,8 +6,10 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.Value;
 
+@ToString
 public class ModalDialog implements Serializable {
 
 	private static final long serialVersionUID = 1L;

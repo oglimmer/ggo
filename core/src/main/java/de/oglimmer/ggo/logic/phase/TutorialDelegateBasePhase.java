@@ -11,7 +11,7 @@ import de.oglimmer.ggo.ui.shortlife.UIButton;
 import lombok.Getter;
 import lombok.Setter;
 
-public class TutorialDelegateBasePhase extends BasePhase {
+abstract public class TutorialDelegateBasePhase extends BasePhase {
 
 	private static final long serialVersionUID = 1L;
 
@@ -120,10 +120,10 @@ public class TutorialDelegateBasePhase extends BasePhase {
 		delegate.updateModalDialg(player);
 	}
 
-	@Override
-	public String toString() {
-		return "TutorialDelegateBasePhase [delegate=" + delegate + ", title=" + title + ", nextPhase=" + nextPhase
-				+ "]";
+	public String toString(int lvl) {
+		return "TutorialDelegateBasePhase [delegate=" + delegate + ", title=\""
+				+ (title != null ? (title.length() > 20 ? title.substring(0, 20) + "…" : title) : "null")
+				+ "\", nextPhase=" + (nextPhase != null ? nextPhase.toString(lvl + 1) : "null") + "]";
 	}
 
 }
