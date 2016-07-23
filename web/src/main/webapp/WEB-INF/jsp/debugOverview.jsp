@@ -30,7 +30,8 @@
 
 		<c:forEach var="game" items="${actionBean.games }">
 
-			<h2>${game.id }</h2>
+			<h2>Game: ${game.id }</h2>
+			<p>Created = ${game.createdOn }</p>
 
 			<h3>Fields</h3>
 			<c:forEach var="field" items="${game.board.fields }">
@@ -39,12 +40,19 @@
 
 			<h3>Phase</h3>
 			
-			${game.currentPhase.toString(0) } <br />
+			<ol>
+				<c:forEach var="subPhase" items="${actionBean.buildPhaseStack(game)}">
+					<li>${subPhase }</li>
+				</c:forEach>
+			</ol>
 
 			<h3>Players</h3>
 
 			<c:forEach var="p" items="${game.players }">
 				<h4><a name="player${p.id }">${p.id }/${p.side }</a></h4>
+				<p>Last action = ${p.lastAction }</p>
+				<p>Last connection = ${p.lastConnection }</p>
+				<p>${actionBean.getAtmosphereResources(p) }</p>
 				<c:forEach var="u" items="${p.unitInHand }">
 					${u } <br />
 				</c:forEach>

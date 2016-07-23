@@ -1,6 +1,7 @@
 package de.oglimmer.ggo.logic;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.oglimmer.atmospheremvc.com.MessageQueue;
@@ -18,6 +19,14 @@ public class Player implements de.oglimmer.atmospheremvc.game.Player {
 
 	@Getter
 	private String id = RandomString.getRandomStringHex(8);
+
+	@Getter
+	@Setter
+	private Date lastAction;
+
+	@Getter
+	@Setter
+	private Date lastConnection;
 
 	@Getter
 	private Side side;

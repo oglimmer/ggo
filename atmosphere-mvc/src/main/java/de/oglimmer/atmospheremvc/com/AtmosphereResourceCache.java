@@ -2,6 +2,7 @@ package de.oglimmer.atmospheremvc.com;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -64,12 +65,14 @@ public enum AtmosphereResourceCache {
 		}
 		item.setDisconnected(false);
 
-		Player disconnectingPlayer = item.getPlayer();
-		if (disconnectingPlayer != null) {
-			Player remainingPlayer = disconnectingPlayer.getGame().getOtherPlayer(disconnectingPlayer);
-			if (remainingPlayer != null) {
-				remainingPlayer.updateUI();
-			}
+		updateOtherPlayer(item);
+		updateLastConnectionTime(item);
+	}
+
+	private void updateLastConnectionTime(Item item) {
+		Player actingPlayer = item.getPlayer();
+		if (actingPlayer != null) {
+			actingPlayer.setLastConnection(new Date());
 		}
 	}
 
@@ -77,12 +80,17 @@ public enum AtmosphereResourceCache {
 		items.stream().filter(i -> i.getUuid().equals(uuid)).forEach(i -> i.setDisconnected(true));
 		Item item = getItem(uuid);
 		if (item != null) {
-			Player disconnectingPlayer = item.getPlayer();
-			if (disconnectingPlayer != null) {
-				Player remainingPlayer = disconnectingPlayer.getGame().getOtherPlayer(disconnectingPlayer);
-				if (remainingPlayer != null) {
-					remainingPlayer.updateUI();
-				}
+			updateOtherPlayer(item);
+			updateLastConnectionTime(item);
+		}
+	}
+
+	private void updateOtherPlayer(Item item) {
+		Player actingPlayer = item.getPlayer();
+		if (actingPlayer != null) {
+			Player remainingPlayer = actingPlayer.getGame().getOtherPlayer(actingPlayer);
+			if (remainingPlayer != null) {
+				remainingPlayer.updateUI();
 			}
 		}
 	}

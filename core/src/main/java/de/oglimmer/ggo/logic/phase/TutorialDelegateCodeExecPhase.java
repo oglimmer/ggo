@@ -1,7 +1,6 @@
 package de.oglimmer.ggo.logic.phase;
 
 import de.oglimmer.ggo.logic.Game;
-import de.oglimmer.ggo.logic.util.Strings;
 import lombok.Setter;
 
 public class TutorialDelegateCodeExecPhase extends TutorialDelegateBasePhase {
@@ -22,8 +21,8 @@ public class TutorialDelegateCodeExecPhase extends TutorialDelegateBasePhase {
 	}
 
 	@Override
-	public String toString(int lvl) {
-		return "<br/>" + Strings.repeat("&nbsp;", lvl * 2) + "TutorialDelegateCodeExecPhase [] extends " + super.toString(lvl);
+	public String toString() {
+		return "TutorialDelegateCodeExecPhase [] extends " + super.toString();
 	}
 
 }

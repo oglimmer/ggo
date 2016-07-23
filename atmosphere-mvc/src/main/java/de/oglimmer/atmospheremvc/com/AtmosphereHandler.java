@@ -3,6 +3,7 @@ package de.oglimmer.atmospheremvc.com;
 import static org.atmosphere.cpr.ApplicationConfig.MAX_INACTIVE;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -49,11 +50,13 @@ public class AtmosphereHandler {
 	@Message(encoders = { JacksonEncoder.class }, decoders = { JacksonDecoder.class })
 	public void onMessage(CommandMessage message) throws IOException {
 		log.debug("onMessage: {}", message);
-		Game game = Games.<Game>getGames().getGameByPlayerId(message.getPid());
+		Game game = Games.<Game> getGames().getGameByPlayerId(message.getPid());
 		if (game == null) {
 			// @TODO: send 'game not exists'
 		} else {
 			Player player = game.getPlayerById(message.getPid());
+			player.setLastAction(new Date());
+			player.setLastConnection(new Date());
 			assert player != null;
 			if ("join".equals(message.getCmd())) {
 				AtmosphereResourceCache.INSTANCE.registerPlayer(player, r.uuid());

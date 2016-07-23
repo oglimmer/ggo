@@ -7,7 +7,6 @@ import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.Unit;
-import de.oglimmer.ggo.logic.util.Strings;
 import de.oglimmer.ggo.ui.shortlife.UIButton;
 import lombok.Setter;
 
@@ -57,9 +56,9 @@ public class TutorialDelegateCombatPhase extends TutorialDelegateBasePhase {
 	}
 
 	@Override
-	public String toString(int lvl) {
-		return "<br/>" + Strings.repeat("&nbsp;", lvl * 2) + "TutorialDelegateCombatPhase [unit=" + unit + ", field=" + (field != null ? field.getId() : "null")
-				+ "] extends " + super.toString(lvl);
+	public String toString() {
+		return "TutorialDelegateCombatPhase [unit=" + unit + ", field=" + (field != null ? field.getId() : "null")
+				+ "] extends " + super.toString();
 	}
 
 }

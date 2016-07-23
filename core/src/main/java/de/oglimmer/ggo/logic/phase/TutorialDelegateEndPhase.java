@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
-import de.oglimmer.ggo.logic.util.Strings;
 import de.oglimmer.ggo.ui.shortlife.UIButton;
 
 public class TutorialDelegateEndPhase extends TutorialDelegateBasePhase {
@@ -31,8 +30,8 @@ public class TutorialDelegateEndPhase extends TutorialDelegateBasePhase {
 	}
 
 	@Override
-	public String toString(int lvl) {
-		return "<br/>" + Strings.repeat("&nbsp;", lvl * 2) + "TutorialDelegateEndPhase [] extends " + super.toString(lvl);
+	public String toString() {
+		return "TutorialDelegateEndPhase [] extends " + super.toString();
 	}
 
 }

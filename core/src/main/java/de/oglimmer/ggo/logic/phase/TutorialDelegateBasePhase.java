@@ -28,6 +28,7 @@ abstract public class TutorialDelegateBasePhase extends BasePhase {
 	private String title;
 
 	@Setter
+	@Getter
 	private TutorialDelegateBasePhase nextPhase;
 
 	public TutorialDelegateBasePhase(Game game) {
@@ -120,10 +121,10 @@ abstract public class TutorialDelegateBasePhase extends BasePhase {
 		delegate.updateModalDialg(player);
 	}
 
-	public String toString(int lvl) {
+	@Override
+	public String toString() {
 		return "TutorialDelegateBasePhase [delegate=" + delegate + ", title=\""
-				+ (title != null ? (title.length() > 20 ? title.substring(0, 20) + "…" : title) : "null")
-				+ "\", nextPhase=" + (nextPhase != null ? nextPhase.toString(lvl + 1) : "null") + "]";
+				+ (title != null ? (title.length() > 20 ? title.substring(0, 20) + "…" : title) : "null") + "\"]";
 	}
 
 }
