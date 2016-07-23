@@ -5,14 +5,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.oglimmer.ggo</groupId>
 	<artifactId>web</artifactId>
-	<version>0.28</version>
+	<version>0.29-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<scm>
 		<url>https://github.com/oglimmer/ggo</url>
 		<connection>scm:git:git://github.com/oglimmer/ggo.git</connection>
 		<developerConnection>scm:git:git@github.com:oglimmer/ggo.git</developerConnection>
-		<tag>ggo-0.28</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<properties>
@@ -156,7 +156,7 @@
 		<dependency>
 			<groupId>de.oglimmer.ggo</groupId>
 			<artifactId>core</artifactId>
-			<version>0.28</version>
+			<version>0.29-SNAPSHOT</version>
 		</dependency>
 		<!-- this doesn't work in jasmine tests <dependency> <groupId>org.atmosphere.client</groupId> 
 			<artifactId>javascript</artifactId> <version>2.3.2</version> <type>war</type> 
