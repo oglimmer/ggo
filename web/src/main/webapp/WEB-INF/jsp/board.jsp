@@ -42,6 +42,8 @@
 		</div>
 	
 		<div id="boardDiv"></div>
+		
+		<p>Created by <a href="http://oglimmer.de" target="_blank">oglimmer.de</a> - ${actionBean.longVersion } - <stripes:link beanclass="de.oglimmer.ggo.web.action.ImpressumActionBean">Impressum/Kontakt/Datenschutz&nbsp;</stripes:link> </p>
 	</div>
 
 	<!-- resources -->
@@ -63,9 +65,6 @@
 	</script>
 	<script data-main="js/board.js" src="webjars/requirejs/2.2.0/require.min.js"></script>
 
-
-
-     <p>${actionBean.longVersion } - Created by oglimmer.de <!-- - Impressum/Kontakt/Datenschutz&nbsp; --> </p>
 </body>
 </html>
 

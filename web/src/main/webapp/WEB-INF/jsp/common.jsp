@@ -51,7 +51,7 @@
       <hr>
 
       <footer>
-        <p>${actionBean.longVersion } - Created by oglimmer.de <!-- - Impressum/Kontakt/Datenschutz&nbsp; --> </p>
+        <p>Created by <a href="http://oglimmer.de" target="_blank">oglimmer.de</a> - ${actionBean.longVersion } - <stripes:link beanclass="de.oglimmer.ggo.web.action.ImpressumActionBean">Impressum/Kontakt/Datenschutz&nbsp;</stripes:link> </p>
       </footer>
     </div> <!-- /container -->
 
