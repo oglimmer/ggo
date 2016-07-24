@@ -28,6 +28,26 @@
 			</c:forEach>
 		</ul>
 
+		<div class="container">
+			<div class="row">
+				<h3>GameNotifications</h3>
+				<div class="col-sm-1">ID</div>
+				<div class="col-sm-3">EMAIL</div>
+				<div class="col-sm-2">CREATED_ON</div>
+				<div class="col-sm-2">CONFIRMED</div>
+				<div class="col-sm-4">CONFIRMED_ID</div>
+			</div>
+			<c:forEach var="gn" items="${actionBean.gameNotifications}">
+				<div class="row">
+					<div class="col-sm-1">${gn.id }</div>
+					<div class="col-sm-3">${gn.email }</div>
+					<div class="col-sm-2">${gn.createdOn }</div>
+					<div class="col-sm-2">${gn.confirmed }</div>
+					<div class="col-sm-4">${gn.confirmId }</div>
+				</div>
+			</c:forEach>
+		</div>		
+
 		<c:forEach var="game" items="${actionBean.games }">
 
 			<h2>Game: ${game.id }</h2>

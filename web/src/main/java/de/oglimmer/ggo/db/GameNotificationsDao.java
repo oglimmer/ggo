@@ -4,6 +4,8 @@ import static de.oglimmer.ggo.db.DBAccess.DB;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 import de.oglimmer.ggo.logic.util.RandomString;
@@ -57,6 +59,13 @@ public enum GameNotificationsDao {
 		GameNotification[] retObj = new GameNotification[1];
 		DB.execQuery(query, rs -> convertResultSetToGameNotification(gm -> retObj[0] = gm, rs), confirmId);
 		return retObj[0];
+	}
+
+	public Collection<GameNotification> all() {
+		Collection<GameNotification> coll = new ArrayList<>();
+		String query = "select id,email,createdOn,confirmed,confirmId from game_notification";
+		DB.execQuery(query, rs -> convertResultSetToGameNotification(gn -> coll.add(gn), rs));
+		return coll;
 	}
 
 }

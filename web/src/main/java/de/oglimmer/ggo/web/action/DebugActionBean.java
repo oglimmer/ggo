@@ -9,6 +9,8 @@ import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
 import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache.Item;
 import de.oglimmer.atmospheremvc.game.Game;
 import de.oglimmer.atmospheremvc.game.Games;
+import de.oglimmer.ggo.db.GameNotification;
+import de.oglimmer.ggo.db.GameNotificationsDao;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateBasePhase;
 import de.oglimmer.ggo.util.GridGameOneProperties;
@@ -37,6 +39,9 @@ public class DebugActionBean extends BaseAction {
 	@Getter
 	private Collection<Game> games;
 
+	@Getter
+	private Collection<GameNotification> gameNotifications;
+
 	@ValidationMethod
 	public void validate(ValidationErrors errors) {
 		if (!GridGameOneProperties.PROPERTIES.getRuntimePassword().equals(pass)) {
@@ -53,6 +58,7 @@ public class DebugActionBean extends BaseAction {
 	public Resolution show() {
 		atmosphereResources = AtmosphereResourceCache.INSTANCE.getItems();
 		games = Games.<Game> getGames().getAllGames();
+		gameNotifications = GameNotificationsDao.INSTANCE.all();
 		return new ForwardResolution(VIEW_OVERVIEW);
 	}
 
