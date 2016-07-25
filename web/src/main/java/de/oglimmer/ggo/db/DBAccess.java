@@ -1,9 +1,6 @@
 package de.oglimmer.ggo.db;
 
-import static de.oglimmer.ggo.util.GridGameOneProperties.PROPERTIES;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +15,7 @@ public enum DBAccess {
 	DB;
 
 	<R> R execOnCon(Function<Connection, R> fkt) {
-		try (Connection conn = getConnection(buildUrl())) {
+		try (Connection conn = ConnectionPool.INSTANCE.getCon()) {
 			return fkt.apply(conn);
 		} catch (SQLException e) {
 			log.error("Failed to exec query", e);
@@ -70,18 +67,6 @@ public enum DBAccess {
 			}
 			return 0;
 		});
-	}
-
-	private Connection getConnection(String url) throws SQLException {
-		return DriverManager.getConnection(url, PROPERTIES.getDbUser(), PROPERTIES.getDbPassword());
-	}
-
-	private String buildUrl() {
-		String url = PROPERTIES.getDbServerUrl() + PROPERTIES.getDbSchema();
-		if (PROPERTIES.getDbParameter() != null) {
-			url += "?" + PROPERTIES.getDbParameter();
-		}
-		return url;
 	}
 
 }

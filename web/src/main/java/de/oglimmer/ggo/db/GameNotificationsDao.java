@@ -16,7 +16,7 @@ public enum GameNotificationsDao {
 	INSTANCE;
 
 	private GameNotificationsDao() {
-		GridGameOneProperties.PROPERTIES.registerOnReload(() -> gamePropertiesChanged());
+		GridGameOneProperties.PROPERTIES.registerOnReload(this::gamePropertiesChanged);
 		gamePropertiesChanged();
 	}
 

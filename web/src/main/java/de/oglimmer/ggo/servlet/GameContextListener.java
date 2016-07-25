@@ -5,6 +5,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import de.oglimmer.atmospheremvc.game.Games;
+import de.oglimmer.ggo.db.ConnectionPool;
 import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.util.GameCleaner;
@@ -30,6 +31,7 @@ public class GameContextListener implements ServletContextListener {
 		GridGameOneProperties.PROPERTIES.shutdown();
 		EmailService.EMAIL.shutdown();
 		GameCleaner.INSTANCE.stop();
+		ConnectionPool.INSTANCE.shutdown();
 	}
 
 }
