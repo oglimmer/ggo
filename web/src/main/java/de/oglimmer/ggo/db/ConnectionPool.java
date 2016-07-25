@@ -26,15 +26,17 @@ public class ConnectionPool {
 	public synchronized void shutdown() {
 		if (cpds != null) {
 			log.debug("Shutdown c3p0 connection pool");
-
 			try {
-				while (cpds.getNumBusyConnections() > 0) {
-					TimeUnit.MILLISECONDS.sleep(5);
+				final int WAIT_TIME = 5;
+				long c = 0; // wait for max 30 sec
+				while (cpds.getNumBusyConnections() > 0 && c < 30_000) {
+					TimeUnit.MILLISECONDS.sleep(WAIT_TIME);
+					c += WAIT_TIME;
 				}
 			} catch (SQLException | InterruptedException e) {
-				e.printStackTrace();
+				// SQLException can actually never happen
+				// In case of InterruptedException we just proceed
 			}
-
 			cpds.close();
 			cpds = null;
 		}
@@ -53,7 +55,6 @@ public class ConnectionPool {
 	}
 
 	public synchronized Connection getCon() throws SQLException {
-
 		return cpds.getConnection();
 	}
 
