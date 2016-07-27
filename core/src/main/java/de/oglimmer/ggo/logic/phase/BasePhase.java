@@ -3,8 +3,6 @@ package de.oglimmer.ggo.logic.phase;
 import java.util.Collection;
 import java.util.Collections;
 
-import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
-import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -60,10 +58,7 @@ abstract public class BasePhase implements de.oglimmer.atmospheremvc.game.Phase 
 	}
 
 	protected void notifyPlayer(Player p) {
-		AtmosphereResourceCache.Item item = AtmosphereResourceCache.INSTANCE.getItem(p);
-		if (item == null || item.isDisconnected()) {
-			EmailService.EMAIL.gameNeedsYourAction(p);
-		}
+		p.notifyForAction();
 	}
 
 	@Override

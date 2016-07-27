@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.oglimmer.ggo.logic.ai.AiStrategy;
 import de.oglimmer.ggo.logic.phase.BasePhase;
 import de.oglimmer.ggo.logic.phase.DraftPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateBasePhase;
@@ -49,27 +50,25 @@ public class Game implements de.oglimmer.atmospheremvc.game.Game {
 		return players.get(0).getId().equals(pid) ? players.get(0) : players.get(1);
 	}
 
-	public Unit getUnitById(String unitId) {
-		return board.getFields().stream().filter(f -> f.getUnit() != null)
-				.filter(f -> f.getUnit().getId().equals(unitId)).map(f -> f.getUnit()).findFirst().get();
-	}
-
 	/**
 	 * @param nextPhase
-	 * @return true if a new game logic phase was enabled (false if it was just a Delegatable)
+	 * @return true if a new game logic phase was enabled (false if it was just
+	 *         a Delegatable)
 	 */
 	public boolean setCurrentPhase(BasePhase nextPhase) {
 		if (currentPhase instanceof TutorialDelegateBasePhase) {
 			// currentPhase is a delegable
 			TutorialDelegateBasePhase currentPhaseTutorial = (TutorialDelegateBasePhase) currentPhase;
 			if (nextPhase instanceof TutorialDelegateBasePhase) {
-				// nextPhase is a delegable as well => change the top-level class and just safe the underlying delegate
+				// nextPhase is a delegable as well => change the top-level
+				// class and just safe the underlying delegate
 				TutorialDelegateBasePhase nextPhaseTutorial = (TutorialDelegateBasePhase) nextPhase;
 				nextPhaseTutorial.setDelegate(currentPhaseTutorial.getDelegate());
 				currentPhase = nextPhase;
 				return false;
 			} else {
-				// nextPhase isn't delegable => keep the top-level class and replace the underlying delegate
+				// nextPhase isn't delegable => keep the top-level class and
+				// replace the underlying delegate
 				currentPhaseTutorial.setDelegate(nextPhase);
 				return true;
 			}
@@ -77,7 +76,8 @@ public class Game implements de.oglimmer.atmospheremvc.game.Game {
 		} else {
 			// currentPhase isn't a delegable
 			if (nextPhase instanceof TutorialDelegateBasePhase) {
-				// we switch to a top-level delegable, but we must keep the underlying delegate
+				// we switch to a top-level delegable, but we must keep the
+				// underlying delegate
 				TutorialDelegateBasePhase nextPhaseTutorial = (TutorialDelegateBasePhase) nextPhase;
 				nextPhaseTutorial.setDelegate(currentPhase);
 				currentPhase = nextPhase;
@@ -94,17 +94,24 @@ public class Game implements de.oglimmer.atmospheremvc.game.Game {
 	}
 
 	public Player createPlayer(String email) {
-		Side side;
-		if (players.size() == 0) {
-			side = Side.GREEN;
-		} else if (players.size() == 1) {
-			side = Side.RED;
-		} else {
-			throw new RuntimeException();
-		}
+		Side side = getUnusedSide();
 		Player newPlayer = new Player(side, email, this);
 		players.add(newPlayer);
 		return newPlayer;
+	}
+
+	public void createAiPlayer(Class<? extends AiStrategy> clazz) {
+		players.add(new PlayerAi(getUnusedSide(), this, clazz));
+	}
+
+	private Side getUnusedSide() {
+		if (players.size() == 0) {
+			return Side.GREEN;
+		} else if (players.size() == 1) {
+			return Side.RED;
+		} else {
+			throw new RuntimeException();
+		}
 	}
 
 	@Override

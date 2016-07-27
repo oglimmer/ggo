@@ -28,7 +28,6 @@ public class DeployPhase extends BasePhase {
 
 	public DeployPhase(Game game) {
 		super(game);
-
 	}
 
 	@Override
@@ -36,10 +35,10 @@ public class DeployPhase extends BasePhase {
 		Player firstActivePlayer = findFirstPlayer();
 		findActivePlayer(firstActivePlayer);
 		if (this.activePlayer != null) {
-			notifyPlayer(activePlayer);
 			getGame().getPlayers().forEach(p -> p.getMessages().clearErrorInfo());
 			getGame().getPlayers()
 					.forEach(p -> additionalAirborneTargetFields.put(p, calcAdditionalTargetFieldsAirborne(p)));
+			notifyPlayer(activePlayer);
 		}
 	}
 
@@ -98,13 +97,18 @@ public class DeployPhase extends BasePhase {
 
 	@Override
 	public boolean isHighlighted(Field field, Player forPlayer) {
+		Set<Field> tmp = getDeployFields(forPlayer);
+		return forPlayer == activePlayer && selectedUnit != null && tmp.contains(field);
+	}
+
+	public Set<Field> getDeployFields(Player forPlayer) {
 		Set<Field> tmp = new HashSet<>(getDefaultDeployZone(forPlayer));
 		if (selectedUnit != null && selectedUnit.getUnitType() == UnitType.AIRBORNE) {
 			tmp.addAll(additionalAirborneTargetFields.get(forPlayer));
 		}
 		// remove fields with unit
 		getGame().getBoard().getFields().stream().filter(f -> f.getUnit() != null).forEach(f -> tmp.remove(f));
-		return forPlayer == activePlayer && selectedUnit != null && tmp.contains(field);
+		return tmp;
 	}
 
 	@Override

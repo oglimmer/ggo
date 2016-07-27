@@ -55,7 +55,7 @@ public class CombatDisplayPhase extends BasePhase {
 		}
 	}
 
-	private void execDoneButton(Player player) {
+	public void execDoneButton(Player player) {
 		inTurn.remove(player);
 		if (inTurn.isEmpty()) {
 			nextPhase();

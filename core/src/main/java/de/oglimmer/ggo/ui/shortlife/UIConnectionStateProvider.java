@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
 import de.oglimmer.ggo.logic.Player;
+import de.oglimmer.ggo.logic.PlayerAi;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateBasePhase;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
@@ -32,7 +33,8 @@ public class UIConnectionStateProvider implements Serializable {
 	}
 
 	public boolean getOpponentConnectionStatusIgnore() {
-		return forPlayer.getGame().getCurrentPhase() instanceof TutorialDelegateBasePhase;
+		return forPlayer.getGame().getCurrentPhase() instanceof TutorialDelegateBasePhase
+				|| forPlayer.getGame().getOtherPlayer(forPlayer) instanceof PlayerAi;
 	}
 
 }

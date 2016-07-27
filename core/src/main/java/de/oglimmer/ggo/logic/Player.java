@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
 import de.oglimmer.atmospheremvc.com.MessageQueue;
+import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.phase.BasePhase;
 import de.oglimmer.ggo.logic.util.RandomString;
 import de.oglimmer.ggo.ui.UIStates;
@@ -84,6 +86,7 @@ public class Player implements de.oglimmer.atmospheremvc.game.Player {
 		score += addScore;
 	}
 
+	@Override
 	public void updateUI() {
 		BasePhase currentPhase = game.getCurrentPhase();
 		if (currentPhase != null) {
@@ -94,7 +97,16 @@ public class Player implements de.oglimmer.atmospheremvc.game.Player {
 		messages.process();
 	}
 
+	public void notifyForAction() {
+		AtmosphereResourceCache.Item item = AtmosphereResourceCache.INSTANCE.getItem(this);
+		if (item == null || item.isDisconnected()) {
+			EmailService.EMAIL.gameNeedsYourAction(this);
+		}
+	}
+
+	@Override
 	public String toString() {
 		return "Player [id=" + id + ", side=" + side + "]";
 	}
+
 }

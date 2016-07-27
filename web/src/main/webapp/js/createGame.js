@@ -68,6 +68,14 @@ requirejs([ 'commons' ], function(commons) {
 				}
 			});
 		})
+		$("#btnAi").click(function() {
+			$.ajax({
+				url : "./CreateAiQuery.action",
+				success : function(result) {
+					document.location.href="Board.action?playerId="+result.playerId;
+				}
+			});
+		})
 
 		
 	});

@@ -19,6 +19,7 @@ import de.oglimmer.ggo.logic.battle.CommandType;
 import de.oglimmer.ggo.ui.persistent.ModalDialog;
 import de.oglimmer.ggo.ui.shortlife.UIButton;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,8 @@ public class CombatCommandPhase extends BasePhase {
 	private Map<Player, State> states = new HashMap<>();
 
 	private Set<Player> inTurn = new HashSet<>();
+
+	@Getter
 	private CommandCenter cc;
 
 	public CombatCommandPhase(Game game, CombatPhaseRoundCounter combatPhaseRoundCounter) {
@@ -55,6 +58,7 @@ public class CombatCommandPhase extends BasePhase {
 		if (getGame().getBoard().getTotalUnits() == 0) {
 			nextPhase();
 		} else {
+			cc.setAllToFortify();
 			getGame().getPlayers().forEach(p -> {
 				if (getGame().getBoard().getTotalUnits(p) > 0) {
 					inTurn.add(p);
@@ -64,8 +68,6 @@ public class CombatCommandPhase extends BasePhase {
 			if (inTurn.isEmpty()) {
 				nextPhase();
 			}
-
-			cc.setAllToFortify();
 		}
 	}
 
@@ -110,7 +112,7 @@ public class CombatCommandPhase extends BasePhase {
 		}
 	}
 
-	private void execDoneButton(Player player) {
+	public void execDoneButton(Player player) {
 		inTurn.remove(player);
 		if (inTurn.isEmpty()) {
 			nextPhase();
@@ -156,7 +158,7 @@ public class CombatCommandPhase extends BasePhase {
 	}
 
 	private void execSelectUnit(Player player, String param) {
-		Unit unit = getGame().getUnitById(param);
+		Unit unit = getGame().getBoard().getUnitById(param);
 		Unit currentlySelected = getState(player).getSelectedUnits();
 		if (currentlySelected != null && currentlySelected != unit) {
 			log.error("Player {} has unit selected", player.getSide());

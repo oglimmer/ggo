@@ -16,7 +16,8 @@
 		   	<h3>Choose a gaming type ...</h3>
 		   	<p>
 		   		<button id="btnByEmail" class="btn btn-primary btn-lg">Play by e-mail</button>
-		   		<button id="btnRealTime" class="btn btn-primary btn-lg">Real-time game</button>
+		   		<button id="btnRealTime" class="btn btn-primary btn-lg">Real-time vs human</button>
+		   		<button id="btnAi" class="btn btn-primary btn-lg">Real-time vs A.I.</button>
 		   		<button id="btnTutorial" class="btn btn-primary btn-lg">Tutorial</button>
 		   	</p>
 	   	</div>

@@ -8,7 +8,7 @@ define([ 'jquery', 'app/Constants', 'atmosphere' ], function($, Constants,
 
 	// https://github.com/Atmosphere/atmosphere/wiki/atmosphere.js-atmosphere.js-API
 	var request = {
-		url : '/grid/srvcom',
+		url : 'srvcom',
 		contentType : "application/json",
 		// logLevel : 'debug',
 		trackMessageLength : false,

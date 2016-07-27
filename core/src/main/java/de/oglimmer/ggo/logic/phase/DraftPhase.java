@@ -50,14 +50,18 @@ public class DraftPhase extends BasePhase {
 			for (UnitType type : UnitType.values()) {
 				if (("buy" + type.toString()).equals(param)) {
 					if (type.getCost() <= player.getCredits()) {
-						player.spendCredits(type.getCost());
-						player.getUnitInHand().add(new Unit(player, type));
+						draftUnit(player, type);
 					}
 				}
 			}
 			break;
 		}
+	}
 
+	public void draftUnit(Player player, UnitType type) {
+		assert player.getCredits() >= type.getCost();
+		player.spendCredits(type.getCost());
+		player.getUnitInHand().add(new Unit(player, type));
 	}
 
 	private void execSelectHandCard(Player player, String param) {
@@ -74,7 +78,7 @@ public class DraftPhase extends BasePhase {
 		return unit.getPlayer() == forPlayer && forPlayer.getUnitInHand().contains(unit) && inTurn.contains(forPlayer);
 	}
 
-	private void playerDone(Player player) {
+	public void playerDone(Player player) {
 		inTurn.remove(player);
 		if (inTurn.isEmpty()) {
 			nextPhase();
