@@ -31,9 +31,9 @@ public class DraftPhase extends BasePhase {
 	@Override
 	public void init() {
 		inTurn.addAll(getGame().getPlayers());
-		notifyPlayers();
 		getGame().getPlayers().forEach(p -> p.incCredits(CREDITS_PER_TURN));
 		getGame().getPlayers().forEach(p -> p.getMessages().clearErrorInfo());
+		notifyPlayers();
 	}
 
 	@Override

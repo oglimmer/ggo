@@ -90,7 +90,8 @@ public class Unit implements Serializable {
 		return possibleCommands;
 	}
 
-	private Set<Field> getSupportableFields(CommandCenter cc) {
+	public Set<Field> getSupportableFields(CommandCenter cc) {
+		assert this.unitType != UnitType.ARTILLERY;
 		/*
 		 * A unit can support a neighbor if an own unit is currently there and
 		 * not moving away.
@@ -149,7 +150,8 @@ public class Unit implements Serializable {
 				.filter(c -> c.getTargetField() == deployedOn).collect(Collectors.toSet());
 	}
 
-	private Set<Field> getTargetableFields() {
+	public Set<Field> getTargetableFields() {
+		assert this.unitType == UnitType.ARTILLERY || this.unitType == UnitType.HELICOPTER;
 		/*
 		 * A unit can target a neighbor if an enemy unit is on that field (don't
 		 * care about enemy commands)
