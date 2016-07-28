@@ -51,6 +51,9 @@ public class RandomStrategy implements AiStrategy {
 		DeployPhase dp = (DeployPhase) game.getCurrentPhase();
 		Field toDeployField = null;
 		int x = 5;
+		if (toDeploy.getUnitType() == UnitType.ARTILLERY) {
+			x = 4;
+		}
 		int tryForColumn = 5;
 		while (toDeployField == null) {
 			int y = (int) (Math.random() * 10);
@@ -84,30 +87,45 @@ public class RandomStrategy implements AiStrategy {
 						}
 					}
 					if (setMove) {
-						
-						Point pos = u.getDeployedOn().getPos();
-						String targetFieldId = null;
-						if (pos.x == 1 && pos.y == 2) {
-							targetFieldId = "0:1";
-						} else if (pos.x == 0 && pos.y == 1) {
-							targetFieldId = "0:0";
-						} else if (pos.x == 0 && pos.y == 3) {
-							targetFieldId = "0:4";
-						} else if (pos.x == 0 && pos.y == 5) {
-							targetFieldId = "0:4";
-						} else if (pos.x == 1 && pos.y == 6) {
-							targetFieldId = "0:5";
-						} else if (pos.x == 0 && pos.y == 7) {
-							targetFieldId = "0:8";
-						} else if (pos.x == 0 && pos.y == 9) {
-							targetFieldId = "0:8";
-						} else if (pos.x > 0) {
-							targetFieldId = pos.x - 1 + ":" + pos.y;
+
+						if (u.getUnitType() != UnitType.ARTILLERY) {
+
+							Optional<Field> fieldToSupport = u.getSupportableFields(combatCommandPhase.getCc()).stream()
+									.filter(f -> f.getUnit() != null).filter(f -> f.getUnit().getPlayer() != player)
+									.findAny();
+							if (fieldToSupport.isPresent()) {
+								combatCommandPhase.getCc().addCommand(u, fieldToSupport.get(), CommandType.SUPPORT);
+								setMove = false;
+							}
+
 						}
-						if (targetFieldId != null) {
-							Field targetField = game.getBoard().getField(targetFieldId);
-							if (combatCommandPhase.getCc().getByTargetField(player, targetField).isEmpty()) {
-								combatCommandPhase.getCc().addCommand(u, targetField, CommandType.MOVE);
+
+						if (setMove && Math.random() > 0.2) {
+
+							Point pos = u.getDeployedOn().getPos();
+							String targetFieldId = null;
+							if (pos.x == 1 && pos.y == 2) {
+								targetFieldId = "0:1";
+							} else if (pos.x == 0 && pos.y == 1) {
+								targetFieldId = "0:0";
+							} else if (pos.x == 0 && pos.y == 3) {
+								targetFieldId = "0:4";
+							} else if (pos.x == 0 && pos.y == 5) {
+								targetFieldId = "0:4";
+							} else if (pos.x == 1 && pos.y == 6) {
+								targetFieldId = "0:5";
+							} else if (pos.x == 0 && pos.y == 7) {
+								targetFieldId = "0:8";
+							} else if (pos.x == 0 && pos.y == 9) {
+								targetFieldId = "0:8";
+							} else if (pos.x > 0) {
+								targetFieldId = pos.x - 1 + ":" + pos.y;
+							}
+							if (targetFieldId != null) {
+								Field targetField = game.getBoard().getField(targetFieldId);
+								if (combatCommandPhase.getCc().getByTargetField(player, targetField).isEmpty()) {
+									combatCommandPhase.getCc().addCommand(u, targetField, CommandType.MOVE);
+								}
 							}
 						}
 					}
