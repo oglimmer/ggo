@@ -24,7 +24,7 @@
 		<h3>AtmosphereResources</h3>
 		<ul>
 			<c:forEach var="item" items="${actionBean.atmosphereResources}">
-				<li>UUID={${item.uuid}}, disconnected={${item.disconnected }}, Player={<a href="#player${item.player.id}">${item.player.id}</a>, ${item.player.side}}</li>
+				<li>UUID={${item.uuid}}, disconnected={${item.disconnected }}, Player={<a href="#player${item.player.id}">${item.player.id}</a>, ${item.player.side}}, ${item.created}</li>
 			</c:forEach>
 		</ul>
 
