@@ -18,4 +18,6 @@ public interface Player extends Serializable {
 	void setLastAction(Date now);
 
 	void setLastConnection(Date now);
+
+	Date getLastConnection();
 }

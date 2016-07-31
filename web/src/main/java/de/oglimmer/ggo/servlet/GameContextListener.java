@@ -4,6 +4,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import de.oglimmer.atmospheremvc.com.AtmosphereResourceCacheCleaner;
 import de.oglimmer.atmospheremvc.game.Games;
 import de.oglimmer.ggo.db.ConnectionPool;
 import de.oglimmer.ggo.email.EmailService;
@@ -23,6 +24,7 @@ public class GameContextListener implements ServletContextListener {
 		Games.setGames(new Games<>(Game.class));
 		Games.getGames().loadAll();
 		GameCleaner.INSTANCE.start();
+		AtmosphereResourceCacheCleaner.INSTANCE.start();
 	}
 
 	@Override
@@ -32,6 +34,7 @@ public class GameContextListener implements ServletContextListener {
 		EmailService.EMAIL.shutdown();
 		GameCleaner.INSTANCE.stop();
 		ConnectionPool.INSTANCE.shutdown();
+		AtmosphereResourceCacheCleaner.INSTANCE.shutdown();
 	}
 
 }

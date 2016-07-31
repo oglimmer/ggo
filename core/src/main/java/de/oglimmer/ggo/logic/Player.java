@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
+import de.oglimmer.atmospheremvc.com.AtmosphereResourceCacheItem;
 import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.phase.BasePhase;
@@ -98,7 +99,7 @@ public class Player implements de.oglimmer.atmospheremvc.game.Player {
 	}
 
 	public void notifyForAction() {
-		AtmosphereResourceCache.Item item = AtmosphereResourceCache.INSTANCE.getItem(this);
+		AtmosphereResourceCacheItem item = AtmosphereResourceCache.INSTANCE.getItem(this);
 		if (item == null || item.isDisconnected()) {
 			EmailService.EMAIL.gameNeedsYourAction(this);
 		}

@@ -6,12 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
+import de.oglimmer.atmospheremvc.com.AtmosphereResourceCacheItem;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +73,7 @@ public class Games<T extends Game> {
 	}
 
 	public Collection<T> getAllGames() {
-		return games.values();
+		return new ArrayList<>(games.values());
 	}
 
 	public void removeAbandonedGame(String gameId) {
@@ -104,6 +107,13 @@ public class Games<T extends Game> {
 	}
 
 	public void removeGame(String gameId) {
-		games.remove(gameId);
+		T removedGame = games.remove(gameId);
+		if (removedGame != null) {
+			Collection<? extends Player> players = removedGame.getPlayers();
+			AtmosphereResourceCache.INSTANCE.getItems().stream().filter(i -> players.contains(i.getPlayer()))
+					.map(AtmosphereResourceCacheItem::getUuid).forEach(AtmosphereResourceCache.INSTANCE::remove);
+		} else {
+			log.error("removed Game but not found");
+		}
 	}
 }

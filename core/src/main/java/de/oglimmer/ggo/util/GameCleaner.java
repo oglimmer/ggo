@@ -1,8 +1,6 @@
 package de.oglimmer.ggo.util;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -15,23 +13,26 @@ import lombok.extern.slf4j.Slf4j;
 public enum GameCleaner {
 	INSTANCE;
 
+	private static final int SECONDS_UNTIL_GAME_EXPIRES = 60 * 60 * 24;
+
 	private ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
 
 	public void start() {
 		service.scheduleAtFixedRate(new Runnable() {
 
+			private Calendar cal;
+
 			@Override
 			public void run() {
-				Calendar cal = Calendar.getInstance();
-				cal.add(Calendar.DAY_OF_YEAR, -1);
+				cal = Calendar.getInstance();
+				cal.add(Calendar.SECOND, -SECONDS_UNTIL_GAME_EXPIRES);
 				log.debug("Compare games against {}", cal.getTime());
+				Games.<Game> getGames().getAllGames().stream().filter(this::expiredGames).map(Game::getId)
+						.forEach(Games.<Game> getGames()::removeGame);
+			}
 
-				Collection<Game> allGames = new ArrayList<>(Games.<Game> getGames().getAllGames());
-				allGames.forEach(game -> {
-					if (game.getCreatedOn().before(cal.getTime())) {
-						Games.<Game> getGames().removeGame(game.getId());
-					}
-				});
+			private boolean expiredGames(Game game) {
+				return game.getCreatedOn().before(cal.getTime());
 			}
 
 		}, 1, 1, TimeUnit.MINUTES);

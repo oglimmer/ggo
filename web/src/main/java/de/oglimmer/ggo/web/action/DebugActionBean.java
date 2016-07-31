@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache;
-import de.oglimmer.atmospheremvc.com.AtmosphereResourceCache.Item;
+import de.oglimmer.atmospheremvc.com.AtmosphereResourceCacheItem;
 import de.oglimmer.atmospheremvc.game.Game;
 import de.oglimmer.atmospheremvc.game.Games;
 import de.oglimmer.ggo.db.GameNotification;
@@ -34,7 +34,7 @@ public class DebugActionBean extends BaseAction {
 	private String pass;
 
 	@Getter
-	private List<Item> atmosphereResources;
+	private List<AtmosphereResourceCacheItem> atmosphereResources;
 
 	@Getter
 	private Collection<Game> games;
@@ -74,8 +74,9 @@ public class DebugActionBean extends BaseAction {
 		return collectedPhases;
 	}
 
-	public Item getAtmosphereResources(Player p) {
-		Optional<Item> item = atmosphereResources.stream().filter(ar -> ar.getPlayer() == p).findFirst();
+	public AtmosphereResourceCacheItem getAtmosphereResources(Player p) {
+		Optional<AtmosphereResourceCacheItem> item = atmosphereResources.stream().filter(ar -> ar.getPlayer() == p)
+				.findFirst();
 		if (item.isPresent()) {
 			return item.get();
 		}

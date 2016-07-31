@@ -2,6 +2,7 @@ package de.oglimmer.atmospheremvc.com;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -11,37 +12,16 @@ import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
 
 import de.oglimmer.atmospheremvc.game.Player;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public enum AtmosphereResourceCache {
 	INSTANCE;
 
-	@Getter
-	private List<Item> items = new ArrayList<>();
+	private List<AtmosphereResourceCacheItem> items = Collections.synchronizedList(new ArrayList<>());
 
-	@RequiredArgsConstructor
-	@Data
-	public class Item {
-
-		@NonNull
-		private String uuid;
-
-		@NonNull
-		private WeakReference<AtmosphereResourceImpl> ar;
-
-		private Player player;
-
-		private boolean disconnected;
-
-		public String toString() {
-			return "Item [uuid=" + uuid + ", ar=" + (ar != null ? ar.hashCode() : null) + ", player="
-					+ (player != null ? player.getId() : null) + ", disconnected=" + disconnected + "]";
-		}
+	public List<AtmosphereResourceCacheItem> getItems() {
+		return new ArrayList<>(items);
 	}
 
 	/**
@@ -50,10 +30,10 @@ public enum AtmosphereResourceCache {
 	 * @param r
 	 */
 	public void connect(AtmosphereResourceImpl r) {
-		Item item = getItem(r.uuid());
+		AtmosphereResourceCacheItem item = getItem(r.uuid());
 		if (item == null) {
 			// connect
-			item = new Item(r.uuid(), new WeakReference<>(r));
+			item = new AtmosphereResourceCacheItem(r.uuid(), new WeakReference<>(r));
 			items.add(item);
 			log.debug("connect {}", item);
 		} else if (item.getAr().get() != r) {
@@ -69,7 +49,7 @@ public enum AtmosphereResourceCache {
 		updateLastConnectionTime(item);
 	}
 
-	private void updateLastConnectionTime(Item item) {
+	private void updateLastConnectionTime(AtmosphereResourceCacheItem item) {
 		Player actingPlayer = item.getPlayer();
 		if (actingPlayer != null) {
 			actingPlayer.setLastConnection(new Date());
@@ -78,14 +58,14 @@ public enum AtmosphereResourceCache {
 
 	public void disconnect(String uuid) {
 		items.stream().filter(i -> i.getUuid().equals(uuid)).forEach(i -> i.setDisconnected(true));
-		Item item = getItem(uuid);
+		AtmosphereResourceCacheItem item = getItem(uuid);
 		if (item != null) {
 			updateOtherPlayer(item);
 			updateLastConnectionTime(item);
 		}
 	}
 
-	private void updateOtherPlayer(Item item) {
+	private void updateOtherPlayer(AtmosphereResourceCacheItem item) {
 		Player actingPlayer = item.getPlayer();
 		if (actingPlayer != null) {
 			Player remainingPlayer = actingPlayer.getGame().getOtherPlayer(actingPlayer);
@@ -95,8 +75,9 @@ public enum AtmosphereResourceCache {
 		}
 	}
 
-	private Item getItem(String uuid) {
-		Optional<Item> findFirst = items.stream().filter(i -> i.getUuid().equals(uuid)).findFirst();
+	private AtmosphereResourceCacheItem getItem(String uuid) {
+		Optional<AtmosphereResourceCacheItem> findFirst = items.stream().filter(i -> i.getUuid().equals(uuid))
+				.findFirst();
 		if (findFirst.isPresent()) {
 			log.debug("get item for uuid {}", uuid);
 			return findFirst.get();
@@ -106,7 +87,7 @@ public enum AtmosphereResourceCache {
 	}
 
 	public boolean isConnected(Player player) {
-		Item item = getItem(player);
+		AtmosphereResourceCacheItem item = getItem(player);
 		if (item != null) {
 			return !item.isDisconnected();
 		}
@@ -114,20 +95,20 @@ public enum AtmosphereResourceCache {
 	}
 
 	public void registerPlayer(Player player, String uuid) {
-		Item disconnectedPlayerItem = getItem(player);
+		AtmosphereResourceCacheItem disconnectedPlayerItem = getItem(player);
 		if (disconnectedPlayerItem != null) {
 			remove(disconnectedPlayerItem.getUuid());
 		}
-		Item connectedUuidItem = getItem(uuid);
+		AtmosphereResourceCacheItem connectedUuidItem = getItem(uuid);
 		if (connectedUuidItem != null && connectedUuidItem.getPlayer() != player) {
 			connectedUuidItem.setPlayer(player);
 			log.debug("set on {} player {}", uuid, player.getSide());
 		}
 	}
 
-	private void remove(String uuid) {
-		for (Iterator<Item> it = items.iterator(); it.hasNext();) {
-			Item i = it.next();
+	public void remove(String uuid) {
+		for (Iterator<AtmosphereResourceCacheItem> it = items.iterator(); it.hasNext();) {
+			AtmosphereResourceCacheItem i = it.next();
 			if (i.getUuid().equals(uuid)) {
 				it.remove();
 			}
@@ -135,7 +116,7 @@ public enum AtmosphereResourceCache {
 	}
 
 	public AtmosphereResource get(Player player) {
-		Item findFirst = getItem(player);
+		AtmosphereResourceCacheItem findFirst = getItem(player);
 		if (findFirst != null) {
 			AtmosphereResourceImpl atmosphereResourceImpl = findFirst.getAr().get();
 			log.debug("get Resource for player {} = {}", player.getSide(), atmosphereResourceImpl.uuid());
@@ -145,8 +126,9 @@ public enum AtmosphereResourceCache {
 		return null;
 	}
 
-	public Item getItem(Player player) {
-		Optional<Item> findFirst = items.stream().filter(i -> i.getPlayer() == player).findFirst();
+	public AtmosphereResourceCacheItem getItem(Player player) {
+		Optional<AtmosphereResourceCacheItem> findFirst = items.stream().filter(i -> i.getPlayer() == player)
+				.findFirst();
 		if (findFirst.isPresent()) {
 			return findFirst.get();
 		}
