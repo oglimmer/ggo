@@ -18,7 +18,7 @@
     <logger name="de.oglimmer.atmospheremvc.com.MessageQueue" level="ERROR"/>
 
     <root>
-        <level value="DEBUG"/>
+        <level value="INFO"/>
         <appender-ref ref="STDOUT"/>
     </root>
 
