@@ -9,10 +9,10 @@ import de.oglimmer.atmospheremvc.com.AtmosphereResourceCacheItem;
 import de.oglimmer.atmospheremvc.com.MessageQueue;
 import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.phase.BasePhase;
-import de.oglimmer.ggo.logic.util.RandomString;
 import de.oglimmer.ggo.ui.UIStates;
 import de.oglimmer.ggo.ui.persistent.Messages;
 import de.oglimmer.ggo.ui.persistent.ModalDialog;
+import de.oglimmer.utils.random.RandomString;
 import lombok.Getter;
 import lombok.Setter;
 

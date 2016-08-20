@@ -4,7 +4,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import de.oglimmer.ggo.logic.util.RandomString;
+import de.oglimmer.utils.AbstractProperties;
+import de.oglimmer.utils.random.RandomString;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

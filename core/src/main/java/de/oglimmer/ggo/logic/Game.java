@@ -8,7 +8,7 @@ import de.oglimmer.ggo.logic.ai.AiStrategy;
 import de.oglimmer.ggo.logic.phase.BasePhase;
 import de.oglimmer.ggo.logic.phase.DraftPhase;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateBasePhase;
-import de.oglimmer.ggo.logic.util.RandomName;
+import de.oglimmer.utils.random.RandomName;
 import lombok.Getter;
 import lombok.Setter;
 

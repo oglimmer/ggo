@@ -14,7 +14,7 @@ import de.oglimmer.ggo.logic.battle.Command;
 import de.oglimmer.ggo.logic.battle.CommandCenter;
 import de.oglimmer.ggo.logic.battle.CommandType;
 import de.oglimmer.ggo.logic.util.FieldUtil;
-import de.oglimmer.ggo.logic.util.RandomString;
+import de.oglimmer.utils.random.RandomString;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

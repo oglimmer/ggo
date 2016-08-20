@@ -2,7 +2,7 @@ package de.oglimmer.ggo.logic;
 
 import java.io.Serializable;
 
-import de.oglimmer.ggo.logic.util.RandomString;
+import de.oglimmer.utils.random.RandomString;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
