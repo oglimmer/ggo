@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import de.oglimmer.ggo.logic.util.RandomString;
 import de.oglimmer.ggo.util.GridGameOneProperties;
+import de.oglimmer.utils.random.RandomString;
 import lombok.SneakyThrows;
 
 public enum GameNotificationsDao {
