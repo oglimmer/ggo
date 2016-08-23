@@ -42,8 +42,8 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>de.oglimmer</groupId>
-			<artifactId>utils</artifactId>
+			<groupId>de.oglimmer.utils</groupId>
+			<artifactId>common-utils</artifactId>
 			<version>0.1</version>
 		</dependency>
 	</dependencies>
