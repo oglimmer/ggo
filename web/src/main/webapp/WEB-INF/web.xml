@@ -55,4 +55,8 @@
 		<url-pattern>/srvcom/*</url-pattern>
 	</servlet-mapping>
 
+	<error-page>
+    	<error-code>404</error-code>
+    	<location>/redirect.jsp</location>
+	</error-page>
 </web-app>
