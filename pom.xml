@@ -32,6 +32,15 @@
 		<tag>HEAD</tag>
 	</scm>
 
+  <pluginRepositories>
+    <!-- this is the only repo providing org.apache.maven.plugins:maven-release-plugin:3.0-r1585899 -->
+    <pluginRepository>
+      <id>adobe-repo</id>
+      <name>adobe-repo</name>
+      <url>https://repo.adobe.com/nexus/content/groups/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
 	<modules>
 		<module>atmosphere-mvc</module>
 		<module>core</module>
@@ -49,12 +58,4 @@
 		</plugins>
 	</build>
 
-<repositories>
-    <!-- this is the only repo providing org.apache.maven.plugins:maven-release-plugin:3.0-r1585899 -->
-    <repository>
-      <id>adobe-repo</id>
-      <name>adobe-repo</name>
-      <url>https://repo.adobe.com/nexus/content/groups/public/</url>
-    </repository>
-  </repositories>
 </project>
