@@ -7,6 +7,9 @@
 	   <div class="container">
 	   	<div id="divWaitingForOtherPlayer" style="display:none">
 			<h3>Your game is <span id="gameId"></span></h3>
+      <h4>
+        We will store a session cookies on your computer. They don't store any personal information and are just used to identify your computer on subsequent http calls unless you will close your browser. If you are not okay with this cookie, just leave this page now.<br/>
+      </h4>
 			<p>Waiting for other player <span id="waitingProgress"></span></p>
 			<p>(We have informed <span id="numberOfNotifications"></span> by email about your new game, if eventually 
 			no one joins this new game, you could either add yourself to the email notification system on the portal page or

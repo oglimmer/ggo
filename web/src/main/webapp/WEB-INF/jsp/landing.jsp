@@ -32,7 +32,7 @@
 			</stripes:link>
 		</p>
 	</c:if>
-	
+	<%--
 	<p>
 		<stripes:form beanclass="de.oglimmer.ggo.web.action.LandingActionBean">
 			Put your email address here to get a notification if someone hits the 'create game' button.
@@ -40,6 +40,7 @@
 			<stripes:submit class="btn btn-primary" name="register" value="Register" />
 		</stripes:form>
 	</p>
+  --%>
   
 	<script data-main="js/landing.js" src="webjars/requirejs/2.2.0/require.min.js"></script>
 	  

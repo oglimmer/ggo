@@ -6,7 +6,7 @@
 	 <div class="jumbotron">
 	   <div class="container">
 	     	<h3>Enter e-mail addresses</h3>
-	     	
+	     	<h4>We won't store your email addresses in any database. As soon as the game has ended, your personal email address is removed from memory.</h4>
 	     	<stripes:errors />
 
 			<stripes:form beanclass="de.oglimmer.ggo.web.action.CreateGameByEmailActionBean">
@@ -19,7 +19,7 @@
 	                <div class="row form-group">
 	                    <div class="col-sm-12">
 	                        Opponent's email address:<stripes:text id="email2" name="email2" class="form-control"></stripes:text>
-	                        <stripes:checkbox name="searchForOne" id="searchForOne" /> I don't have an opponent, use player's database
+	                        <stripes:checkbox name="searchForOne" id="searchForOne" /> I don't have an opponent, use player's database (this is not longer supported due to GDPR)
 	                    </div>
 	                </div>
 	                <div class="row form-group">
