@@ -1,5 +1,16 @@
 # Grid Game One
 
+Where to start?
+---------------
+
+1.) Install java, mvn, curl
+
+2.) run `./run_local.sh -f`
+
+3.) Browse [http://localhost:8080/grid]()
+
+Give run_local.sh -h a try.
+
 jasmine tests
 -------------
 
