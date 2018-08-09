@@ -71,7 +71,7 @@
 			<plugin>
 				<groupId>com.github.searls</groupId>
 				<artifactId>jasmine-maven-plugin</artifactId>
-				<version>2.1</version>
+				<version>2.2</version>
 				<executions>
 					<execution>
 						<goals>
@@ -80,6 +80,10 @@
 					</execution>
 				</executions>
 				<configuration>
+          <phantomjs>
+            <version>2.1.1</version>
+            <checkSystemPath>true</checkSystemPath>
+          </phantomjs>
 					<keepServerAlive>true</keepServerAlive>
 					<specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
 					<jsSrcDir>${project.basedir}/src/main/webapp/js</jsSrcDir>
