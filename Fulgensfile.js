@@ -26,7 +26,7 @@ module.exports = {
 
     "tomcat": {
       Source: "tomcat",
-      Connect: "ggo"
+      Deploy: "ggo"
     }
   }
 }
