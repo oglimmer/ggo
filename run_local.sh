@@ -1,12 +1,20 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 trap cleanup 2
 set -e
 
-# returns the JDK version.
-# 8 for 1.8.0_nn, 9 for 9-ea etc, and "no_java" for undetected
-# from https://stackoverflow.com/questions/7334754/correct-way-to-check-java-version-from-bash-script
-jdk_version() {
+
+#------------
+# FunctionsBuilder
+#------------
+
+
+
+	jdk_version() {
+		
+  # returns the JDK version.
+  # 8 for 1.8.0_nn, 9 for 9-ea etc, and "no_java" for undetected
+  # from https://stackoverflow.com/questions/7334754/correct-way-to-check-java-version-from-bash-script
   local result
   local java_cmd
   if [[ -n $(type -p java) ]]
@@ -38,13 +46,23 @@ jdk_version() {
     done
   fi
   echo "$result"
-}
+
+	}
+
+
+
+
+
+#------------
+# CleanupBuilder
+#------------
+
 
 cleanup()
 {
-	echo "****************************************************************"
-	echo "Stopping software.....please wait...."
-	echo "****************************************************************"
+  echo "****************************************************************"
+  echo "Stopping software .....please wait...."
+  echo "****************************************************************"
 
   ALL_COMPONENTS=(tomcat)
   for keepRunningAllElement in "${ALL_COMPONENTS[@]}"; do
@@ -60,64 +78,60 @@ cleanup()
 
       if [ "$keepRunningAllElement" == "tomcat" ]; then
         echo "Stopping $keepRunningAllElement ..."
-        if [ "$TYPE_SOURCE_TOMCAT" == "download" ]; then
-         localrun/apache-tomcat-$TOMCAT_VERSION/bin/shutdown.sh
+        if [ "$TYPE_SOURCE_TOMCAT" == "docker" ]; then
+         docker rm -f $dockerContainerIDtomcat
          rm -f .tomcat
         fi
-        if [ "$TYPE_SOURCE_TOMCAT" == "docker" ]; then
-          docker rm -f $containerId
-          rm -f .tomcat
+        if [ "$TYPE_SOURCE_TOMCAT" == "download" ]; then
+         ./localrun/apache-tomcat-$TOMCAT_VERSION/bin/shutdown.sh
+         rm -f .tomcat
         fi
-      
+        
       fi
     fi
   done
 
-	exit 0
+  exit 0
 }
 
-#
-# SECTION: HELP / USAGE
-#
 
-usage="$(basename "$0")
+
+
+#------------
+# OptionsBuilder
+#------------
+
+
+
+usage="$(basename "$0") - Builds, deploys and run GridGameOne
 where:
   -h                         show this help text
-  -b [local|docker:version]  build locally (default) or within a maven image on docker, the default image is 3-jdk-10
   -s                         skip any build
   -c [all|build]             clean local run directory, when a build is scheduled for execution it also does a full build
-  -f                         tail the apache catalina log at the end
-  -v                         start VirtualBox via vagrant, install all dependencies, ssh into the VM and run
-  -k [component]             keep [all] or comma sperarated list of components running
+  -k [component]             keep comma sperarated list of components running
   -t [component:type:[path|version]] run component inside [docker] container, [download] component (default) or [local] use installed component from path
-  -j version                 set/overwrite java_home to a specific version, needs to be in format for java_home 1.8, 9, 10
+  -V                         enable Verbose
+  -v                         start VirtualBox via vagrant, install all dependencies, ssh into the VM and run
+  -b local|docker:version    build locally (default) or within a maven image on docker, the default image is 3-jdk-10
+  -f                         tail the apache catalina log at the end
+  -j version                 macOS only: set/overwrite JAVA_HOME to a specific version, needs to be in format for /usr/libexec/java_home
 
-Tested software versions:
-  -b docker:[3-jdk-8|3-jdk-9|3-jdk-10] default 3-jdk-10
-  -j any locally installed JDK, version needs to be compatible with /usr/lib/java_home
-  -t tomcat:download:[7|8|9], default 9
-  -t tomcat:docker:[7|8|9], default 9
-
-Examples:
-  -b local                          do a local build, would respect -j
-  -b docker:3-jdk-10                do a docker based build, in this case use maven:3-jdk-10 image
-  -t tomcat:local:/usr/lib/tomcat   reuse tomcat installation from /usr/lib/tomcat, would not start/stop this tomcat   
-  -t tomcat:download:7              download latest version 7 tomcat and run this build within it, would respect -j
-  -t tomcat:docker:7                start docker image tomcat:7 and run this build within it
+Details:
+ -b docker:[3-jdk-8|3-jdk-9|3-jdk-10] #do a docker based build, uses \`maven:3-jdk-10\` image
+ -b local #do a local build, would respect -j
+ -t tomcat:local:/usr/lib/tomcat #reuse tomcat installation from /usr/lib/tomcat, does not start/stop this tomcat
+ -t tomcat:download:[7|8|9] #download tomcat version x and run this build within it, would respect -j
+ -t tomcat:docker:[7|8|9] #start docker image \`tomcat:X\` and run this build within it
+ -j version #can use any locally installed JDK, see /usr/libexec/java_home -V
 "
 
-#
-# SECTION: RESOLVE PARAMETER
-#
-
-cd ${0%/*}
+cd $(cd "$(dirname "$0")";pwd -P)
 
 BUILD=local
-while getopts ':hb:sc:fvk:t:j:' option; do
+while getopts ':hsc:k:t:Vvb:fj:' option; do
   case "$option" in
     h) echo "$usage"
        exit;;
-    b) BUILD=$OPTARG;;
     s) SKIP_BUILD=YES;;
     c) 
        CLEAN=$OPTARG
@@ -125,10 +139,12 @@ while getopts ':hb:sc:fvk:t:j:' option; do
          echo "Illegal -c parameter" && exit 1
        fi
        ;;
-    f) TAIL=YES;;
-    v) VAGRANT=YES;;
     k) KEEP_RUNNING=$OPTARG;;
     t) TYPE_SOURCE=$OPTARG;;
+    V) VERBOSE=YES;;
+    v) VAGRANT=YES;;
+    b) BUILD=$OPTARG;;
+    f) TAIL=YES;;
     j) JAVA_VERSION=$OPTARG;;
     :) printf "missing argument for -%s\n" "$OPTARG" >&2
        echo "$usage" >&2
@@ -141,45 +157,51 @@ done
 shift $((OPTIND - 1))
 TYPE_PARAM="$1"
 
-#TYPE_SOURCE
+
+
+
+#------------
+# DependencycheckBuilder
+#------------
+
+mvn --version 1>/dev/null || exit 1; 
+curl --version 1>/dev/null || exit 1; 
+java -version 2>/dev/null || exit 1; 
+
+
+
+
+#------------
+# CleanBuilder
+#------------
+
+
+# clean if requested
+if [ -n "$CLEAN" ]; then
+  if [ "$CLEAN" == "all" ]; then
+    rm -rf localrun
+  fi
+  
+fi
+
+
+
+
+#------------
+# GlobalVariablesBuilder
+#------------
+
 TYPE_SOURCE_TOMCAT=download
-IFS=',' read -r -a array <<< "$TYPE_SOURCE"
-for typeSourceElement in "${array[@]}"; do
-  IFS=: read comp type pathOrVersion <<< "$typeSourceElement"
-  if [ "$comp" == "tomcat" ]; then
-    TYPE_SOURCE_TOMCAT=$type
-    if [ "$TYPE_SOURCE_TOMCAT" == "local" ]; then
-      TYPE_SOURCE_TOMCAT_PATH=$pathOrVersion
-    else
-      TYPE_SOURCE_TOMCAT_VERSION=$pathOrVersion
-    fi
-  else
-    echo "Illegal component in -t" && exit 1
-  fi
-done
-if [ "$TYPE_SOURCE_TOMCAT" == "download" ]; then
-  if [ -z "$TYPE_SOURCE_TOMCAT_VERSION" ]; then
-    TYPE_SOURCE_TOMCAT_VERSION="9"
-  fi
-  # find latest tomcat version for $TYPE_SOURCE_TOMCAT_VERSION
-  if [ "$(uname)" == "Linux" ]; then
-    GREP_PERL_MODE="-P"
-  fi
-  TOMCAT_BASE_URL="http://mirror.vorboss.net/apache/tomcat"
-  TOMCAT_VERSION_PRE=$(curl -s "$TOMCAT_BASE_URL/tomcat-$TYPE_SOURCE_TOMCAT_VERSION/"|grep -m1 -o $GREP_PERL_MODE "<a href=\"v\d*.\d*.\d*" || echo "__________9.0.10")
-  TOMCAT_VERSION=${TOMCAT_VERSION_PRE:10}
-  TOMCAT_URL=$TOMCAT_BASE_URL/tomcat-$TYPE_SOURCE_TOMCAT_VERSION/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
-fi
 
-#JAVA_VERSION
-if [ -n "$JAVA_VERSION" ]; then
-  export JAVA_HOME=$(/usr/libexec/java_home -v $JAVA_VERSION)
-fi
 
-# check for dependencies
-mvn --version 1>/dev/null || exit 1
-java -version 2>/dev/null || exit 1
-curl --version 1>/dev/null || exit 1
+
+#------------
+# PrepareBuilder
+#------------
+
+
+mkdir -p localrun
+
 
 
 if [ "$VAGRANT" == "YES" -a "$VAGRANT_IGNORE" != "YES" ]; then
@@ -197,62 +219,295 @@ Vagrant.configure("2") do |config|
     vb.memory = "1024"
   end
   config.vm.provision "shell", inline: <<-SHELL
+    
     apt-get update
-    apt-get install -y maven openjdk-8-jdk-headless npm phantomjs
+    apt-get install -y maven openjdk-8-jdk-headless npm docker.io
     ln -s /usr/bin/nodejs /usr/bin/node
-    npm install -g jasmine phantomjs-prebuilt
+    npm install -g jasmine
     echo "Now continue with..."
     echo "\$ cd /share_host"
     echo "\$ ./run_local.sh -f"
-    echo "...then browse to http://localhost:8080/grid"
+    echo "...then browse to http://localhost:8080/XXXX"
   SHELL
 end
 EOF
   vagrant up
-  vagrant ssh -c "cd /share_host && ./run_local.sh -f"
+  if [ -f "../run_local.sh" ]; then
+    vagrant ssh -c "cd /share_host && ./run_local.sh -f"
+  else
+    echo "Save the fulgens output into a bash script (e.g. run_local.sh) and use it inside the new VM"
+  fi
   exit 1
 fi
 
 
-# clean if requested
-if [ -n "$CLEAN" ]; then
-  if [ "$CLEAN" == "all" ]; then
-	  rm -rf localrun
+
+if [ "$(uname)" == "Darwin" ]; then 
+  if [ -n "$JAVA_VERSION" ]; then
+    export JAVA_HOME=$(/usr/libexec/java_home -v $JAVA_VERSION)
   fi
-	MVN_CLEAN=clean
 fi
 
-# prepare env
-mkdir -p localrun
 
-#build
-if [ "$SKIP_BUILD" != "YES" ]; then
-  if [ "$BUILD" == "local" ]; then
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# JavaPlugin // dependency
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if [ -n "$VERBOSE" ]; then echo "JavaPlugin // dependency"; fi
+
+
+#------------
+# PrepareCompBuilder
+#------------
+
+
+
+
+
+#------------
+# GetsourceBuilder
+#------------
+
+
+
+
+
+#------------
+# PrebuildBuilder
+#------------
+
+
+
+
+
+#------------
+# BuildBuilder
+#------------
+
+
+
+
+
+#------------
+# PostbuildBuilder
+#------------
+
+
+
+
+
+#------------
+# PrestartBuilder
+#------------
+
+
+
+
+
+#------------
+# StartBuilder
+#------------
+
+
+
+
+
+#------------
+# PoststartBuilder
+#------------
+
+
+
+
+
+#------------
+# LeaveCompBuilder
+#------------
+
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# MvnPlugin // ggo
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if [ -n "$VERBOSE" ]; then echo "MvnPlugin // ggo"; fi
+
+
+#------------
+# PrepareCompBuilder
+#------------
+
+
+
+
+
+#------------
+# GetsourceBuilder
+#------------
+
+
+
+
+
+#------------
+# PrebuildBuilder
+#------------
+
+
+
+
+
+#------------
+# BuildBuilder
+#------------
+
+
+
+if [ "$BUILD" == "local" ]; then
+  f_build() {
+    if [ -n "$VERBOSE" ]; then echo "pwd=$(pwd)"; echo "mvn $MVN_CLEAN $MVN_OPTS package"; fi
+    
     mvn $MVN_CLEAN $MVN_OPTS package
-  elif [[ "$BUILD" == docker* ]]; then
-    IFS=: read mainType dockerVersion <<< "$BUILD"
-    if [ -z "$dockerVersion" ]; then
-      dockerVersion=3-jdk-10
-    fi
+    
+  }
+elif [[ "$BUILD" == docker* ]]; then
+  IFS=: read mainType dockerVersion <<< "$BUILD"
+  if [ -z "$dockerVersion" ]; then
+    dockerVersion=3-jdk-10
+  fi
 
-    mkdir -p localrun/dockerbuild
-    cat <<-EOFDOCK > localrun/dockerbuild/Dockerfile
+  mkdir -p localrun/dockerbuild
+  cat <<-EOFDOCK > localrun/dockerbuild/Dockerfile
 FROM maven:$dockerVersion
-RUN apt-get update && \
-    if [ "\$(cat /etc/debian_version)" = "9.5" ]; then \
-      curl -sL https://deb.nodesource.com/setup_6.x | bash -; apt-get  -qy install nodejs phantomjs; \
-      else apt-get -qy install npm phantomjs; fi && \
-    apt-get clean && \
-    rm -rf /tmp/* /var/tmp/* /var/lib/apt/archive/* /var/lib/apt/lists/*
-RUN npm install -g jasmine phantomjs-prebuilt
+RUN apt-get update && \\
+      if [ "\$(cat /etc/debian_version)" = "8.11" ]; then \\
+         curl -sL https://deb.nodesource.com/setup_6.x | bash -; apt-get  -qy install nodejs; \\
+      elif [ "\$(cat /etc/debian_version)" = "9.5" ]; then \\
+        curl -sL https://deb.nodesource.com/setup_6.x | bash -; apt-get  -qy install nodejs; \\
+      else apt-get -qy install npm; fi \\
+     && \\
+  apt-get clean && \\
+  rm -rf /tmp/* /var/tmp/* /var/lib/apt/archive/* /var/lib/apt/lists/*
+RUN npm install -g jasmine
 ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
 CMD ["mvn"]
 EOFDOCK
-    docker build --tag maven_build:$dockerVersion localrun/dockerbuild/
-
-    docker run --rm -v "$(pwd)":/usr/src/build -v $(pwd)/localrun/.m2:/root/.m2 -w /usr/src/build maven_build:$dockerVersion mvn $MVN_CLEAN $MVN_OPTS package
+  docker build --tag maven_build:$dockerVersion localrun/dockerbuild/
+  f_build() {
+    if [ -n "$VERBOSE" ]; then echo "pwd=$(pwd)"; echo "docker run --rm -v $(pwd):/usr/src/build -v $(pwd)/localrun/.m2:/root/.m2 -w /usr/src/build maven_build:$dockerVersion mvn $MVN_CLEAN $MVN_OPTS package"; fi
+    
+    docker run --rm -v "$(pwd)":/usr/src/build -v "$(pwd)/localrun/.m2":/root/.m2 -w /usr/src/build maven_build:$dockerVersion mvn $MVN_CLEAN $MVN_OPTS package
+    
+  }
+    
+fi   
+if [ "$SKIP_BUILD" != "YES" ]; then
+  if [ -n "$CLEAN" ]; then
+    MVN_CLEAN=clean
   fi
+  f_build
 fi
+
+
+
+
+
+#------------
+# PostbuildBuilder
+#------------
+
+
+
+
+
+#------------
+# PrestartBuilder
+#------------
+
+
+
+
+
+#------------
+# StartBuilder
+#------------
+
+
+
+
+
+#------------
+# PoststartBuilder
+#------------
+
+
+
+
+
+#------------
+# LeaveCompBuilder
+#------------
+
+
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# TomcatPlugin // tomcat
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if [ -n "$VERBOSE" ]; then echo "TomcatPlugin // tomcat"; fi
+
+
+#------------
+# PrepareCompBuilder
+#------------
+
+
+
+IFS=',' read -r -a array <<< "$TYPE_SOURCE"
+for typeSourceElement in "${array[@]}"; do
+  IFS=: read comp type pathOrVersion <<< "$typeSourceElement"
+  if [ "$comp" == "tomcat" ]; then
+    TYPE_SOURCE_TOMCAT=$type
+    if [ "$TYPE_SOURCE_TOMCAT" == "local" ]; then
+      TYPE_SOURCE_TOMCAT_PATH=$pathOrVersion
+    else
+      TYPE_SOURCE_TOMCAT_VERSION=$pathOrVersion
+    fi
+  fi
+
+done
+
+if [ "$TYPE_SOURCE_TOMCAT" == "docker" ]; then
+  if [ -z "$TYPE_SOURCE_TOMCAT_VERSION" ]; then
+    TYPE_SOURCE_TOMCAT_VERSION=9
+  fi
+  
+fi
+
+if [ "$TYPE_SOURCE_TOMCAT" == "download" ]; then
+  if [ -z "$TYPE_SOURCE_TOMCAT_VERSION" ]; then
+    TYPE_SOURCE_TOMCAT_VERSION=9
+  fi
+  # find latest tomcat version for $TYPE_SOURCE_TOMCAT_VERSION
+  if [ "$(uname)" == "Linux" ]; then
+    GREP_PERL_MODE="-P"
+  fi
+  TOMCAT_BASE_URL="http://mirror.vorboss.net/apache/tomcat"
+  TOMCAT_VERSION_PRE=$(curl -s "$TOMCAT_BASE_URL/tomcat-$TYPE_SOURCE_TOMCAT_VERSION/"|grep -m1 -o $GREP_PERL_MODE "<a href=\"v\d*.\d*.\d*" || echo "__________9.0.10")
+  TOMCAT_VERSION=${TOMCAT_VERSION_PRE:10}
+  TOMCAT_URL=$TOMCAT_BASE_URL/tomcat-$TYPE_SOURCE_TOMCAT_VERSION/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz
+fi
+
+
+
+
+#------------
+# GetsourceBuilder
+#------------
+
+
 
 if [ "$TYPE_SOURCE_TOMCAT" == "download" ]; then
   if [ -f .tomcat ] && [ "$(<.tomcat)" != "download" ]; then
@@ -261,64 +516,155 @@ if [ "$TYPE_SOURCE_TOMCAT" == "download" ]; then
   fi
   # download tomcat
   if [ ! -f "/${TMPDIR:-/tmp}/apache-tomcat-$TOMCAT_VERSION.tar" ]; then
-  	curl -s $TOMCAT_URL | gzip -d >/${TMPDIR:-/tmp}/apache-tomcat-$TOMCAT_VERSION.tar
+    curl -s $TOMCAT_URL | gzip -d >/${TMPDIR:-/tmp}/apache-tomcat-$TOMCAT_VERSION.tar
   fi
   # extract tomcat
   if [ ! -d "./apache-tomcat-$TOMCAT_VERSION" ]; then
-  	tar -xf /${TMPDIR:-/tmp}/apache-tomcat-$TOMCAT_VERSION.tar -C ./localrun
+    tar -xf /${TMPDIR:-/tmp}/apache-tomcat-$TOMCAT_VERSION.tar -C ./localrun
   fi
-  targetPath=localrun/apache-tomcat-$TOMCAT_VERSION/webapps/
-  cp web/target/grid.war $targetPath
+fi
 
-  # start tomcat
-  if [ ! -f ".tomcat" ]; then
-    ./localrun/apache-tomcat-$TOMCAT_VERSION/bin/startup.sh
-    echo "download">.tomcat
-  fi
 
-  tailCmd="tail -f ./localrun/apache-tomcat-$TOMCAT_VERSION/logs/catalina.out"
-elif [ "$TYPE_SOURCE_TOMCAT" == "docker" ]; then
+
+
+
+#------------
+# PrebuildBuilder
+#------------
+
+
+
+
+
+#------------
+# BuildBuilder
+#------------
+
+
+
+
+
+#------------
+# PostbuildBuilder
+#------------
+
+
+
+
+
+#------------
+# PrestartBuilder
+#------------
+
+
+
+    
+            if [ "$TYPE_SOURCE_TOMCAT" == "docker" ]; then
+              mkdir -p localrun/webapps
+              targetPath=localrun/webapps/
+            fi
+          
+
+            if [ "$TYPE_SOURCE_TOMCAT" == "download" ]; then
+              targetPath=localrun/apache-tomcat-$TOMCAT_VERSION/webapps/
+            fi
+          
+
+            if [ "$TYPE_SOURCE_TOMCAT" == "local" ]; then
+              targetPath=$TYPE_SOURCE_TOMCAT_PATH/webapps/
+            fi
+          
+    f_deploy() {
+      cp web/target/grid.war $targetPath
+    }
+    f_deploy
+    
+
+
+
+
+#------------
+# StartBuilder
+#------------
+
+
+
+if [ "$TYPE_SOURCE_TOMCAT" == "docker" ]; then
   if [ -f .tomcat ] && [ "$(<.tomcat)" == "download" ]; then
     echo "Tomcat running but started from different source type"
     exit 1
   fi
-  # run in docker
-  if [ -z "$TYPE_SOURCE_TOMCAT_VERSION" ]; then
-    TYPE_SOURCE_TOMCAT_VERSION=9
-  fi
-  mkdir -p localrun/webapps
-  targetPath=localrun/webapps/
-  cp web/target/grid.war $targetPath
   if [ ! -f ".tomcat" ]; then
-    containerId=$(docker run --rm -d -p 8080:8080 -e $(pwd)/localrun/webapps:/usr/lib/tomcat/webapps tomcat:$TYPE_SOURCE_TOMCAT_VERSION)
-    echo "$containerId">.tomcat
+    
+    dockerContainerIDtomcat=$(docker run --rm -d $dockerCouchRef ${dockerFixRef[@]} -p 8080:8080 \
+         \
+        -v "$(pwd)/localrun/webapps":/usr/local/tomcat/webapps tomcat:$TYPE_SOURCE_TOMCAT_VERSION)
+    echo "$dockerContainerIDtomcat">.tomcat
   else
-    containerId=$(<.tomcat)
+    dockerContainerIDtomcat=$(<.tomcat)
   fi
-  tailCmd="docker logs -f $containerId"
-elif [ "$TYPE_SOURCE_TOMCAT" == "local" ]; then
+  tailCmd="docker logs -f $dockerContainerIDtomcat"
+fi
+
+
+
+if [ "$TYPE_SOURCE_TOMCAT" == "download" ]; then
+  # start tomcat
+  if [ ! -f ".tomcat" ]; then
+    
+    ./localrun/apache-tomcat-$TOMCAT_VERSION/bin/startup.sh
+    echo "download">.tomcat
+  fi
+  tailCmd="tail -f ./localrun/apache-tomcat-$TOMCAT_VERSION/logs/catalina.out"
+fi
+
+
+
+if [ "$TYPE_SOURCE_TOMCAT" == "local" ]; then
   if [ -f .tomcat ]; then
     echo "Tomcat running but started from different source type"
     exit 1
   fi
-  # reuse existing tomcat
-  targetPath=$TYPE_SOURCE_TOMCAT_PATH/webapps/
-  cp web/target/grid.war $targetPath
   tailCmd="tail -f $TYPE_SOURCE_TOMCAT_PATH/logs/catalina.out"
-else 
-  echo "Illegal type for tomcat ($TYPE_SOURCE_TOMCAT) -t" && exit 1
 fi
+
+
+
+
+
+#------------
+# PoststartBuilder
+#------------
+
+
+
+
+
+#------------
+# LeaveCompBuilder
+#------------
+
+
+
+
+
+#------------
+# WaitBuilder
+#------------
+
 
 # waiting for ctrl-c
 if [ "$TAIL" == "YES" ]; then
   $tailCmd
 else
   echo "$tailCmd"
-	echo "<return> to rebuild, ctrl-c to stop CouchDB and Tomcat"
+  echo "<return> to rebuild, ctrl-c to stop Tomcat"
   while true; do
-	  read </dev/tty
-    mvn package
-    cp web/target/grid.war $targetPath
+    read </dev/tty
+    f_build
+    f_deploy
   done
 fi
+    
+
 
