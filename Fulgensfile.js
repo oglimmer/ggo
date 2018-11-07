@@ -21,6 +21,10 @@ module.exports = {
           Npm: [ "jasmine" ]
         }
       },
+      EnvVars: [
+        // Jasime fails on maven:3-jdk-11 without this
+        "OPENSSL_CONF=/etc/ssl/"
+      ],
       Artifact: "web/target/grid.war"
     },
 
