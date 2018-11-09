@@ -1,6 +1,7 @@
 module.exports = {
 
   config: {
+    SchemaVersion: "1.0.0",
     Name: "GridGameOne",
     Vagrant: {
       Box: 'ubuntu/xenial64',
@@ -21,11 +22,10 @@ module.exports = {
           Npm: [ "jasmine" ]
         }
       },
+      Artifact: "web/target/grid.war",
       EnvVars: [
-        // Jasime fails on maven:3-jdk-11 without this
         "OPENSSL_CONF=/etc/ssl/"
-      ],
-      Artifact: "web/target/grid.war"
+      ]
     },
 
     "tomcat": {

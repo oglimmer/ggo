@@ -21,6 +21,22 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
+	<build>
+		<plugins>
+			<!-- 
+				Without this the test are failing with "The forked VM terminated without properly saying goodbye. VM crash or System.exit called?", caused by an "Error: Could not find or load main class org.apache.maven.surefire.booter.ForkedBooter".
+				See: https://issues.apache.org/jira/browse/SUREFIRE-1588
+			-->
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <configuration>
+			        <useSystemClassLoader>false</useSystemClassLoader>
+			    </configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
