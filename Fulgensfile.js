@@ -3,32 +3,22 @@ module.exports = {
   config: {
     SchemaVersion: "1.0.0",
     Name: "GridGameOne",
+    BuildDependencies: {
+      Npm: [ "jasmine" ]
+    },
     Vagrant: {
       Box: 'ubuntu/xenial64',
-      Install: 'maven openjdk-8-jdk-headless npm docker.io',
-      AfterInstall: [
-        'ln -s /usr/bin/nodejs /usr/bin/node',
-        'npm install -g jasmine',
-      ]
+      Install: 'maven openjdk-8-jdk-headless docker.io'
     },
   },
 
   software: {
-    "ggo": {
+    ggo: {
       Source: "mvn",
-      Mvn: {
-        BuildDependencies: {
-          Apt: [ "npm" ],
-          Npm: [ "jasmine" ]
-        }
-      },
-      Artifact: "web/target/grid.war",
-      EnvVars: [
-        "OPENSSL_CONF=/etc/ssl/"
-      ]
+      Artifact: "web/target/grid.war"
     },
 
-    "tomcat": {
+    tomcat: {
       Source: "tomcat",
       Deploy: "ggo"
     }

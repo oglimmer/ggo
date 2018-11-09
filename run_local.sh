@@ -126,7 +126,7 @@ where:
   
 
 Details:
- -b docker:[3-jdk-8|3-jdk-9|3-jdk-10|3-jdk-11] #do a docker based build, uses \`maven:3-jdk-10\` image
+ -b docker:[3-jdk-8|3-jdk-9|3-jdk-10|3-jdk-11] #do a docker based build, uses maven:3-jdk-11 image
  -b local #do a local build, would respect -j
  -t tomcat:docker:[7|8|9] #start docker image tomcat:X and run this build within it
  -t tomcat:download:[7|8|9] #download tomcat version x and run this build within it, would respect -j
@@ -246,18 +246,33 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
   	
     apt-get update
-    apt-get install -y maven openjdk-8-jdk-headless npm docker.io
-    ln -s /usr/bin/nodejs /usr/bin/nodenpm install -g jasmine
+    apt-get install -y maven openjdk-8-jdk-headless docker.io
+    
+      if [ "\$(cat /etc/*release|grep ^ID=)" = "ID=debian"  ]; then \\
+        if [ "\$(cat /etc/debian_version)" = "8.11" ]; then \\
+           curl -sL https://deb.nodesource.com/setup_6.x | bash -; apt-get -qy install nodejs; \\
+        elif [ "\$(cat /etc/debian_version)" = "9.5" ]; then \\
+          curl -sL https://deb.nodesource.com/setup_6.x | bash -; apt-get -qy install nodejs; \\
+        else curl -sL https://deb.nodesource.com/setup_10.x | bash -; apt-get -qy install nodejs; fi \\
+      elif [ "\$(cat /etc/*release|grep ^ID=)" = "ID=ubuntu"  ]; then \\
+        curl -sL https://deb.nodesource.com/setup_10.x | bash -; apt-get -qy install nodejs; \\
+      else \\
+        echo "only debian or ubuntu are supported."; \\
+        exit 1; \\
+      fi \\
+    
+    
+    npm install -g jasmine
     echo "Now continue with..."
     echo "\$ cd /share_host"
-    echo "\$ ./run_local.sh -f"
+    echo "\$ sudo ./run_local.sh -f"
     echo "...then browse to http://localhost:8080/XXXX"
   SHELL
 end
 EOF
   vagrant up
   if [ -f "../run_local.sh" ]; then
-    vagrant ssh -c "cd /share_host && ./run_local.sh -f"
+    vagrant ssh -c "cd /share_host && sudo ./run_local.sh -f"
   else
     echo "Save the fulgens output into a bash script (e.g. run_local.sh) and use it inside the new VM"
   fi
@@ -347,16 +362,22 @@ if [[ "$BUILD" == docker* ]]; then
   cat <<- EOFDOCK > localrun/dockerbuild/Dockerfile
     FROM maven:$dockerVersion
     RUN apt-get update && \\ 
-      if [ "\$(cat /etc/debian_version)" = "8.11" ]; then \\
-         curl -sL https://deb.nodesource.com/setup_6.x | bash -; apt-get  -qy install nodejs; \\
-      elif [ "\$(cat /etc/debian_version)" = "9.5" ]; then \\
-        curl -sL https://deb.nodesource.com/setup_6.x | bash -; apt-get  -qy install nodejs; \\
-      else apt-get -qy install npm; fi \\
+      if [ "\$(cat /etc/*release|grep ^ID=)" = "ID=debian"  ]; then \\
+        if [ "\$(cat /etc/debian_version)" = "8.11" ]; then \\
+           curl -sL https://deb.nodesource.com/setup_6.x | bash -; apt-get -qy install nodejs; \\
+        elif [ "\$(cat /etc/debian_version)" = "9.5" ]; then \\
+          curl -sL https://deb.nodesource.com/setup_6.x | bash -; apt-get -qy install nodejs; \\
+        else curl -sL https://deb.nodesource.com/setup_10.x | bash -; apt-get -qy install nodejs; fi \\
+      elif [ "\$(cat /etc/*release|grep ^ID=)" = "ID=ubuntu"  ]; then \\
+        curl -sL https://deb.nodesource.com/setup_10.x | bash -; apt-get -qy install nodejs; \\
+      else \\
+        echo "only debian or ubuntu are supported."; \\
+        exit 1; \\
+      fi \\
      && \\
       apt-get clean && \\
       rm -rf /tmp/* /var/tmp/* /var/lib/apt/archive/* /var/lib/apt/lists/*
     RUN npm install -g jasmine
-    ENV OPENSSL_CONF=/etc/ssl/
     ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
     CMD ["mvn"]
 EOFDOCK
@@ -366,7 +387,7 @@ EOFDOCK
   f_build() {
     if [ -n "$VERBOSE" ]; then echo "pwd=$(pwd)"; echo "docker run --rm -v $(pwd):/usr/src/build -v $(pwd)/localrun/.m2:/root/.m2 -w /usr/src/build $dockerImage:$dockerVersion mvn $MVN_CLEAN $MVN_OPTS package"; fi
     
-    docker run --rm -v "$(pwd)":/usr/src/build -v "$(pwd)/localrun/.m2":/root/.m2 -w /usr/src/build $dockerImage:$dockerVersion mvn $MVN_CLEAN $MVN_OPTS package
+    docker run --rm -e OPENSSL_CONF=/etc/ssl/ -v "$(pwd)":/usr/src/build -v "$(pwd)/localrun/.m2":/root/.m2 -w /usr/src/build $dockerImage:$dockerVersion mvn $MVN_CLEAN $MVN_OPTS package
     
   }
 fi   
@@ -595,6 +616,7 @@ if [ "$TYPE_SOURCE_TOMCAT" == "download" ]; then
   # start tomcat
   if [ ! -f ".tomcatPid" ]; then
     
+    JAVA_OPTS=""
     ./localrun/apache-tomcat-$TOMCAT_VERSION/bin/startup.sh
     echo "download">.tomcatPid
   fi
@@ -609,7 +631,7 @@ if [ "$TYPE_SOURCE_TOMCAT" == "docker" ]; then
   if [ ! -f ".tomcatPid" ]; then
     
     dockerContainerIDtomcat=$(docker run --rm -d $dockerTomcatExtRef ${dockerAddLibRefs[@]} -p 8080:8080 \
-         \
+          \
         -v "$(pwd)/localrun/webapps":/usr/local/tomcat/webapps tomcat:$TYPE_SOURCE_TOMCAT_VERSION)
     echo "$dockerContainerIDtomcat">.tomcatPid
   else
