@@ -12,6 +12,15 @@ module.exports = {
     },
   },
 
+  versions: {
+    ggo: {
+      TestedWith: "3-jre-11"
+    },
+    tomcat: {
+      TestedWith: "9 (slim)"
+    }
+  },
+
   software: {
     ggo: {
       Source: "mvn",
