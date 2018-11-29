@@ -17,8 +17,7 @@ module.exports = {
       TestedWith: "3-jre-11"
     },
     tomcat: {
-      Docker: "tomcat9-openjdk11-openj9",
-      TestedWith: "9 (slim)"
+      TestedWith: "tomcat:9 (slim)"
     }
   },
 
@@ -30,7 +29,7 @@ module.exports = {
 
     tomcat: {
       Source: "tomcat",
-      DockerImage: "oglimmer/adoptopenjdk-tomcat",
+      DockerImage: "adoptopenjdktomcat",
       // runs with 300M on jdk8 with tomcat:9
       DockerMemory: "70M",
       Deploy: "ggo"
