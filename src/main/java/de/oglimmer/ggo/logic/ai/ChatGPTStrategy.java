@@ -108,11 +108,7 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
     }
 
     private ChatCompletionCreateParams.Builder builder(StringBuilder sb) {
-        return ChatCompletionCreateParams.builder()
-                .addSystemMessage(INSTRUCTIONS)
-                .addAssistantMessage(createMessageInformation() + "\n" + STRATEGY)
-                .addUserMessage(sb.toString())
-                .model(ChatModel.GPT_4_1_MINI);
+        return ChatCompletionCreateParams.builder().addSystemMessage(INSTRUCTIONS).addAssistantMessage(createMessageInformation() + "\n" + STRATEGY).addUserMessage(sb.toString()).model(ChatModel.GPT_4_1_MINI);
     }
 
     @Override
@@ -129,22 +125,17 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
 
         log.debug("ChatGPT input: {}", sb.toString());
 
-        StructuredChatCompletionCreateParams<DraftList> params = builder(sb)
-                .responseFormat(DraftList.class, JsonSchemaLocalValidation.NO)
-                .build();
+        StructuredChatCompletionCreateParams<DraftList> params = builder(sb).responseFormat(DraftList.class, JsonSchemaLocalValidation.NO).build();
 
-        client.chat().completions().create(params).choices().stream()
-                .flatMap(choice -> choice.message().content().stream())
-                .flatMap(e -> e.unitsToDraft.stream())
-                .forEach(unit -> {
-                    UnitType ut = UnitType.getUnitType(unit);
-                    if (ut != null) {
-                        log.debug("Drafting unit: {}", unit);
-                        draftPhase.draftUnit(player, ut);
-                    } else {
-                        log.warn("Unknown unit type: {}", unit);
-                    }
-                });
+        client.chat().completions().create(params).choices().stream().flatMap(choice -> choice.message().content().stream()).flatMap(e -> e.unitsToDraft.stream()).forEach(unit -> {
+            UnitType ut = UnitType.getUnitType(unit);
+            if (ut != null) {
+                log.debug("Drafting unit: {}", unit);
+                draftPhase.draftUnit(player, ut);
+            } else {
+                log.warn("Unknown unit type: {}", unit);
+            }
+        });
 
         draftPhase.playerDone(player);
     }
@@ -169,28 +160,24 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
 
                 log.debug("ChatGPT input: {}", sb.toString());
 
-                StructuredChatCompletionCreateParams<DeployDecision> params = builder(sb)
-                        .responseFormat(DeployDecision.class, JsonSchemaLocalValidation.NO)
-                        .build();
+                StructuredChatCompletionCreateParams<DeployDecision> params = builder(sb).responseFormat(DeployDecision.class, JsonSchemaLocalValidation.NO).build();
 
-                client.chat().completions().create(params).choices().stream()
-                        .flatMap(choice -> choice.message().content().stream())
-                        .forEach(deployDecision -> {
-                            UnitType ut = UnitType.getUnitType(deployDecision.unitType);
-                            if (ut != null) {
-                                player.getUnitInHand().stream().filter(u -> u.getUnitType() == ut).findFirst().ifPresent(u -> {
-                                    log.debug("Deploying unit: {}", u.getUnitType());
-                                    deployPhase.execCmd(player, "selectHandCard", u.getId());
-                                    int x = deployDecision.targetFieldX;
-                                    int y = deployDecision.targetFieldY;
-                                    Field toDeployField = game.getBoard().getField(new Point(x, y));
-                                    log.debug("Deploying unit to field: {}", toDeployField.getId());
-                                    deployPhase.execCmd(player, "selectTargetField", toDeployField.getId());
-                                });
-                            } else {
-                                log.warn("Unknown unit type: {}", deployDecision.unitType);
-                            }
+                client.chat().completions().create(params).choices().stream().flatMap(choice -> choice.message().content().stream()).forEach(deployDecision -> {
+                    UnitType ut = UnitType.getUnitType(deployDecision.unitType);
+                    if (ut != null) {
+                        player.getUnitInHand().stream().filter(u -> u.getUnitType() == ut).findFirst().ifPresent(u -> {
+                            log.debug("Deploying unit: {}", u.getUnitType());
+                            deployPhase.execCmd(player, "selectHandCard", u.getId());
+                            int x = deployDecision.targetFieldX;
+                            int y = deployDecision.targetFieldY;
+                            Field toDeployField = game.getBoard().getField(new Point(x, y));
+                            log.debug("Deploying unit to field: {}", toDeployField.getId());
+                            deployPhase.execCmd(player, "selectTargetField", toDeployField.getId());
                         });
+                    } else {
+                        log.warn("Unknown unit type: {}", deployDecision.unitType);
+                    }
+                });
                 success = true;
             } catch (CmdException e) {
                 log.debug("Command failed: {}", e.getMessage());
@@ -199,29 +186,17 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
     }
 
     private static boolean hasConflictingMoves(List<CombatPhaseDecisionDecoded> decisions) {
-        return decisions.stream()
-                .filter(d -> d.getCommand() == CommandType.MOVE)
-                .map(CombatPhaseDecisionDecoded::getTargetField)
-                .collect(Collectors.groupingBy(f -> f, Collectors.counting()))
-                .values().stream()
-                .anyMatch(count -> count > 1);
+        return decisions.stream().filter(d -> d.getCommand() == CommandType.MOVE).map(CombatPhaseDecisionDecoded::getTargetField).collect(Collectors.groupingBy(f -> f, Collectors.counting())).values().stream().anyMatch(count -> count > 1);
     }
 
     private static boolean areSupportsValid(List<CombatPhaseDecisionDecoded> decisions) {
-        Map<Field, Field> finalPositions = decisions.stream()
-                .filter(d -> d.getCommand() == CommandType.MOVE)
-                .collect(Collectors.toMap(
-                        CombatPhaseDecisionDecoded::getSourceField,
-                        CombatPhaseDecisionDecoded::getTargetField
-                ));
+        Map<Field, Field> finalPositions = decisions.stream().filter(d -> d.getCommand() == CommandType.MOVE).collect(Collectors.toMap(CombatPhaseDecisionDecoded::getSourceField, CombatPhaseDecisionDecoded::getTargetField));
 
-        return decisions.stream()
-                .filter(d -> d.getCommand() == CommandType.SUPPORT)
-                .allMatch(support -> {
-                    Field supporterFinalPos = finalPositions.getOrDefault(support.getSourceField(), support.getSourceField());
-                    Field targetFinalPos = finalPositions.getOrDefault(support.getTargetField(), support.getTargetField());
-                    return supporterFinalPos.getNeighbors().contains(targetFinalPos);
-                });
+        return decisions.stream().filter(d -> d.getCommand() == CommandType.SUPPORT).allMatch(support -> {
+            Field supporterFinalPos = finalPositions.getOrDefault(support.getSourceField(), support.getSourceField());
+            Field targetFinalPos = finalPositions.getOrDefault(support.getTargetField(), support.getTargetField());
+            return supporterFinalPos.getNeighbors().contains(targetFinalPos);
+        });
     }
 
     @Override
@@ -238,29 +213,24 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
 
                 log.debug("ChatGPT input: {}", sb.toString());
 
-                StructuredChatCompletionCreateParams<CombatPhaseDecisionsList> params = builder(sb)
-                        .responseFormat(CombatPhaseDecisionsList.class, JsonSchemaLocalValidation.NO)
-                        .build();
+                StructuredChatCompletionCreateParams<CombatPhaseDecisionsList> params = builder(sb).responseFormat(CombatPhaseDecisionsList.class, JsonSchemaLocalValidation.NO).build();
 
-                List<CombatPhaseDecisionDecoded> list = client.chat().completions().create(params).choices().stream()
-                        .flatMap(choice -> choice.message().content().stream())
-                        .flatMap(e -> e.decisions.stream())
-                        .map(combatDecision -> {
-                            int targetFieldX = combatDecision.targetFieldX;
-                            int targetFieldY = combatDecision.targetFieldY;
-                            int sourceFieldX = combatDecision.sourceFieldX;
-                            int sourceFieldY = combatDecision.sourceFieldY;
-                            log.debug("Executing command: {} ", combatDecision);
-                            CommandType commandType = CommandType.fromString(combatDecision.command);
-                            Field sourceField = game.getBoard().getField(new Point(sourceFieldX, sourceFieldY));
-                            Field targetField = game.getBoard().getField(new Point(targetFieldX, targetFieldY));
-                            log.debug("Executing command: {} from field {} to field {}", commandType, sourceField, targetField);
-                            CombatPhaseDecisionDecoded decoded = new CombatPhaseDecisionDecoded();
-                            decoded.setCommand(commandType);
-                            decoded.setSourceField(sourceField);
-                            decoded.setTargetField(targetField);
-                            return decoded;
-                        }).toList();
+                List<CombatPhaseDecisionDecoded> list = client.chat().completions().create(params).choices().stream().flatMap(choice -> choice.message().content().stream()).flatMap(e -> e.decisions.stream()).map(combatDecision -> {
+                    int targetFieldX = combatDecision.targetFieldX;
+                    int targetFieldY = combatDecision.targetFieldY;
+                    int sourceFieldX = combatDecision.sourceFieldX;
+                    int sourceFieldY = combatDecision.sourceFieldY;
+                    log.debug("Executing command: {} ", combatDecision);
+                    CommandType commandType = CommandType.fromString(combatDecision.command);
+                    Field sourceField = game.getBoard().getField(new Point(sourceFieldX, sourceFieldY));
+                    Field targetField = game.getBoard().getField(new Point(targetFieldX, targetFieldY));
+                    log.debug("Executing command: {} from field {} to field {}", commandType, sourceField, targetField);
+                    CombatPhaseDecisionDecoded decoded = new CombatPhaseDecisionDecoded();
+                    decoded.setCommand(commandType);
+                    decoded.setSourceField(sourceField);
+                    decoded.setTargetField(targetField);
+                    return decoded;
+                }).toList();
 
                 // Check if multiple units are trying to move to the same field
                 if (hasConflictingMoves(list)) {
@@ -268,19 +238,11 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
                 }
 
                 // Validate move ranges
-                list.stream()
-                        .filter(d -> d.getCommand() == CommandType.MOVE)
-                        .forEach(move -> {
-                            if (move.getSourceField().getUnit().getUnitType() == UnitType.HELICOPTER) {
-                                if (move.getSourceField().getNeighbors().stream()
-                                        .flatMap(f -> f.getNeighbors().stream())
-                                        .noneMatch(f -> f == move.getTargetField())) {
-                                    throw new CmdException(CmdException.Type.ERROR);
-                                }
-                            } else if (!move.getSourceField().getNeighbors().contains(move.getTargetField())) {
-                                throw new CmdException(CmdException.Type.ERROR);
-                            }
-                        });
+                list.stream().filter(d -> d.getCommand() == CommandType.MOVE).forEach(move -> {
+                    if (!move.getSourceField().getNeighbors().contains(move.getTargetField())) {
+                        throw new CmdException(CmdException.Type.ERROR);
+                    }
+                });
 
                 // Check if supporting units will be neighbors after movement
                 if (!areSupportsValid(list)) {
