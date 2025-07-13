@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8" />
+	<title>GridGameOne</title>
+	<link rel="stylesheet" th:href="@{/css/styles.css}" />	
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+	<link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap-theme.min.css}" />
+
+</head>
+<body>
+
+	<nav class="navbar navbar-inverse navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">GridGameOne</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav navbar-right">
+				<li><a th:href="@{/Help}" target="_blank">Instructions</a></li>
+			</ul>          
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+
+
+	<div id="boardContainer">
+		<div id="messageDiv">
+			<div id="messageOpponentConnectionLost"></div>
+			<div id="messageScore">Your score: 0, opponents score: 0</div>
+			<div id="messageTitle">waiting for server message ...</div>
+			<div id="messageInfo"></div>
+			<div id="messageError"></div>
+		</div>
+	
+		<div id="boardDiv"></div>
+		
+		<p>Created by <a href="http://oglimmer.de" target="_blank">oglimmer.de</a> - <span th:text="${longVersion}">??</span> - <a th:href="@{/Impressum}">Impressum/Kontakt/Datenschutz&nbsp;</a> </p>
+	</div>
+
+	<!-- resources -->
+	<img id="infantry_red" th:src="@{/images/infantry_red.png}" style="display: none" />
+	<img id="infantry_green" th:src="@{/images/infantry_green.png}" style="display: none" />
+	<img id="tank_green" th:src="@{/images/tank_green.png}" style="display: none" />
+	<img id="tank_red" th:src="@{/images/tank_red.png}" style="display: none" />
+	<img id="airborne_green" th:src="@{/images/airborne_green.png}" style="display: none" />
+	<img id="airborne_red" th:src="@{/images/airborne_red.png}" style="display: none" />
+	<img id="helicopter_green" th:src="@{/images/helicopter_green.png}" style="display: none" />
+	<img id="helicopter_red" th:src="@{/images/helicopter_red.png}" style="display: none" />
+	<img id="artillery_green" th:src="@{/images/artillery_green.png}" style="display: none" />
+	<img id="artillery_red" th:src="@{/images/artillery_red.png}" style="display: none" />
+	<img id="city_red" th:src="@{/images/city_red.png}" style="display: none" />
+	<img id="city_green" th:src="@{/images/city_green.png}" style="display: none" />
+
+	<script th:inline="javascript">
+		var ggoPlayerId = /*[[${playerId}]]*/ "";
+	</script>
+	<script data-main="js/board.js" th:src="@{/webjars/requirejs/2.2.0/require.min.js}"></script>
+
+</body>
+</html>

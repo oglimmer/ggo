@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('Create Game by Email - GridGameOne', ~{::content})}">
+<th:block th:fragment="content">
+
+	 <div class="jumbotron">
+	   <div class="container">
+	     	<h3>Enter e-mail addresses</h3>
+	     	<h4>We won't store your email addresses in any database. As soon as the game has ended, your personal email address is removed from memory.</h4>
+	     	
+	     	<div th:if="${#fields.hasErrors('createGameForm')}" class="alert alert-danger">
+	     		<ul>
+	     			<li th:each="err : ${#fields.errors('createGameForm.*')}" th:text="${err}"></li>
+	     		</ul>
+	     	</div>
+
+			<form th:action="@{/CreateGameByEmail}" th:object="${createGameForm}" method="post">
+	            <fieldset>
+	                <div class="row form-group">
+	                    <div class="col-sm-12">
+	                        Your email address:<input th:field="*{email1}" class="form-control" />
+	                        <span th:if="${#fields.hasErrors('email1')}" th:errors="*{email1}" class="text-danger"></span>
+	                    </div>
+	                </div>
+	                <div class="row form-group">
+	                    <div class="col-sm-12">
+	                        Opponent's email address:<input th:field="*{email2}" id="email2" class="form-control" />
+	                        <span th:if="${#fields.hasErrors('email2')}" th:errors="*{email2}" class="text-danger"></span>
+	                        <input th:field="*{searchForOne}" type="checkbox" id="searchForOne" /> I don't have an opponent, use player's database (this is not longer supported due to GDPR)
+	                    </div>
+	                </div>
+	                <div class="row form-group">
+	                    <div class="col-sm-12">
+	                        <input type="submit" value="Create game" class="btn btn-primary" />
+	                        <a th:href="@{/}" class="btn btn-primary">Cancel</a>
+	                    </div>
+	                </div>
+	            </fieldset>
+	        </form>	     	
+	     	
+	   </div>
+	 </div>
+  
+      <script data-main="js/createGameByEmail.js" th:src="@{/webjars/requirejs/2.2.0/require.min.js}"></script>
+	  
+</th:block>
+</html>

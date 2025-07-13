@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="availableGames">
+    <div th:each="i : ${availableGames}">
+        <a th:href="@{/JoinGame(gameId=${i.id})}" class="btn btn-primary btn-lg">
+            Join <span th:text="${i.id}"></span> (Started <span th:text="${#temporals.format(i.createdOn, 'dd.MM.yyyy HH:mm:ss')}"></span>)
+        </a>
+        <br/><br/>
+    </div>
+</th:block>
+
+</html>

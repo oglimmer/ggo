@@ -5,3 +5,6 @@ target
 web/src/main/webapp/META-INF/MANIFEST.MF
 web/src/main/webapp/images/impressum.png
 localrun
+phantomjsdriver.log
+.claude
+.idea

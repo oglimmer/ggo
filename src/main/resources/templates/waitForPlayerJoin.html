@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout('Waiting for Player to Join', ~{::content})}">
+
+<th:block th:fragment="content">
+    <div class="jumbotron">
+        <div class="container">
+            <h3>We informed people about your new game.</h3>
+            <p>
+                As soon as someone accepted to join your game, you will get an email.
+            </p>
+        </div>
+    </div>
+</th:block>
+
+</html>
