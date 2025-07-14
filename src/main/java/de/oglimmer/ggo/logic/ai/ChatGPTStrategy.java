@@ -24,9 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import de.oglimmer.ggo.logic.Unit;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -201,33 +204,55 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
         CombatCommandPhase combatCommandPhase = (CombatCommandPhase) game.getCurrentPhase();
         OpenAIClient client = OpenAIOkHttpClient.fromEnv();
 
+        List<Unit> playerUnits = game.getBoard().getFields().stream()
+                .filter(f -> f.getUnit() != null && f.getUnit().getPlayer() == player)
+                .map(Field::getUnit)
+                .toList();
+
+
         boolean success = false;
         while (!success) {
             try {
-                StringBuilder sb = new StringBuilder();
+                List<CombatPhaseDecisionDecoded> list = new ArrayList<>();
+                for (Unit u : playerUnits) {
+                    StringBuilder sb = new StringBuilder("Make a decision for the combat, move, support, fortify phase for the unit ");
 
-                sb.append("Make the decisions for the combat, move, support, fortify phase! For each of your units on the battle field, you can either do nothing (fortify) or move to on unoccupied field or move to a field occupied by an enemy to combat this unit or support one of your own units. Valid commands are move,bombard,support. Answer with a JSON and nothing else.");
+                    sb.append(u.getUnitType()).append(" at field ").append(u.getDeployedOn().getPos().x).append(":").append(u.getDeployedOn().getPos().y);
 
-                log.debug("ChatGPT input: {}", sb.toString());
+                    sb.append(" - This unit can ");
 
-                StructuredChatCompletionCreateParams<CombatPhaseDecisionsList> params = builder(sb).responseFormat(CombatPhaseDecisionsList.class, JsonSchemaLocalValidation.NO).build();
+                    if (u.getUnitType() == UnitType.ARTILLERY) {
+                        sb.append("bombard up to 2 fields or");
+                    }
+                    if (u.getUnitType() == UnitType.HELICOPTER) {
+                        sb.append("bombard up to 1 field or ");
+                    }
 
-                List<CombatPhaseDecisionDecoded> list = client.chat().completions().create(params).choices().stream().flatMap(choice -> choice.message().content().stream()).flatMap(e -> e.decisions.stream()).map(combatDecision -> {
-                    int targetFieldX = combatDecision.targetFieldX;
-                    int targetFieldY = combatDecision.targetFieldY;
-                    int sourceFieldX = combatDecision.sourceFieldX;
-                    int sourceFieldY = combatDecision.sourceFieldY;
-                    log.debug("Executing command: {} ", combatDecision);
-                    CommandType commandType = CommandType.fromString(combatDecision.command);
-                    Field sourceField = game.getBoard().getField(new Point(sourceFieldX, sourceFieldY));
-                    Field targetField = game.getBoard().getField(new Point(targetFieldX, targetFieldY));
-                    log.debug("Executing command: {} from field {} to field {}", commandType, sourceField, targetField);
-                    CombatPhaseDecisionDecoded decoded = new CombatPhaseDecisionDecoded();
-                    decoded.setCommand(commandType);
-                    decoded.setSourceField(sourceField);
-                    decoded.setTargetField(targetField);
-                    return decoded;
-                }).toList();
+                    sb.append("move 1 field or support an adjacent unit or fortify on this field.");
+
+                    sb.append("Answer with a JSON and nothing else.");
+
+                    log.debug("ChatGPT input: {}", sb);
+
+                    StructuredChatCompletionCreateParams<CombatPhaseDecision> params = builder(sb).responseFormat(CombatPhaseDecision.class, JsonSchemaLocalValidation.NO).build();
+
+                    client.chat().completions().create(params).choices().stream()
+                            .flatMap(choice -> choice.message().content().stream())
+                            .forEach(combatDecision -> {
+                                int targetFieldX = combatDecision.targetFieldX;
+                                int targetFieldY = combatDecision.targetFieldY;
+                                log.debug("Executing command: {} ", combatDecision);
+                                CommandType commandType = CommandType.fromString(combatDecision.command);
+                                Field sourceField = u.getDeployedOn();
+                                Field targetField = game.getBoard().getField(new Point(targetFieldX, targetFieldY));
+                                log.debug("Executing command: {} from field {} to field {}", commandType, sourceField, targetField);
+                                CombatPhaseDecisionDecoded decoded = new CombatPhaseDecisionDecoded();
+                                decoded.setCommand(commandType);
+                                decoded.setSourceField(sourceField);
+                                decoded.setTargetField(targetField);
+                                list.add(decoded);
+                            });
+                }
 
                 // Check if multiple units are trying to move to the same field
                 if (hasConflictingMoves(list)) {
@@ -260,6 +285,7 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
 
                     combatCommandPhase.getCc().addCommand(u.getSourceField().getUnit(), u.getTargetField(), u.getCommand());
                 });
+
                 success = true;
             } catch (CmdException e) {
                 log.debug("Command failed: {}", e.getMessage());
@@ -282,8 +308,6 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
     @Setter
     public static class CombatPhaseDecision {
         private String command;
-        private Integer sourceFieldX;
-        private Integer sourceFieldY;
         private Integer targetFieldX;
         private Integer targetFieldY;
     }
@@ -295,14 +319,6 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
         private CommandType command;
         private Field sourceField;
         private Field targetField;
-    }
-
-    @ToString
-    @Getter
-    @Setter
-    public static class CombatPhaseDecisionsList {
-        @ArraySchema(maxItems = 100)
-        private List<CombatPhaseDecision> decisions;
     }
 
 
