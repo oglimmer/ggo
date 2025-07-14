@@ -32,7 +32,6 @@ WORKDIR /app
 
 # Copy the built jar from build stage
 COPY --from=build /app/target/grid.jar app.jar
-COPY --from=build /app/src/main/webapp ./src/main/webapp
 
 # Change ownership to spring user
 RUN chown spring:spring app.jar
@@ -42,8 +41,6 @@ USER spring
 
 # Expose port 8080
 EXPOSE 8080
-
-ENV JAVA_OPTS=-Dggo.properties=/etc/ggo.properties
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
