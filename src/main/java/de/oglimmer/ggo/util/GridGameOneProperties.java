@@ -18,9 +18,10 @@ import org.springframework.stereotype.Component;
 public class GridGameOneProperties {
 
     private Smtp smtp = new Smtp();
+    private App app = new App();
+
     private String runtimePassword;
     private boolean emailDisabled;
-    private App app = new App();
 
     @Getter
     @Setter

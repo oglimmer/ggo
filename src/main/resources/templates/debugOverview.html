@@ -50,7 +50,7 @@
 
         <h3>Phase</h3>
         <ol>
-            <li th:each="subPhase : ${T(de.oglimmer.ggo.web.action.DebugActionBean).buildPhaseStack(game)}" th:text="${subPhase}"></li>
+            <li th:each="subPhase : ${T(de.oglimmer.ggo.web.action.DebugController).buildPhaseStack(game)}" th:text="${subPhase}"></li>
         </ol>
 
         <h3>Players</h3>
@@ -58,7 +58,7 @@
             <h4><a th:name="'player' + ${p.id}"><span th:text="${p.id}"></span>/<span th:text="${p.side}"></span></a></h4>
             <p>Last action = <span th:text="${p.lastAction}"></span></p>
             <p>Last connection = <span th:text="${p.lastConnection}"></span></p>
-            <p th:text="${T(de.oglimmer.ggo.web.action.DebugActionBean).getWebSocketSessions(p)}"></p>
+            <p th:text="${T(de.oglimmer.ggo.web.action.DebugController).getWebSocketSessions(p, webSocketSessions)}"></p>
             <div th:each="u : ${p.unitInHand}">
                 <span th:text="${u}"></span><br />
             </div>

@@ -2,31 +2,30 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('Create Game - GridGameOne', ~{::content})}">
 <th:block th:fragment="content">
 
-	 <div class="jumbotron">
-	   <div class="container">
-	   	<div id="divWaitingForOtherPlayer" style="display:none">
-			<h3>Your game is <span id="gameId"></span></h3>
-      <h4>
-        We will store a session cookies on your computer. They don't store any personal information and are just used to identify your computer on subsequent http calls unless you will close your browser. If you are not okay with this cookie, just leave this page now.<br/>
-      </h4>
-			<p>Waiting for other player <span id="waitingProgress"></span></p>
-			<p>(We have informed <span id="numberOfNotifications"></span> by email about your new game, if eventually 
-			no one joins this new game, you could either add yourself to the email notification system on the portal page or
-			create a play-by-email game with an opponent from the database.)
-	   	</div>
-	   	<div id="divChooseType">
-		   	<h3>Choose a gaming type ...</h3>
-		   	<p>
-		   		<button id="btnByEmail" class="btn btn-primary btn-lg">Play by e-mail</button>
-		   		<button id="btnRealTime" class="btn btn-primary btn-lg">Real-time vs human</button>
-		   		<button id="btnAi" class="btn btn-primary btn-lg">Real-time vs A.I.</button>
-		   		<button id="btnTutorial" class="btn btn-primary btn-lg">Tutorial</button>
-		   	</p>
-	   	</div>
-	   </div>
-	 </div>
-  
-      <script data-main="js/createGame.js" th:src="@{/webjars/requirejs/2.2.0/require.min.js}"></script>
-	  
+    <div class="jumbotron">
+        <div class="container">
+            <div id="divWaitingForOtherPlayer" style="display:none">
+                <h3>Your game is <span id="gameId"></span></h3>
+                <p>Waiting for other player <span id="waitingProgress"></span></p>
+                <p>(We have informed <span id="numberOfNotifications"></span> by email about your new game, if
+                    eventually
+                    no one joins this new game, you could either add yourself to the email notification system on the
+                    portal page or
+                    create a play-by-email game with an opponent from the database.)
+            </div>
+            <div id="divChooseType">
+                <h3>Choose a gaming type ...</h3>
+                <p>
+                    <button id="btnByEmail" class="btn btn-primary btn-lg">Play by e-mail</button>
+                    <button id="btnRealTime" class="btn btn-primary btn-lg">Real-time vs human</button>
+                    <button id="btnAi" class="btn btn-primary btn-lg">Real-time vs A.I.</button>
+                    <button id="btnTutorial" class="btn btn-primary btn-lg">Tutorial</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script data-main="js/createGame.js" th:src="@{/webjars/requirejs/2.2.0/require.min.js}"></script>
+
 </th:block>
 </html>

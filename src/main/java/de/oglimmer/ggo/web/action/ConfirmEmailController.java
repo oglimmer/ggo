@@ -17,7 +17,7 @@ public class ConfirmEmailController extends BaseController {
 	public String show(@RequestParam String confirmId, RedirectAttributes redirectAttributes) {
 		gameNotificationsDao.confirmEmail(confirmId);
 		redirectAttributes.addFlashAttribute("message", 
-				"Your email address is now confirmed. We'll send you notifcations when someone craates a new game. Stay tuned.");
+				"Your email address is now confirmed. We'll send you notification when someone creates a new game. Stay tuned.");
 		return "redirect:/";
 	}
 

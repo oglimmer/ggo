@@ -30,6 +30,7 @@ public class GameNotificationsDao {
         GameNotification gameNotification = new GameNotification();
         gameNotification.setEmail(email);
         gameNotification.setConfirmId(confirmId);
+        gameNotification.setCreatedOn(Instant.now());
         return gameNotificationRepository.save(gameNotification);
     }
 

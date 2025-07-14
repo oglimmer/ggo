@@ -23,14 +23,14 @@ public class EmailService {
 
     private String getUnregister(String confirmId) {
         return "\n\n\n\n\nTo unsubscribe (we actually delete your email in our system) click here " + "http://"
-                + properties.getApp().getDomain() + properties.getApp().getUrlPath() + "/UnregisterEmail.action?confirmId=" + confirmId;
+                + properties.getApp().getDomain() + properties.getApp().getUrlPath() + "/UnregisterEmail?confirmId=" + confirmId;
     }
 
     public void sendConfirmation(String email, long id, String confirmId) {
         this.send(email, "[GridGameOne] Confirm notifications",
                 "Hi,\n\nplease click this link to confirm your email address for notifications for GridGameOne.\n\n"
                         + "http://" + properties.getApp().getDomain() + properties.getApp().getUrlPath()
-                        + "/ConfirmEmail.action?confirmId=" + confirmId
+                        + "/ConfirmEmail?confirmId=" + confirmId
                         + "\n\n\nRegards,\nOliZ\n\n\n\n\nBtw, we will always give you the chance to delete your email address (completely) from our system.");
     }
 
@@ -45,7 +45,7 @@ public class EmailService {
         this.send(email, "[GridGameOne] Game created notification",
                 "Hi,\n\nyou had asked us to notify you in case someone creates a game on GridGameOne.\n\nThis just happened.\n\n"
                         + "The game is a play-by-email. If you want to join that, please click here:\nhttp://"
-                        + properties.getApp().getDomain() + properties.getApp().getUrlPath() + "/JoinPlayByEmail.action?gameId=" + gameId
+                        + properties.getApp().getDomain() + properties.getApp().getUrlPath() + "/JoinPlayByEmail?gameId=" + gameId
                         + "&confirmId=" + confirmId + "\n\n\nRegards,\nOliZ" + getUnregister(confirmId));
     }
 
@@ -58,12 +58,12 @@ public class EmailService {
             this.send(p.getEmail(), "[GridGameOne] Game invite",
                     "Hi,\n\nyou have been invited to a game of GridGameOne.\n\n"
                             + "Click here to do your first turn:\nhttp://" + properties.getApp().getDomain()
-                            + properties.getApp().getUrlPath() + "/Board.action?playerId=" + p.getId() + "\n\n\nRegards,\nOliZ");
+                            + properties.getApp().getUrlPath() + "/Board?playerId=" + p.getId() + "\n\n\nRegards,\nOliZ");
         } else {
             this.send(p.getEmail(), "[GridGameOne] Game needs your command",
                     "Hi,\n\na game of GridGameOne needs your command.\n\n"
                             + "Click here to get back to the board:\nhttp://" + properties.getApp().getDomain()
-                            + properties.getApp().getUrlPath() + "/Board.action?playerId=" + p.getId() + "\n\n\nRegards,\nOliZ");
+                            + properties.getApp().getUrlPath() + "/Board?playerId=" + p.getId() + "\n\n\nRegards,\nOliZ");
         }
     }
 

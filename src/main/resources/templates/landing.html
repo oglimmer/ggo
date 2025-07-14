@@ -2,41 +2,45 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout('GridGameOne', ~{::content})}">
 <th:block th:fragment="content">
 
-	 <!-- Main jumbotron for a primary marketing message or call to action -->
-	 <div class="jumbotron">
-	   <div class="container">
-	     <h1>Welcome to Grid Game One</h1>
-	     <p>An open source, 2 player, hex-field based, <span style='font-weight:bold'>no-luck</span>, strategy, web-game.</p>
-	     <p>
-			See a tutorial video <a href="https://www.youtube.com/embed/kCPBiaSKDY4">on Youtube here</a>.
-		 </p>
-	     <p>	     	
-	     	<a class="btn btn-primary btn-lg" th:href="@{/CreateGame}">
-	     		Create Game
-	     	</a> <--- tutorial available!!!
-	     </p>
-	     <div id="availGames">querying games ...</div>
-	   </div>
-	 </div>
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Welcome to Grid Game One</h1>
+            <p>An open source, 2 player, hex-field based, <span style='font-weight:bold'>no-luck</span>, strategy,
+                web-game.</p>
+            <p>
+                See a tutorial video <a href="https://www.youtube.com/embed/kCPBiaSKDY4">on Youtube here</a>.
+            </p>
+            <p>
+                <a class="btn btn-primary btn-lg" th:href="@{/CreateGame}">
+                    Create Game
+                </a> <--- tutorial available!!!
+            </p>
+            <div id="availGames">querying games ...</div>
+        </div>
+    </div>
 
-	<div th:if="${player != null}">
-		<p>
-			<a class="btn btn-primary btn-lg" th:href="@{/Board(playerId=${player.id})}">
-	     		Re-join last game (<span th:text="${game.id}">??</span>) as player <span th:text="${player.side}">??</span>
-			</a>
-		</p>
-	</div>
-	<!--
-	<p>
-		<form th:action="@{/Landing}" method="post">
-			Put your email address here to get a notification if someone hits the 'create game' button.
-			<input class="form-control" name="email" style="width:250px;display:inline-block;" />
-			<input class="btn btn-primary" type="submit" value="Register" />
-		</form>
-	</p>
-  -->
-  
-	<script data-main="js/landing.js" th:src="@{/webjars/requirejs/2.2.0/require.min.js}"></script>
-	  
+    <div th:if="${player != null}">
+        <p>
+            <a class="btn btn-primary btn-lg" th:href="@{/Board(playerId=${player.id})}">
+                Re-join last game (<span th:text="${game.id}">??</span>) as player <span
+                    th:text="${player.side}">??</span>
+            </a>
+        </p>
+    </div>
+    <p>
+    <form th:action="@{/Landing}" method="post">
+        Put your email address here to get a notification if someone hits the 'create game' button.
+        <input class="form-control" name="email" style="width:250px;display:inline-block;"/>
+        <input class="btn btn-primary" type="submit" value="Register"/>
+        By entering your email, you consent to us storing it and using it solely to notify you when a new game is
+        created. Your data will be handled in accordance with our <a th:href="@{/Impressum}">[Privacy Policy]</a>. You
+        can withdraw your consent at any
+        time.
+    </form>
+    </p>
+
+    <script data-main="js/landing.js" th:src="@{/webjars/requirejs/2.2.0/require.min.js}"></script>
+
 </th:block>
 </html>

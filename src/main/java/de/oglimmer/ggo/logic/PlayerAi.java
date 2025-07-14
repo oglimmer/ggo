@@ -8,6 +8,7 @@ import de.oglimmer.ggo.logic.phase.CombatCommandPhase;
 import de.oglimmer.ggo.logic.phase.CombatDisplayPhase;
 import de.oglimmer.ggo.logic.phase.DeployPhase;
 import de.oglimmer.ggo.logic.phase.DraftPhase;
+import de.oglimmer.ggo.websocket.com.MessageQueue;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -39,6 +40,11 @@ public class PlayerAi extends Player {
 			} else if (getGame().getCurrentPhase() instanceof CombatDisplayPhase) {
 				((CombatDisplayPhase) getGame().getCurrentPhase()).execDoneButton(this);
 			}
+			getGame().getCurrentPhase().updateMessages();
+			getGame().getCurrentPhase().updateModalDialgs();
+
+			MessageQueue messages = new MessageQueue(getGame());
+			messages.process();
 		});
 	}
 }

@@ -30,7 +30,7 @@ public class DebugController extends BaseController {
 	private GridGameOneProperties properties;
 
 	@GetMapping("/Debug")
-	public String show(@RequestParam(required = false) String pass, Model model, RedirectAttributes redirectAttributes) {
+	public String show(@RequestParam String pass, Model model, RedirectAttributes redirectAttributes) {
 		if (pass == null || !properties.getRuntimePassword().equals(pass)) {
 			redirectAttributes.addFlashAttribute("error", "invalid password");
 			return "redirect:/Debug";
@@ -42,12 +42,13 @@ public class DebugController extends BaseController {
 		
 		model.addAttribute("webSocketSessions", webSocketSessions);
 		model.addAttribute("games", games);
+		model.addAttribute("pass", pass);
 		model.addAttribute("gameNotifications", gameNotifications);
 		addCommonAttributes(model);
 		return "debugOverview";
 	}
 
-	@PostMapping("/Debug")
+	@GetMapping("/Debug/resetGame")
 	public String resetGame(@RequestParam String pass, RedirectAttributes redirectAttributes) {
 		if (!properties.getRuntimePassword().equals(pass)) {
 			redirectAttributes.addFlashAttribute("error", "invalid password");
@@ -58,7 +59,7 @@ public class DebugController extends BaseController {
 		return "redirect:/Debug?pass=" + pass;
 	}
 
-	public Collection<String> buildPhaseStack(Game game) {
+	public static Collection<String> buildPhaseStack(Game game) {
 		Collection<String> collectedPhases = new ArrayList<>();
 		collectedPhases.add(game.getCurrentPhase().toString());
 		if (game.getCurrentPhase() instanceof TutorialDelegateBasePhase) {
@@ -70,7 +71,7 @@ public class DebugController extends BaseController {
 		return collectedPhases;
 	}
 
-	public WebSocketSessionCacheItem getWebSocketSessions(Player p, List<WebSocketSessionCacheItem> webSocketSessions) {
+	public static WebSocketSessionCacheItem getWebSocketSessions(Player p, List<WebSocketSessionCacheItem> webSocketSessions) {
 		Optional<WebSocketSessionCacheItem> item = webSocketSessions.stream().filter(ar -> ar.getPlayer() == p)
 				.findFirst();
         return item.orElse(null);
