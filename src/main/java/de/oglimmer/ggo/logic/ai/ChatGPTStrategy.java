@@ -119,8 +119,7 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
         StringBuilder sb = new StringBuilder();
 
         int credits = player.getCredits();
-        sb.append("You have ").append(credits).append(" credits.").append("\n\n");
-
+        sb.append("You have ").append(credits).append(" credits.");
         sb.append("Tell me which units you want to draft! Spend all the credits. Options are: infantry,tank,airborne,helicopter,artillery. Answer with a JSON string array and nothing else.");
 
         log.debug("ChatGPT input: {}", sb.toString());
@@ -154,8 +153,6 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
                 player.getUnitInHand().forEach(u -> {
                     sb.append(u.getUnitType()).append(",");
                 });
-                sb.append("\n\n");
-
                 sb.append("Tell me which one unit you want to deploy where! Your side of the field is the right side, columns 5 to 9. Pick one of your hand units and select an unoccupied but strategically important field. Answer with a JSON and nothing else.");
 
                 log.debug("ChatGPT input: {}", sb.toString());

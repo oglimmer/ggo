@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.atmospheremvc.game;
+package de.oglimmer.ggo.websocket.game;
 
 import java.io.Serializable;
 import java.util.List;

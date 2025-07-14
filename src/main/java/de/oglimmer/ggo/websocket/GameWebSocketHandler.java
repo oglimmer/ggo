@@ -1,6 +1,5 @@
 package de.oglimmer.ggo.websocket;
 
-import java.io.IOException;
 import java.util.Date;
 
 import org.springframework.web.socket.CloseStatus;
@@ -10,11 +9,11 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.oglimmer.ggo.atmospheremvc.com.CommandMessage;
-import de.oglimmer.ggo.atmospheremvc.com.MessageQueue;
-import de.oglimmer.ggo.atmospheremvc.game.Game;
-import de.oglimmer.ggo.atmospheremvc.game.Games;
-import de.oglimmer.ggo.atmospheremvc.game.Player;
+import de.oglimmer.ggo.websocket.com.CommandMessage;
+import de.oglimmer.ggo.websocket.com.MessageQueue;
+import de.oglimmer.ggo.websocket.game.Game;
+import de.oglimmer.ggo.websocket.game.Games;
+import de.oglimmer.ggo.websocket.game.Player;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -23,13 +22,13 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         log.debug("WebSocket connection established: {}", session.getId());
         WebSocketSessionCache.INSTANCE.connect(session);
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         log.debug("Received message: {}", message.getPayload());
         
         try {
@@ -69,13 +68,13 @@ public class GameWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         log.debug("WebSocket connection closed: {} with status: {}", session.getId(), status);
         WebSocketSessionCache.INSTANCE.disconnect(session.getId());
     }
 
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    public void handleTransportError(WebSocketSession session, Throwable exception) {
         log.error("WebSocket transport error for session: {}", session.getId(), exception);
         WebSocketSessionCache.INSTANCE.disconnect(session.getId());
     }

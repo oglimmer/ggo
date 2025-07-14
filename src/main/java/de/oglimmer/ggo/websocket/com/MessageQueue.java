@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.atmospheremvc.com;
+package de.oglimmer.ggo.websocket.com;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import de.oglimmer.ggo.atmospheremvc.game.Game;
-import de.oglimmer.ggo.atmospheremvc.game.Player;
+import de.oglimmer.ggo.websocket.game.Game;
+import de.oglimmer.ggo.websocket.game.Player;
 import de.oglimmer.ggo.websocket.WebSocketSessionCache;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

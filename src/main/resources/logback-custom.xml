@@ -13,17 +13,6 @@
 	  	</layout>
 	</appender>    
 
-    <!--<logger name="org.atmosphere" level="TRACE"/>-->
-    <!--<logger name="org.atmosphere.cpr.AtmosphereResourceEventListenerAdapter" level="INFO"/>-->
-    <!--<logger name="org.atmosphere.cpr.AtmosphereResourceEventListener" level="INFO"/>-->
-
-    <!--<logger name="org.atmosphere.cpr.AtmosphereResourceImpl" level="DEBUG"/>-->
-    <!--<logger name="org.atmosphere.cpr.AsyncSupportListenerAdapter" level="INFO"/>-->
-
-    <logger name="atmospheremvc.com.AtmosphereHandler" level="INFO"/>
-    <logger name="atmospheremvc.com.AtmosphereResourceCache" level="INFO"/>
-    <logger name="atmospheremvc.com.MessageQueue" level="ERROR"/>
-
     <root>
         <level value="INFO"/>
         <appender-ref ref="STDOUT"/>

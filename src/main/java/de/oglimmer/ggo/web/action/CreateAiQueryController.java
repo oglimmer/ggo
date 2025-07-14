@@ -4,10 +4,9 @@ import de.oglimmer.ggo.logic.ai.ChatGPTStrategy;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import de.oglimmer.ggo.atmospheremvc.game.Games;
+import de.oglimmer.ggo.websocket.game.Games;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
-import de.oglimmer.ggo.logic.ai.RandomStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@AllArgsConstructor
 @Controller
 public class CreateAiQueryController extends BaseController {
 

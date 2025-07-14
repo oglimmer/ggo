@@ -3,7 +3,7 @@ package de.oglimmer.ggo.logic.phase;
 import java.util.Collection;
 import java.util.Collections;
 
-import de.oglimmer.ggo.atmospheremvc.game.Phase;
+import de.oglimmer.ggo.websocket.game.Phase;
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -24,7 +24,7 @@ abstract public class BasePhase implements Phase {
 	private Game game;
 
 	@Override
-	public void execCmd(de.oglimmer.ggo.atmospheremvc.game.Player player, String cmd, String param) {
+	public void execCmd(de.oglimmer.ggo.websocket.game.Player player, String cmd, String param) {
 		execCmd((Player) player, cmd, param);
 	}
 

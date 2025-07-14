@@ -3,27 +3,31 @@ package de.oglimmer.ggo.web.action;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import de.oglimmer.ggo.atmospheremvc.game.Games;
+import de.oglimmer.ggo.websocket.game.Games;
 import de.oglimmer.ggo.db.GameNotification;
 import de.oglimmer.ggo.db.GameNotificationsDao;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@AllArgsConstructor
 @Slf4j
 @Controller
 public class JoinPlayByEmailController extends BaseController {
+
+	private GameNotificationsDao gameNotificationsDao;
 
 	@GetMapping("/JoinPlayByEmail")
 	public String join(@RequestParam String gameId, @RequestParam String confirmId, 
 					   HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		Game game = Games.<Game> getGames().getGameById(gameId);
 		if (game.getPlayers().size() == 1) {
-			GameNotification gameNoti = GameNotificationsDao.INSTANCE.getByConfirmId(confirmId);
+			GameNotification gameNoti = gameNotificationsDao.getByConfirmId(confirmId);
 			if (gameNoti != null) {
 				Player player = game.createPlayer(gameNoti.getEmail());
 				game.startGame();

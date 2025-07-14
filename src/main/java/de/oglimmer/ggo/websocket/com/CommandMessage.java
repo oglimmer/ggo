@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.atmospheremvc.com;
+package de.oglimmer.ggo.websocket.com;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

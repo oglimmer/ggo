@@ -2,7 +2,7 @@ package de.oglimmer.ggo.ui;
 
 import java.io.Serializable;
 
-import de.oglimmer.ggo.atmospheremvc.game.UIState;
+import de.oglimmer.ggo.websocket.game.UIState;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.ui.persistent.Messages;
 import de.oglimmer.ggo.ui.persistent.ModalDialog;

@@ -3,7 +3,7 @@ package de.oglimmer.ggo.web.action;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import de.oglimmer.ggo.atmospheremvc.game.Games;
+import de.oglimmer.ggo.websocket.game.Games;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateBasePhase;
@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@AllArgsConstructor
 @Controller
 public class CreateTutorialQueryController extends BaseController {
 
@@ -35,7 +36,7 @@ public class CreateTutorialQueryController extends BaseController {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	static class Result {
+	public static class Result {
 		private String playerId;
 	}
 

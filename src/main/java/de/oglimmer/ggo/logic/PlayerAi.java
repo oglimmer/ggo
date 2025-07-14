@@ -1,6 +1,7 @@
 package de.oglimmer.ggo.logic;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.CompletableFuture;
 
 import de.oglimmer.ggo.logic.ai.AiStrategy;
 import de.oglimmer.ggo.logic.phase.CombatCommandPhase;
@@ -28,14 +29,16 @@ public class PlayerAi extends Player {
 
 	@Override
 	public void notifyForAction() {
-		if (getGame().getCurrentPhase() instanceof DraftPhase) {
-			strategy.draft();
-		} else if (getGame().getCurrentPhase() instanceof DeployPhase) {
-			strategy.deploy();
-		} else if (getGame().getCurrentPhase() instanceof CombatCommandPhase) {
-			strategy.command();
-		} else if (getGame().getCurrentPhase() instanceof CombatDisplayPhase) {
-			((CombatDisplayPhase) getGame().getCurrentPhase()).execDoneButton(this);
-		}
+		CompletableFuture.runAsync(() -> {
+			if (getGame().getCurrentPhase() instanceof DraftPhase) {
+				strategy.draft();
+			} else if (getGame().getCurrentPhase() instanceof DeployPhase) {
+				strategy.deploy();
+			} else if (getGame().getCurrentPhase() instanceof CombatCommandPhase) {
+				strategy.command();
+			} else if (getGame().getCurrentPhase() instanceof CombatDisplayPhase) {
+				((CombatDisplayPhase) getGame().getCurrentPhase()).execDoneButton(this);
+			}
+		});
 	}
 }

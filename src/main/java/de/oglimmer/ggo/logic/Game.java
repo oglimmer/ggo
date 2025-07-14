@@ -12,7 +12,7 @@ import de.oglimmer.ggo.random.RandomName;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Game implements de.oglimmer.ggo.atmospheremvc.game.Game {
+public class Game implements de.oglimmer.ggo.websocket.game.Game {
 
 	private static final long serialVersionUID = 1L;
 
@@ -115,8 +115,8 @@ public class Game implements de.oglimmer.ggo.atmospheremvc.game.Game {
 	}
 
 	@Override
-	public Player getOtherPlayer(de.oglimmer.ggo.atmospheremvc.game.Player currentPlayer) {
-		return (Player) de.oglimmer.ggo.atmospheremvc.game.Game.super.getOtherPlayer(currentPlayer);
+	public Player getOtherPlayer(de.oglimmer.ggo.websocket.game.Player currentPlayer) {
+		return (Player) de.oglimmer.ggo.websocket.game.Game.super.getOtherPlayer(currentPlayer);
 	}
 
 }

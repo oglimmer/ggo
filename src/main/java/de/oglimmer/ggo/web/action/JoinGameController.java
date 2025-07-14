@@ -3,15 +3,17 @@ package de.oglimmer.ggo.web.action;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import de.oglimmer.ggo.atmospheremvc.game.Games;
+import de.oglimmer.ggo.websocket.game.Games;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@AllArgsConstructor
 @Slf4j
 @Controller
 public class JoinGameController extends BaseController {

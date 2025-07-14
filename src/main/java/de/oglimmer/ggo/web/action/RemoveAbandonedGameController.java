@@ -1,12 +1,14 @@
 package de.oglimmer.ggo.web.action;
 
-import de.oglimmer.ggo.atmospheremvc.game.Games;
+import de.oglimmer.ggo.websocket.game.Games;
 import de.oglimmer.ggo.logic.Game;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@AllArgsConstructor
 @Controller
 public class RemoveAbandonedGameController extends BaseController {
 

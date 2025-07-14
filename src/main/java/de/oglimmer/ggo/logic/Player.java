@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.oglimmer.ggo.websocket.WebSocketSessionCache;
 import de.oglimmer.ggo.websocket.WebSocketSessionCacheItem;
-import de.oglimmer.ggo.atmospheremvc.com.MessageQueue;
+import de.oglimmer.ggo.websocket.com.MessageQueue;
 import de.oglimmer.ggo.email.EmailService;
 import de.oglimmer.ggo.logic.phase.BasePhase;
 import de.oglimmer.ggo.ui.UIStates;
@@ -16,7 +16,7 @@ import de.oglimmer.ggo.random.RandomString;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Player implements de.oglimmer.ggo.atmospheremvc.game.Player {
+public class Player implements de.oglimmer.ggo.websocket.game.Player {
 
 	private static final long serialVersionUID = 1L;
 
@@ -101,7 +101,7 @@ public class Player implements de.oglimmer.ggo.atmospheremvc.game.Player {
 	public void notifyForAction() {
 		WebSocketSessionCacheItem item = WebSocketSessionCache.INSTANCE.getItem(this);
 		if (item == null || item.isDisconnected()) {
-			EmailService.EMAIL.gameNeedsYourAction(this);
+			EmailService.INSTANCE.gameNeedsYourAction(this);
 		}
 	}
 

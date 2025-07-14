@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
 
-import de.oglimmer.ggo.atmospheremvc.util.Json;
+import de.oglimmer.ggo.websocket.util.Json;
 
 public class JsonTest {
 

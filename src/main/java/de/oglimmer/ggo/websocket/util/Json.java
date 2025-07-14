@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.atmospheremvc.util;
+package de.oglimmer.ggo.websocket.util;
 
 import java.util.Iterator;
 import java.util.Map.Entry;

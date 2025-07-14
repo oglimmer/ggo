@@ -2,12 +2,14 @@ package de.oglimmer.ggo.web.action;
 
 import java.util.Collection;
 
-import de.oglimmer.ggo.atmospheremvc.game.Games;
+import de.oglimmer.ggo.websocket.game.Games;
 import de.oglimmer.ggo.logic.Game;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@AllArgsConstructor
 @Controller
 public class LandingGameQueryController extends BaseController {
 

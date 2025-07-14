@@ -1,6 +1,6 @@
 package de.oglimmer.ggo.web.action;
 
-import de.oglimmer.ggo.atmospheremvc.game.Games;
+import de.oglimmer.ggo.websocket.game.Games;
 import de.oglimmer.ggo.logic.Game;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@AllArgsConstructor
 @Controller
 public class WaitingForOtherPlayerQueryController extends BaseController {
 
@@ -28,7 +29,7 @@ public class WaitingForOtherPlayerQueryController extends BaseController {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	static class Result {
+	public static class Result {
 		private String action;
 	}
 

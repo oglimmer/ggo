@@ -1,0 +1,19 @@
+
+services:
+  mariadb:
+    image: mariadb
+    environment:
+      - TZ=UTC
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=ggo
+      - MARIADB_USER=ggo
+      - MARIADB_PASSWORD=foobar
+    healthcheck:
+      test: mariadb -uggo -pfoobar ggo -e "select 1"
+      interval: 3s
+      timeout: 60s
+      retries: 5
+      start_period: 10s
+      start_interval: 3s
+    ports:
+      - "3306:3306"

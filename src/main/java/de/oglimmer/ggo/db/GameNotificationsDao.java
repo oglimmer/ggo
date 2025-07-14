@@ -1,71 +1,55 @@
 package de.oglimmer.ggo.db;
 
-import static de.oglimmer.ggo.db.DBAccess.DB;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.function.Consumer;
-
-import de.oglimmer.ggo.util.GridGameOneProperties;
 import de.oglimmer.ggo.random.RandomString;
-import lombok.SneakyThrows;
+import de.oglimmer.ggo.util.GridGameOneProperties;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
-public enum GameNotificationsDao {
-	INSTANCE;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
-	private GameNotificationsDao() {
-		GridGameOneProperties.PROPERTIES.registerOnReload(this::gamePropertiesChanged);
-		gamePropertiesChanged();
-	}
+@AllArgsConstructor
+@Service
+public class GameNotificationsDao {
 
-	@SneakyThrows(value = ClassNotFoundException.class)
-	private void gamePropertiesChanged() {
-		Class.forName(GridGameOneProperties.PROPERTIES.getDbDriver());
-	}
+    private GameNotificationRepository gameNotificationRepository;
+    private GridGameOneProperties properties;
 
-	public int allConfirmed(Consumer<GameNotification> callback) {
-		if (GridGameOneProperties.PROPERTIES.isEmailDisabled()) {
-			return -1;
-		}
-		String query = "select id,email,createdOn,confirmed,confirmId from game_notification where confirmed is not null";
-		return DB.execQuery(query, rs -> convertResultSetToGameNotification(callback, rs));
-	}
+    public List<GameNotification> allConfirmed() {
+        if (properties.isEmailDisabled()) {
+            return List.of();
+        }
+        return gameNotificationRepository.findAllByConfirmedIsNotNull();
+    }
 
-	@SneakyThrows(value = SQLException.class)
-	private void convertResultSetToGameNotification(Consumer<GameNotification> callback, ResultSet rs) {
-		callback.accept(new GameNotification(rs));
-	}
+    public GameNotification addEmail(String email) {
+        String confirmId = RandomString.getRandomStringHex(32);
+        GameNotification gameNotification = new GameNotification();
+        gameNotification.setEmail(email);
+        gameNotification.setConfirmId(confirmId);
+        return gameNotificationRepository.save(gameNotification);
+    }
 
-	public GameNotification addEmail(String email) {
-		String confirmId = RandomString.getRandomStringHex(32);
-		String query = " insert into game_notification (email, confirmId) values (?,?)";
-		return new GameNotification(DB.executeUpdate(query, email, confirmId), email, confirmId);
-	}
+    public void unregisterEmail(String confirmId) {
+        gameNotificationRepository.deleteByConfirmId(confirmId);
+    }
 
-	public void unregisterEmail(String confirmId) {
-		String query = "delete from game_notification where confirmId = ?";
-		DB.executeUpdate(query, confirmId);
-	}
+    @Transactional
+    public void confirmEmail(String confirmId) {
+        Optional<GameNotification> allByConfirmIdAndConfirmedIsNull = gameNotificationRepository.findAllByConfirmIdAndConfirmedIsNull(confirmId);
+        allByConfirmIdAndConfirmedIsNull.ifPresent(gameNotification -> gameNotification.setConfirmed(Instant.now()));
+    }
 
-	public void confirmEmail(String confirmId) {
-		String query = "update game_notification set confirmed = now()  where confirmId = ? and confirmed is null";
-		DB.executeUpdate(query, confirmId);
-	}
+    public GameNotification getByConfirmId(String confirmId) {
+        Optional<GameNotification> allByConfirmId = gameNotificationRepository.findAllByConfirmId(confirmId);
+        return allByConfirmId.get();
+    }
 
-	public GameNotification getByConfirmId(String confirmId) {
-		String query = "select id,email,createdOn,confirmed,confirmId from game_notification where confirmId = ?";
-		GameNotification[] retObj = new GameNotification[1];
-		DB.execQuery(query, rs -> convertResultSetToGameNotification(gm -> retObj[0] = gm, rs), confirmId);
-		return retObj[0];
-	}
-
-	public Collection<GameNotification> all() {
-		Collection<GameNotification> coll = new ArrayList<>();
-		String query = "select id,email,createdOn,confirmed,confirmId from game_notification";
-		DB.execQuery(query, rs -> convertResultSetToGameNotification(gn -> coll.add(gn), rs));
-		return coll;
-	}
+    public Collection<GameNotification> all() {
+        return gameNotificationRepository.findAll();
+    }
 
 }

@@ -15,7 +15,7 @@ import org.springframework.web.socket.WebSocketSession;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.oglimmer.ggo.atmospheremvc.game.Player;
+import de.oglimmer.ggo.websocket.game.Player;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

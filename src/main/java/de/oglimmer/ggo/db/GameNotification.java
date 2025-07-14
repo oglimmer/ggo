@@ -1,31 +1,26 @@
 package de.oglimmer.ggo.db;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.Data;
+import java.time.Instant;
 
-@Data
+@Entity
+@Getter
+@Setter
 public class GameNotification {
 
-	private int id;
-	private String email;
-	private Timestamp createdOn;
-	private Timestamp confirmed;
-	private String confirmId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
+    private String email;
+    @Column(nullable = false)
+    private Instant createdOn;
+    @Column
+    private Instant confirmed;
+    @Column(nullable = false)
+    private String confirmId;
 
-	public GameNotification(int id, String email, String confirmId) {
-		this.id = id;
-		this.email = email;
-		this.confirmId = confirmId;
-	}
-
-	public GameNotification(ResultSet rs) throws SQLException {
-		this.id = rs.getInt("id");
-		this.email = rs.getString("email");
-		this.createdOn = rs.getTimestamp("createdOn");
-		this.confirmed = rs.getTimestamp("confirmed");
-		this.confirmId = rs.getString("confirmId");
-	}
 }

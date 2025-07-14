@@ -72,7 +72,7 @@
                     </phantomjs>
                     <keepServerAlive>true</keepServerAlive>
                     <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
-                    <jsSrcDir>${project.basedir}/src/main/webapp/js</jsSrcDir>
+                    <jsSrcDir>src/main/resources/static/js</jsSrcDir>
                     <jsTestSrcDir>${project.basedir}/src/test/js</jsTestSrcDir>
                     <sourceIncludes>
                         <include>*.js</include>
@@ -131,6 +131,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
@@ -148,18 +158,6 @@
             <version>3.3.7</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>org.mariadb.jdbc</groupId>
-            <artifactId>mariadb-java-client</artifactId>
-            <version>3.5.4</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.11.2</version>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.atmospheremvc.game;
+package de.oglimmer.ggo.websocket.game;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.oglimmer.ggo.atmospheremvc.util.Json;
+import de.oglimmer.ggo.websocket.util.Json;
 
 abstract public class UIState implements Serializable {
 
