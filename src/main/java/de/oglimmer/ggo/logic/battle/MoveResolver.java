@@ -23,8 +23,8 @@ public class MoveResolver {
 	}
 
 	private void collect() {
-		cc.stream().filter(c -> c.getCommandType() == CommandType.MOVE)
-				.forEach(c -> targetFieldToUnit.put(c.getTargetField(), c.getUnit()));
+		cc.stream().filter(c -> c.commandType() == CommandType.MOVE)
+				.forEach(c -> targetFieldToUnit.put(c.targetField(), c.unit()));
 	}
 
 	private void setNewField() {

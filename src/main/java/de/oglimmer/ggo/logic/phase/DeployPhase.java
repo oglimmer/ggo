@@ -144,12 +144,12 @@ public class DeployPhase extends BasePhase {
 	private void execSelectHandCard(Player player, String param) {
 		if (player != activePlayer) {
 			log.error("got cmd selectHandCard from not active player");
-			return;
+			throw new CmdException(CmdException.Type.SELECTED_CARD_NOT_FROM_ACTIVE_PLAYER);
 		}
 		Unit paramSelectedUnit = player.getUnitInHand().stream().filter(u -> u.getId().equals(param)).findFirst().get();
 		if (selectedUnit != null && selectedUnit != paramSelectedUnit) {
 			log.error("execSelectHandCard but selectedUnit was " + selectedUnit.getUnitType());
-			return;
+			throw new CmdException(CmdException.Type.WRONG_SELECTED_CARD);
 		}
 		if (selectedUnit == paramSelectedUnit) {
 			selectedUnit = null;
@@ -161,7 +161,7 @@ public class DeployPhase extends BasePhase {
 	private void execSelectTargetField(Player player, String param) {
 		if (player != activePlayer) {
 			log.error("got cmd selectHandCard from not active player");
-			return;
+			throw new CmdException(CmdException.Type.SELECTED_CARD_NOT_FROM_ACTIVE_PLAYER);
 		}
 		if (selectedUnit == null) {
 			log.error("execSelectTargetField but selectedUnit was null");

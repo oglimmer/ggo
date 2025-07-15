@@ -64,17 +64,17 @@ public class CommandCenter implements Serializable {
 		Command commandToRemove = commands.get(u);
 		
 		// If this was a MOVE command, we need to check for cascading cancellations
-		if (commandToRemove != null && commandToRemove.getCommandType().isMove()) {
-			Field fieldBeingVacated = commandToRemove.getUnit().getDeployedOn();
+		if (commandToRemove != null && commandToRemove.commandType().isMove()) {
+			Field fieldBeingVacated = commandToRemove.unit().getDeployedOn();
 			
 			// Remove the original command first
 			commands.remove(u);
 			
 			// Find other units that were planning to move into the field being vacated
 			Set<Unit> unitsToCancel = commands.entrySet().stream()
-					.filter(entry -> entry.getValue().getCommandType().isMove())
-					.filter(entry -> entry.getValue().getTargetField() == fieldBeingVacated)
-					.filter(entry -> entry.getValue().getUnit().getPlayer() == u.getPlayer()) // Only same player
+					.filter(entry -> entry.getValue().commandType().isMove())
+					.filter(entry -> entry.getValue().targetField() == fieldBeingVacated)
+					.filter(entry -> entry.getValue().unit().getPlayer() == u.getPlayer()) // Only same player
 					.map(Map.Entry::getKey)
 					.collect(Collectors.toSet());
 			
@@ -90,7 +90,7 @@ public class CommandCenter implements Serializable {
 			// For non-MOVE commands, just remove the command normally
 			for (Iterator<Map.Entry<Unit, Command>> it = commands.entrySet().iterator(); it.hasNext();) {
 				Map.Entry<Unit, Command> en = it.next();
-				if (en.getValue().getUnit() == u) {
+				if (en.getValue().unit() == u) {
 					it.remove();
 				}
 			}
@@ -109,8 +109,8 @@ public class CommandCenter implements Serializable {
 	}
 
 	public Set<Command> getByTargetField(Player forPlayer, Field f) {
-		return commands.values().stream().filter(c -> c.getUnit().getPlayer() == forPlayer)
-				.filter(c -> c.getTargetField() == f).collect(Collectors.toSet());
+		return commands.values().stream().filter(c -> c.unit().getPlayer() == forPlayer)
+				.filter(c -> c.targetField() == f).collect(Collectors.toSet());
 	}
 
 	public void allCommands(Consumer<Command> consumer) {

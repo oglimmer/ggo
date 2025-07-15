@@ -1,17 +1,8 @@
 package de.oglimmer.ggo.logic.battle;
 
-import java.io.Serializable;
-
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Unit;
-import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.NonNull;
 
-@AllArgsConstructor
-@Value
-public class Command implements Serializable {
-	private static final long serialVersionUID = 1L;
-	private CommandType commandType;
-	private Unit unit;
-	private Field targetField;
+public record Command(@NonNull CommandType commandType, @NonNull Unit unit, @NonNull Field targetField) {
 }

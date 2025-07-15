@@ -55,7 +55,7 @@ public class BaseBattleResolver {
 	}
 
 	protected static void score(Unit winningUnit, CommandCenter cc) {
-		CommandType ct = cc.getByUnit(winningUnit).getCommandType();
+		CommandType ct = cc.getByUnit(winningUnit).commandType();
 		if (!cc.isDry()) {
 			int score = 0;
 			if (ct == CommandType.MOVE) {
@@ -72,11 +72,11 @@ public class BaseBattleResolver {
 
 	protected int isSupported(Unit u) {
 		return (int) cc.getByTargetField(u.getPlayer(), u.getDeployedOn()).stream()
-				.filter(c -> c.getCommandType().isSupport()).count();
+				.filter(c -> c.commandType().isSupport()).count();
 	}
 
 	protected int isFortified(Unit u) {
-		return cc.getByUnit(u).getCommandType() == CommandType.FORTIFY ? 1 : 0;
+		return cc.getByUnit(u).commandType() == CommandType.FORTIFY ? 1 : 0;
 	}
 
 	protected void killCrossingOne(Unit killed, Unit killer) {

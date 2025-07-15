@@ -60,6 +60,6 @@ public class Field implements Serializable {
     }
 
     public String asPosString() {
-        return pos.getX() + ":" + pos.getY();
+        return ((int) pos.getX()) + ":" + ((int) pos.getY());
     }
 }

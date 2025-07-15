@@ -34,8 +34,8 @@ public class BattleGroundResolver extends BaseBattleResolver {
 	}
 
 	private Collection<? extends Unit> getNonMovingUnitsOnField(Field battleGround) {
-		return getCc().stream().filter(c -> !c.getCommandType().isMove())
-				.filter(c -> c.getUnit().getDeployedOn() == battleGround).map(c -> c.getUnit())
+		return getCc().stream().filter(c -> !c.commandType().isMove())
+				.filter(c -> c.unit().getDeployedOn() == battleGround).map(c -> c.unit())
 				.collect(Collectors.toSet());
 	}
 
@@ -66,8 +66,8 @@ public class BattleGroundResolver extends BaseBattleResolver {
 	}
 
 	private void collectFieldsWithUnits(Command c) {
-		if (c.getCommandType().isMove()) {
-			possibleBattleGrounds.computeIfAbsent(c.getTargetField(), t -> new HashSet<>()).add(c.getUnit());
+		if (c.commandType().isMove()) {
+			possibleBattleGrounds.computeIfAbsent(c.targetField(), t -> new HashSet<>()).add(c.unit());
 		}
 	}
 

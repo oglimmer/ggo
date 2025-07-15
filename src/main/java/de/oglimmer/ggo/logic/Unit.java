@@ -101,11 +101,11 @@ public class Unit implements Serializable {
 
 			if (f.getUnit() != null && f.getUnit().getPlayer() == player) {
 				Command cmdForTargetUnit = cc.getByUnit(f.getUnit());
-				if (cmdForTargetUnit.getCommandType().isFortify() || cmdForTargetUnit.getCommandType().isBombard()
-						|| cmdForTargetUnit.getCommandType().isSupport()) {
+				if (cmdForTargetUnit.commandType().isFortify() || cmdForTargetUnit.commandType().isBombard()
+						|| cmdForTargetUnit.commandType().isSupport()) {
 					mf.add(f);
-				} else if (cmdForTargetUnit.getCommandType().isMove()) {
-					Field targetFieldForMovingTargetUnit = cmdForTargetUnit.getTargetField();
+				} else if (cmdForTargetUnit.commandType().isMove()) {
+					Field targetFieldForMovingTargetUnit = cmdForTargetUnit.targetField();
 					if (FieldUtil.adjacent(targetFieldForMovingTargetUnit, deployedOn)) {
 						mf.add(f);
 					}
@@ -123,13 +123,13 @@ public class Unit implements Serializable {
 		Set<Field> mf = new HashSet<>();
 		for (Field f : deployedOn.getNeighbors()) {
 			Set<Command> myCommandsForThisField = cc.getByTargetField(player, f);
-			boolean occupiedByOwnUnit = myCommandsForThisField.stream().filter(c -> c.getUnit() != this)
-					.anyMatch(c -> c.getCommandType().isMove() || c.getCommandType().isFortify());
+			boolean occupiedByOwnUnit = myCommandsForThisField.stream().filter(c -> c.unit() != this)
+					.anyMatch(c -> c.commandType().isMove() || c.commandType().isFortify());
 			
 			// Also check if there's a unit on this field that is providing support
 			if (!occupiedByOwnUnit && f.getUnit() != null && f.getUnit().getPlayer() == player && f.getUnit() != this) {
 				Command cmdForUnitOnField = cc.getByUnit(f.getUnit());
-				if (cmdForUnitOnField != null && cmdForUnitOnField.getCommandType().isSupport()) {
+				if (cmdForUnitOnField != null && cmdForUnitOnField.commandType().isSupport()) {
 					occupiedByOwnUnit = true;
 				}
 			}
@@ -151,12 +151,12 @@ public class Unit implements Serializable {
 	}
 
 	private boolean allSupportCommandsAdjacent(Set<Command> supportUnits, Field f) {
-		return supportUnits.stream().allMatch(c -> FieldUtil.adjacent(f, c.getUnit().getDeployedOn()));
+		return supportUnits.stream().allMatch(c -> FieldUtil.adjacent(f, c.unit().getDeployedOn()));
 	}
 
 	private Set<Command> getSupportingUnits(CommandCenter cc) {
-		return cc.stream().filter(c -> c.getUnit().getPlayer() == player).filter(c -> c.getCommandType().isSupport())
-				.filter(c -> c.getTargetField() == deployedOn).collect(Collectors.toSet());
+		return cc.stream().filter(c -> c.unit().getPlayer() == player).filter(c -> c.commandType().isSupport())
+				.filter(c -> c.targetField() == deployedOn).collect(Collectors.toSet());
 	}
 
 	public Set<Field> getTargetableFields() {

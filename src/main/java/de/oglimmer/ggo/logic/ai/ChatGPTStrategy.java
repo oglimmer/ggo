@@ -43,27 +43,10 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
             
             ──────────────────────────────── RULES ────────────────────────────────
             OBJECTIVE
-            • After 5 turns, the side with the higher score wins.
-            • Green must capture the right-side cities; Red must capture the left-side cities.
+            • Score as many points as possible.
+            • The Red player must capture the left-side cities.
             
-            TURN STRUCTURE (each turn)
-            1  Draft Phase 2  Deploy Phase 3  Command Phase (3 rounds)
-            
-            1  DRAFT PHASE
-            • +1000 credits per player each turn; unspent credits carry over
-            • Draft simultaneously.
-            • Deploy order:
-              1. More remaining credits → first2. Fewer units → first3. Tie → random.
-            
-            2  DEPLOY PHASE
-            • Players alternate placing one drafted unit at a time until all are placed.
-            • Placement: own side only.
-              ◦ Exception — Airborne: own side **or** any hex adjacent to a friendly unit.
-            
-            3  COMMAND PHASE (3 rounds; simultaneous resolution)
-            • Each unit receives ≤ 1 command per round.
-            
-              COMMAND TYPES
+            COMMAND TYPES
               – Fortify (No move; +1 DEF)
               – Move / Attack (Move into empty hex **or** attack enemy in target hex; cannot enter friendly-occupied hex; if units swap hexes they fight, otherwise no combat.) 
               – Support (Grant adjacent friendly +1 STR; both must stay adjacent.)
@@ -144,18 +127,16 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
         }
 
         sb.append("]");
-        sb.append("},");
-        sb.append("\"instruction\":\"Your decision must be confirm to the game rules and the current game state at all cost.\"");
+        sb.append("}");
         sb.append("}");
 
         return sb.toString();
     }
 
-    private ChatCompletionCreateParams.Builder builder(StringBuilder sb) {
+    private ChatCompletionCreateParams.Builder builder(String msg) {
         return ChatCompletionCreateParams.builder()
-                .addSystemMessage(INSTRUCTIONS + "\n" + STRATEGY)
-                .addAssistantMessage(createMessageInformation())
-                .addUserMessage(sb.toString())
+                .addSystemMessage(INSTRUCTIONS + "\n" + STRATEGY + "\n" + createMessageInformation())
+                .addUserMessage(msg)
                 .model(ChatModel.GPT_4O_MINI);
     }
 
@@ -163,37 +144,43 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
     public void draft() {
         OpenAIClient client = OpenAIOkHttpClient.fromEnv();
         DraftPhase draftPhase = (DraftPhase) game.getCurrentPhase();
+        boolean success = false;
+        while (!success) {
+            try {
+                StringBuilder sb = new StringBuilder();
 
-        StringBuilder sb = new StringBuilder();
+                int credits = player.getCredits();
+                sb.append("You have ").append(credits).append(" credits.");
+                sb.append("""
+                        ### Draft selection (unit types only)
+                        
+                        Consult your internal strategy guide and decide which **unit types** you will purchase this turn.
+                        
+                        Allowed values (lower-case):
+                          "infantry", "tank", "airborne", "helicopter", "artillery"
+                        
+                        Respond with **nothing but** a JSON array of strings in the exact form shown below—no Markdown, no keys, no commentary.
+                        """);
 
-        int credits = player.getCredits();
-        sb.append("You have ").append(credits).append(" credits.");
-        sb.append("""
-                ### Draft selection (unit types only)
-                
-                Consult your internal strategy guide and decide which **unit types** you will purchase this turn.
-                
-                Allowed values (lower-case):
-                  "infantry", "tank", "airborne", "helicopter", "artillery"
-                
-                Respond with **nothing but** a JSON array of strings in the exact form shown below—no Markdown, no keys, no commentary:
-                
-                ["infantry","tank","infantry"]
-                """);
+                log.debug("ChatGPT input: {}", sb.toString());
 
-        log.debug("ChatGPT input: {}", sb.toString());
+                StructuredChatCompletionCreateParams<DraftList> params = builder(sb.toString()).responseFormat(DraftList.class).build();
 
-        StructuredChatCompletionCreateParams<DraftList> params = builder(sb).responseFormat(DraftList.class, JsonSchemaLocalValidation.NO).build();
-
-        client.chat().completions().create(params).choices().stream().flatMap(choice -> choice.message().content().stream()).flatMap(e -> e.unitsToDraft.stream()).forEach(unit -> {
-            UnitType ut = UnitType.getUnitType(unit);
-            if (ut != null) {
-                log.debug("Drafting unit: {}", unit);
-                draftPhase.draftUnit(player, ut);
-            } else {
-                log.warn("Unknown unit type: {}", unit);
+                client.chat().completions().create(params).choices().stream().flatMap(choice -> choice.message().content().stream()).flatMap(e -> e.unitsToDraft.stream()).forEach(unit -> {
+                    UnitType ut = UnitType.getUnitType(unit);
+                    if (ut != null) {
+                        log.debug("Drafting unit: {}", unit);
+                        draftPhase.draftUnit(player, ut);
+                    } else {
+                        log.warn("Unknown unit type: {}", unit);
+                        throw new CmdException(CmdException.Type.UNKNOWN_UNIT);
+                    }
+                });
+                success = true;
+            } catch (CmdException e) {
+                log.warn("Command failed: {}", e.getMessage());
             }
-        });
+        }
 
         draftPhase.playerDone(player);
     }
@@ -238,7 +225,7 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
 
                 log.debug("ChatGPT input: {}", s);
 
-                StructuredChatCompletionCreateParams<DeployDecision> params = builder(sb).responseFormat(DeployDecision.class).build();
+                StructuredChatCompletionCreateParams<DeployDecision> params = builder(sb.toString()).responseFormat(DeployDecision.class).build();
 
                 client.chat().completions().create(params).choices().stream()
                         .flatMap(choice -> choice.message().content().stream())
@@ -251,11 +238,15 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
                                     int x = deployDecision.targetFieldX;
                                     int y = deployDecision.targetFieldY;
                                     Field toDeployField = game.getBoard().getField(new Point(x, y));
+                                    if (!deployPhase.isSelectable(toDeployField, player)) {
+                                        throw new CmdException(CmdException.Type.ILLEGAL_FIELD_TO_DEPLOY);
+                                    }
                                     log.debug("Deploying unit to field: {}", toDeployField.getId());
                                     deployPhase.execCmd(player, "selectTargetField", toDeployField.getId());
                                 });
                             } else {
                                 log.warn("Unknown unit type: {}", deployDecision.unitType);
+                                throw new CmdException(CmdException.Type.UNKNOWN_UNIT);
                             }
                         });
                 success = true;
@@ -299,8 +290,7 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
                     StringBuilder sb = new StringBuilder()
                             .append("### Command phase – round ").append(roundIndex).append('\n')
                             .append("Unit: ").append(u.getUnitType().name().toLowerCase())
-                            .append("  (id: ").append(u.getId()).append(")\n")
-                            .append("Current field: ").append(u.getDeployedOn().asPosString()).append('\n')
+                            .append(" with current field: ").append(u.getDeployedOn().asPosString()).append('\n')
                             .append('\n')
                             .append("Legal actions this round:\n");
 
@@ -330,34 +320,38 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
                             .map(Field::asPosString)
                             .collect(Collectors.joining(", "));
                     sb.append("• move  – empty adjacent fields: ").append(legalMoveHexes).append('\n')
-                            .append("• attack – enemy units in adjacent fields: ").append(legalAttackTargets).append('\n')
+                            .append("• move – attacks an enemy units in adjacent fields: ").append(legalAttackTargets).append('\n')
                             .append("• support – adjacent friendlies: ").append(legalSupportTargets).append('\n')
                             .append("• fortify – remain in place (+1 DEF)\n\n")
                             .append("Respond with **only** this JSON object – no markdown, no comments:\n")
                             .append("{\n")
                             .append("  \"command\": \"<fortify | move | support | bombard>\",\n")
-                            .append("  \"target\" : \"<field or unitId or null>\"\n")
+                            .append("  \"targetFieldX\" : \"<x value of field>\",\n")
+                            .append("  \"targetFieldY\" : \"<y value of field>\"\n")
                             .append("}");
 
                     log.debug("ChatGPT input: {}", sb);
 
-                    StructuredChatCompletionCreateParams<CombatPhaseDecision> params = builder(sb).responseFormat(CombatPhaseDecision.class, JsonSchemaLocalValidation.NO).build();
+                    StructuredChatCompletionCreateParams<CombatPhaseDecision> params = builder(sb.toString())
+                            .responseFormat(CombatPhaseDecision.class).build();
 
                     client.chat().completions().create(params).choices().stream()
                             .flatMap(choice -> choice.message().content().stream())
                             .forEach(combatDecision -> {
-                                int targetFieldX = combatDecision.targetFieldX;
-                                int targetFieldY = combatDecision.targetFieldY;
                                 log.debug("Executing command: {} ", combatDecision);
                                 CommandType commandType = CommandType.fromString(combatDecision.command);
-                                Field sourceField = u.getDeployedOn();
-                                Field targetField = game.getBoard().getField(new Point(targetFieldX, targetFieldY));
-                                log.debug("Executing command: {} from field {} to field {}", commandType, sourceField, targetField);
-                                CombatPhaseDecisionDecoded decoded = new CombatPhaseDecisionDecoded();
-                                decoded.setCommand(commandType);
-                                decoded.setSourceField(sourceField);
-                                decoded.setTargetField(targetField);
-                                list.add(decoded);
+                                if (commandType != CommandType.FORTIFY) {
+                                    int targetFieldX = combatDecision.targetFieldX;
+                                    int targetFieldY = combatDecision.targetFieldY;
+                                    Field sourceField = u.getDeployedOn();
+                                    Field targetField = game.getBoard().getField(new Point(targetFieldX, targetFieldY));
+                                    log.debug("Executing command: {} from field {} to field {}", commandType, sourceField, targetField);
+                                    CombatPhaseDecisionDecoded decoded = new CombatPhaseDecisionDecoded();
+                                    decoded.setCommand(commandType);
+                                    decoded.setSourceField(sourceField);
+                                    decoded.setTargetField(targetField);
+                                    list.add(decoded);
+                                }
                             });
                 }
 

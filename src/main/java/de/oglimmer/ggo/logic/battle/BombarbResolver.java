@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.oglimmer.ggo.logic.Unit;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -17,7 +16,7 @@ public class BombarbResolver extends BaseBattleResolver {
     }
 
     public void collectTargets() {
-        getCc().stream().filter(c -> c.getCommandType().isBombard()).forEach(this::collectTarget);
+        getCc().stream().filter(c -> c.commandType().isBombard()).forEach(this::collectTarget);
     }
 
     public void killTargets() {
@@ -25,17 +24,17 @@ public class BombarbResolver extends BaseBattleResolver {
     }
 
     private void collectTarget(Command c) {
-        if (c.getTargetField().getUnit() == null) {
-            log.error("Target field {} of command {} is empty", c.getTargetField().getId(), c.toString());
+        if (c.targetField().getUnit() == null) {
+            log.error("Target field {} of command {} is empty", c.targetField().getId(), c.toString());
             return;
         }
-        if (c.getUnit() == null) {
+        if (c.unit() == null) {
             log.error("Unit is null of command {}", c.toString());
             return;
         }
-        targetByBombard.add(new Units(c.getTargetField().getUnit(), c.getUnit()));
-        score(c.getUnit(), getCc());
-        log.debug("Unit {} marked to be killed due to bombard by {}", c.getTargetField().getUnit(), c.getUnit());
+        targetByBombard.add(new Units(c.targetField().getUnit(), c.unit()));
+        score(c.unit(), getCc());
+        log.debug("Unit {} marked to be killed due to bombard by {}", c.targetField().getUnit(), c.unit());
     }
 
     private void kilTarget(Units u) {

@@ -20,9 +20,9 @@ public class UICommand {
 		Command cPCommand = forPlayer.getGame().getCurrentPhase().getCommand(unit, forPlayer);
 		if (cPCommand != null) {
 			UICommand returnObj = new UICommand();
-			returnObj.commandType = cPCommand.getCommandType().toString();
-			returnObj.x = (int) cPCommand.getTargetField().getPos().getX();
-			returnObj.y = (int) cPCommand.getTargetField().getPos().getY();
+			returnObj.commandType = cPCommand.commandType().toString();
+			returnObj.x = (int) cPCommand.targetField().getPos().getX();
+			returnObj.y = (int) cPCommand.targetField().getPos().getY();
 			return returnObj;
 		}
 		return null;

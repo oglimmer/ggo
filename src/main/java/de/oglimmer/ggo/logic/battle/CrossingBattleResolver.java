@@ -32,14 +32,14 @@ public class CrossingBattleResolver extends BaseBattleResolver {
 	}
 
 	private void collectCrossingUnits() {
-		getCc().stream().filter(c -> c.getCommandType().isMove()).filter(this::unitAlreadyAdded).forEach(this::check);
+		getCc().stream().filter(c -> c.commandType().isMove()).filter(this::unitAlreadyAdded).forEach(this::check);
 		log.debug("Total crossingUnits {}", crossingUnits.size());
 	}
 
 	private void check(Command c) {
-		Unit unit = c.getUnit();
+		Unit unit = c.unit();
 		Field oldField = unit.getDeployedOn();
-		Field newField = c.getTargetField();
+		Field newField = c.targetField();
 		Unit crossingUnit = getUnitMovingFromTo(newField, oldField);
 		if (crossingUnit != null) {
 			Set<Unit> newSet = new HashSet<>();
@@ -51,14 +51,14 @@ public class CrossingBattleResolver extends BaseBattleResolver {
 	}
 
 	private boolean unitAlreadyAdded(Command command) {
-		return !crossingUnits.stream().anyMatch(set -> set.contains(command.getUnit()));
+		return !crossingUnits.stream().anyMatch(set -> set.contains(command.unit()));
 	}
 
 	private Unit getUnitMovingFromTo(Field from, Field to) {
 		Optional<Command> findFirst = getCc().stream()
-				.filter(c -> c.getTargetField() == to && c.getUnit().getDeployedOn() == from).findFirst();
-		if (findFirst.isPresent() && findFirst.get().getCommandType().isMove()) {
-			return findFirst.get().getUnit();
+				.filter(c -> c.targetField() == to && c.unit().getDeployedOn() == from).findFirst();
+		if (findFirst.isPresent() && findFirst.get().commandType().isMove()) {
+			return findFirst.get().unit();
 		}
 		return null;
 	}

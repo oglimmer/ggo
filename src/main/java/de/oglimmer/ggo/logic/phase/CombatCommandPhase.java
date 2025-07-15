@@ -226,7 +226,7 @@ public class CombatCommandPhase extends BasePhase {
 	@Override
 	public Command getCommand(Unit unit, Player forPlayer) {
 		Command command = cc.getByUnit(unit);
-		if (command != null && command.getUnit().getPlayer() == forPlayer) {
+		if (command != null && command.unit().getPlayer() == forPlayer) {
 			return command;
 		}
 		return null;
