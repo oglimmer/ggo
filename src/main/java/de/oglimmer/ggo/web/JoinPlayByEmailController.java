@@ -1,9 +1,11 @@
-package de.oglimmer.ggo.web.action;
+package de.oglimmer.ggo.web;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import de.oglimmer.ggo.websocket.game.Games;
+import de.oglimmer.ggo.logic.Games;
+import de.oglimmer.ggo.db.GameNotification;
+import de.oglimmer.ggo.db.GameNotificationsDao;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import lombok.AllArgsConstructor;
@@ -16,16 +18,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @AllArgsConstructor
 @Slf4j
 @Controller
-public class JoinGameController extends BaseController {
+public class JoinPlayByEmailController extends BaseController {
 
-	@GetMapping("/JoinGame")
-	public String join(@RequestParam String gameId, HttpServletResponse response, RedirectAttributes redirectAttributes) {
+	private GameNotificationsDao gameNotificationsDao;
+
+	@GetMapping("/JoinPlayByEmail")
+	public String join(@RequestParam String gameId, @RequestParam String confirmId, 
+					   HttpServletResponse response, RedirectAttributes redirectAttributes) {
 		Game game = Games.<Game> getGames().getGameById(gameId);
 		if (game.getPlayers().size() == 1) {
-			Player player = game.createPlayer();
-			game.startGame();
-			response.addCookie(new Cookie("playerId", player.getId()));
-			return "redirect:/Board?playerId=" + player.getId();
+			GameNotification gameNoti = gameNotificationsDao.getByConfirmId(confirmId);
+			if (gameNoti != null) {
+				Player player = game.createPlayer(gameNoti.getEmail());
+				game.startGame();
+				response.addCookie(new Cookie("playerId", player.getId()));
+				return "redirect:/Board?playerId=" + player.getId();
+			}
 		}
 		redirectAttributes.addFlashAttribute("message", "Someone else was faster! The game has already 2 players!");
 		log.error("Join game called but game already had 2 player. GameId={}", gameId);

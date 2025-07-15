@@ -12,14 +12,14 @@ import de.oglimmer.ggo.random.RandomName;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Game implements de.oglimmer.ggo.websocket.game.Game {
+public class Game {
 
 	private static final long serialVersionUID = 1L;
 
 	public static final int TOTAL_TURNS = 5;
 
 	@Getter
-	private String id = RandomName.getName(4);
+	private String id = RandomName.getName();
 
 	@Getter
 	private Date createdOn = new Date();
@@ -114,9 +114,11 @@ public class Game implements de.oglimmer.ggo.websocket.game.Game {
 		}
 	}
 
-	@Override
-	public Player getOtherPlayer(de.oglimmer.ggo.websocket.game.Player currentPlayer) {
-		return (Player) de.oglimmer.ggo.websocket.game.Game.super.getOtherPlayer(currentPlayer);
+	public Player getOtherPlayer(Player currentPlayer) {
+		if (getPlayers().size() != 2) {
+			return null;
+		}
+		return getPlayers().get(0) == currentPlayer ? getPlayers().get(1) : getPlayers().get(0);
 	}
 
 }

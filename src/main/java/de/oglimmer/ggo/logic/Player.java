@@ -16,7 +16,7 @@ import de.oglimmer.ggo.random.RandomString;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Player implements de.oglimmer.ggo.websocket.game.Player {
+public class Player {
 
 	private static final long serialVersionUID = 1L;
 
@@ -87,7 +87,6 @@ public class Player implements de.oglimmer.ggo.websocket.game.Player {
 		score += addScore;
 	}
 
-	@Override
 	public void updateUI() {
 		BasePhase currentPhase = game.getCurrentPhase();
 		if (currentPhase != null) {

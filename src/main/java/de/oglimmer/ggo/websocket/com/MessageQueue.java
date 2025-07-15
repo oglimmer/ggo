@@ -6,8 +6,8 @@ import java.util.Map.Entry;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import de.oglimmer.ggo.websocket.game.Game;
-import de.oglimmer.ggo.websocket.game.Player;
+import de.oglimmer.ggo.logic.Game;
+import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.websocket.WebSocketSessionCache;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

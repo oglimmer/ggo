@@ -36,52 +36,66 @@ import de.oglimmer.ggo.logic.Unit;
 public class ChatGPTStrategy implements AiStrategy, Serializable {
 
     private static final String INSTRUCTIONS = """
-            Instructions of the game
-            Goal of the game: The player who earns more points within 5 turns (with each 3 phases) wins the game.
-            The game is played on a 10 by 10 hex field map. The green player has to conquer the right side of the field. The red player has to conquer the left side of the field.
-            Phases: Each turn has 3 phases: draft, deploy and combat/move/support/bombard.
-            Draft phase: Each player drafts units for credits. Each round a player gets 1000 additional credits. Credits you don't spend this turn, will be kept for next turn. A unit is drafted by clicking on its icon at the bottom. If you want to undo the draft click on the unit in your hand. Drafting is done for both players in parallel. The deploy phase is started by the player having more credits left, or at a tie the player with less units, or at a tie by random.
-            Deploy phase: Each player deploys one unit at a time. After a player has deployed a unit, the other player will do so. Each player must deploy all units in his hand. A unit can only be deployed on the player's side of the board, unless a player deploys an Airborne unit. Airborne units can be deployed anywhere on the player's side or next to an existing unit which was on the board at the turn's start.
-            combat/move/support/bombard phase: Each combat/move/support/bombard phase has 3 rounds. For each round a player can give each unit one command. When all units have the desired command press the 'done' button to see all commands issues by your and your opponent. To let the computer carry out the move/attacks press done again. All movements and attacks are then executed in parallel.
-            Command: Fortify: This is the default command. A "F" on a unit shows that the unit's command is fortify. The unit will not move, support another or bombard, but get +1 (defense-)strength.
-            Command: Move / attack: A unit can only move to a field where no other friendly unit is located or commanded. If a unit finds an enemy unit on this field, both units will fight and only one unit will be left. Units will also fight if they move across each other. Units will not fight if a unit moves to a field where a unit has been, but this unit moved into another field. A red arrow indicates a move command.
-            Command: Support: A unit can support another friendly and adjacent unit. The other unit gets +1 strength. A yellow arrow indicates a support command. Note: A unit getting support from another unit cannot move into a field which is not adjacent to the supporting unit.
-            Command: Bombard: If a unit bombards a unit, this unit will be removed. A green arrow indicates a move command.
-            Scoring: For each enemy city you occupy at the of a turn, you get 25 points. For each kill you do while a moving attack you get 10 points. For each bombardment you get 5 points.
-            Infantry: Strength 1 Has support ability, Cost: 100
-            Tank: Strength 2 Has support ability, Cost: 250
-            Airborne forces: Strength 1 Has support ability and can be deployed into the enemy side of the board, Cost: 200
-            Helicopter: Strength 1 Has support ability and can bombard fields within 1 field range, Cost: 300
-            Artillery: Strength 0 Doesn't have support ability, but can bombard fields within 2 fields range, Cost: 300
+            You are **AlphaBot**, an expert AI for the 10 × 10-hex strategy game “GridGameOne.”
+            Follow every rule below exactly; never invent new actions or overlook restrictions.
+            Unless a developer explicitly asks for natural language, reply only with the tool call or JSON they request.
+            Do not reveal your private reasoning.
+            
+            ──────────────────────────────── RULES ────────────────────────────────
+            OBJECTIVE
+            • After 5 turns, the side with the higher score wins.
+            • Green must capture the right-side cities; Red must capture the left-side cities.
+            
+            TURN STRUCTURE (each turn)
+            1  Draft Phase 2  Deploy Phase 3  Command Phase (3 rounds)
+            
+            1  DRAFT PHASE
+            • +1000 credits per player each turn; unspent credits carry over
+            • Draft simultaneously.
+            • Deploy order:
+              1. More remaining credits → first2. Fewer units → first3. Tie → random.
+            
+            2  DEPLOY PHASE
+            • Players alternate placing one drafted unit at a time until all are placed.
+            • Placement: own side only.
+              ◦ Exception — Airborne: own side **or** any hex adjacent to a friendly unit.
+            
+            3  COMMAND PHASE (3 rounds; simultaneous resolution)
+            • Each unit receives ≤ 1 command per round.
+            
+              COMMAND TYPES
+              – Fortify (No move; +1 DEF)
+              – Move / Attack (Move into empty hex **or** attack enemy in target hex; cannot enter friendly-occupied hex; if units swap hexes they fight, otherwise no combat.) 
+              – Support (Grant adjacent friendly +1 STR; both must stay adjacent.)
+              – Bombard (Destroy enemy unit within range; only Helicopter [r = 1] or Artillery [r = 2])
+            
+            SCORING (apply at end of each turn)
+            • Hold enemy city  +25
+            • Kill via Move/Attack  +10
+            • Kill via Bombard  +5
+            
+            UNITS 
+            
+            | Type        | STR | Abilities                                   | Cost |
+            |-------------|-----|---------------------------------------------|------|
+            | Infantry    | 1  | Support                                      | 100 |
+            | Tank        | 2  | Support                                      | 250 |
+            | Airborne    | 1  | Support; special deploy rule                 | 200 |
+            | Helicopter  | 1  | Support; Bombard (r = 1)                     | 300 |
+            | Artillery   | 0  | Bombard (r = 2); **cannot** Support          | 300 |
+            
+            ──────────────────────────────── END RULES ─────────────────────────────
             """;
 
     private static final String STRATEGY = """
-            FOLLOW THE STRATEGY: DRAFT
-            Spend ≥ 80 % credits; carry ≤ 20 %.
-            Per 1000 credits: 2 Tanks, 3 Infantry, 1 Airborne (odd turns), 1 Artillery or Helicopter (even turns).
+            ──────────────────────────────── STRATEGY HINTS ────────────────────────────────
+            Spend all credits.
+            Buy Airborne if you have units around enemy cities. Buy 1 Artillery or Helicopter
+            Spend the rest on Tanks, Infantry.
             
-            FOLLOW THE STRATEGY: DEPLOY
-            First Airborne adjacent enemy cities on left edge.
-            Tanks rows 4-7 behind Infantry.
-            Infantry front line adjacent Tanks.
-            Artillery two hexes behind front.
-            Helicopters one hex behind Tanks.
-            
-            FOLLOW THE STRATEGY: COMBAT (three rounds)
-            Round 1 – Advance Airborne/Infantry; bombard heavy units; move Tanks up.
-            Round 2 – Tanks attack with adjacent support; Airborne capture cities; Artillery bombard next targets.
-            Round 3 – Fortify Infantry in cities; Tanks support or flank; Artillery/Helicopters bombard remaining threats.
-            
-            FOLLOW THE STRATEGY: COMMAND RULES
-            Each attacking Tank has one supporter.
-            Bombard before moving when possible.
-            Fortify city-holding Infantry.
-            Avoid contested hexes.
-            
-            SCORING PRIORITY
-            1 Hold enemy cities at turn end.
-            2 Tank attack kills.
-            3 Bombard kills.
+            Rush towards enemy cities.
+            Defend your own cities.
+            ──────────────────────────────── END STRATEGY HINTS ────────────────────────────────
             """;
 
     private final Player player;
@@ -90,28 +104,59 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
 
     private String createMessageInformation() {
         StringBuilder sb = new StringBuilder();
-        sb.append("You are the red player, the current game state is: \n");
-        game.getBoard().getFields().iterator().forEachRemaining(f -> {
-            sb.append("Field ").append(f.getPos().x).append(":").append(f.getPos().y);
-            if (f.getUnit() != null && f.getUnit().getPlayer() == player) {
-                sb.append(" occupied by you with ").append(f.getUnit().getUnitType());
-            } else if (f.getUnit() != null) {
-                sb.append(" occupied by the enemy with ").append(f.getUnit().getUnitType());
-            } else {
-                sb.append(" is unoccupied ");
+        sb.append("{");
+        sb.append("\"playerRole\":\"red\",");
+        sb.append("\"gameState\":{");
+        sb.append("\"fields\":[");
+
+        boolean firstField = true;
+        for (Field f : game.getBoard().getFields()) {
+            if (!firstField) {
+                sb.append(",");
             }
-            sb.append(" and neighbors:[");
-            f.getNeighbors().forEach(n -> {
-                sb.append(n.getPos().x).append(":").append(n.getPos().y).append(",");
-            });
-            sb.append("]").append("\n");
-        });
-        sb.append("\nYour decision must be confirm to the game rules and the current game state at all cost.\n");
+            firstField = false;
+
+            sb.append("{");
+            sb.append("\"x\":").append(f.getPos().x).append(",");
+            sb.append("\"y\":").append(f.getPos().y).append(",");
+
+            if (f.getUnit() != null && f.getUnit().getPlayer() == player) {
+                sb.append("\"occupiedBy\":\"you\",");
+                sb.append("\"unitType\":\"").append(f.getUnit().getUnitType()).append("\",");
+            } else if (f.getUnit() != null) {
+                sb.append("\"occupiedBy\":\"enemy\",");
+                sb.append("\"unitType\":\"").append(f.getUnit().getUnitType()).append("\",");
+            } else {
+                sb.append("\"occupiedBy\":\"none\",");
+            }
+
+            sb.append("\"neighbors\":[");
+            boolean firstNeighbor = true;
+            for (Field n : f.getNeighbors()) {
+                if (!firstNeighbor) {
+                    sb.append(",");
+                }
+                firstNeighbor = false;
+                sb.append("{\"x\":").append(n.getPos().x).append(",\"y\":").append(n.getPos().y).append("}");
+            }
+            sb.append("]");
+            sb.append("}");
+        }
+
+        sb.append("]");
+        sb.append("},");
+        sb.append("\"instruction\":\"Your decision must be confirm to the game rules and the current game state at all cost.\"");
+        sb.append("}");
+
         return sb.toString();
     }
 
     private ChatCompletionCreateParams.Builder builder(StringBuilder sb) {
-        return ChatCompletionCreateParams.builder().addSystemMessage(INSTRUCTIONS).addAssistantMessage(createMessageInformation() + "\n" + STRATEGY).addUserMessage(sb.toString()).model(ChatModel.GPT_4_1_MINI);
+        return ChatCompletionCreateParams.builder()
+                .addSystemMessage(INSTRUCTIONS + "\n" + STRATEGY)
+                .addAssistantMessage(createMessageInformation())
+                .addUserMessage(sb.toString())
+                .model(ChatModel.GPT_4O_MINI);
     }
 
     @Override
@@ -123,7 +168,18 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
 
         int credits = player.getCredits();
         sb.append("You have ").append(credits).append(" credits.");
-        sb.append("Tell me which units you want to draft! Spend all the credits. Options are: infantry,tank,airborne,helicopter,artillery. Answer with a JSON string array and nothing else.");
+        sb.append("""
+                ### Draft selection (unit types only)
+                
+                Consult your internal strategy guide and decide which **unit types** you will purchase this turn.
+                
+                Allowed values (lower-case):
+                  "infantry", "tank", "airborne", "helicopter", "artillery"
+                
+                Respond with **nothing but** a JSON array of strings in the exact form shown below—no Markdown, no keys, no commentary:
+                
+                ["infantry","tank","infantry"]
+                """);
 
         log.debug("ChatGPT input: {}", sb.toString());
 
@@ -151,36 +207,60 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
         while (!success) {
             try {
                 StringBuilder sb = new StringBuilder();
+                sb.append("[");
+                sb.append(player.getUnitInHand().stream().map(Unit::getUnitType).map(UnitType::toString).collect(Collectors.joining(",")));
+                sb.append("]");
+                String s = """
+                        ### Deploy one unit
+                        
+                        You still have these undeployed units in hand:
+                        """;
+                s += sb.toString();
+                s += """
+                        
+                        Choose **exactly one** of them and place it on the map.
+                        
+                        Placement rules
+                        • Target field must be empty.
+                        • For infantry or tank or helicopter or artillery: pick a field on the **right half** of the 10×10 board with targetFieldX = 5,6,7,8,9.
+                        • If the chosen unit were “airborne”, you could instead pick any empty field adjacent to one of your own units, but that does **not** apply here.
+                        • Consult your strategy guide—select a field that is tactically valuable this turn.
+                        
+                        Respond with **nothing but** the JSON object shown below—no Markdown, no extra keys, no commentary:
+                        
+                        ```json
+                        {
+                          "unitType": "<one of: infantry | tank | helicopter | artillery | airborne>",
+                          "targetFieldX":  "<target x, e.g. \\"7\\">",
+                          "targetFieldY":  "<target y, e.g. \\"3\\">"
+                        }
+                        """;
 
-                sb.append("Your hand units are:");
-                player.getUnitInHand().forEach(u -> {
-                    sb.append(u.getUnitType()).append(",");
-                });
-                sb.append("Tell me which one unit you want to deploy where! Your side of the field is the right side, columns 5 to 9. Pick one of your hand units and select an unoccupied but strategically important field. Answer with a JSON and nothing else.");
+                log.debug("ChatGPT input: {}", s);
 
-                log.debug("ChatGPT input: {}", sb.toString());
+                StructuredChatCompletionCreateParams<DeployDecision> params = builder(sb).responseFormat(DeployDecision.class).build();
 
-                StructuredChatCompletionCreateParams<DeployDecision> params = builder(sb).responseFormat(DeployDecision.class, JsonSchemaLocalValidation.NO).build();
-
-                client.chat().completions().create(params).choices().stream().flatMap(choice -> choice.message().content().stream()).forEach(deployDecision -> {
-                    UnitType ut = UnitType.getUnitType(deployDecision.unitType);
-                    if (ut != null) {
-                        player.getUnitInHand().stream().filter(u -> u.getUnitType() == ut).findFirst().ifPresent(u -> {
-                            log.debug("Deploying unit: {}", u.getUnitType());
-                            deployPhase.execCmd(player, "selectHandCard", u.getId());
-                            int x = deployDecision.targetFieldX;
-                            int y = deployDecision.targetFieldY;
-                            Field toDeployField = game.getBoard().getField(new Point(x, y));
-                            log.debug("Deploying unit to field: {}", toDeployField.getId());
-                            deployPhase.execCmd(player, "selectTargetField", toDeployField.getId());
+                client.chat().completions().create(params).choices().stream()
+                        .flatMap(choice -> choice.message().content().stream())
+                        .forEach(deployDecision -> {
+                            UnitType ut = UnitType.getUnitType(deployDecision.unitType);
+                            if (ut != null) {
+                                player.getUnitInHand().stream().filter(u -> u.getUnitType() == ut).findFirst().ifPresent(u -> {
+                                    log.debug("Deploying unit: {}", u.getUnitType());
+                                    deployPhase.execCmd(player, "selectHandCard", u.getId());
+                                    int x = deployDecision.targetFieldX;
+                                    int y = deployDecision.targetFieldY;
+                                    Field toDeployField = game.getBoard().getField(new Point(x, y));
+                                    log.debug("Deploying unit to field: {}", toDeployField.getId());
+                                    deployPhase.execCmd(player, "selectTargetField", toDeployField.getId());
+                                });
+                            } else {
+                                log.warn("Unknown unit type: {}", deployDecision.unitType);
+                            }
                         });
-                    } else {
-                        log.warn("Unknown unit type: {}", deployDecision.unitType);
-                    }
-                });
                 success = true;
             } catch (CmdException e) {
-                log.debug("Command failed: {}", e.getMessage());
+                log.warn("Command failed: {}", e.getMessage());
             }
         }
     }
@@ -213,24 +293,51 @@ public class ChatGPTStrategy implements AiStrategy, Serializable {
         boolean success = false;
         while (!success) {
             try {
+                int roundIndex = combatCommandPhase.getCombatPhaseRoundCounter().getCurrentRound();
                 List<CombatPhaseDecisionDecoded> list = new ArrayList<>();
                 for (Unit u : playerUnits) {
-                    StringBuilder sb = new StringBuilder("Make a decision for the combat, move, support, fortify phase for the unit ");
-
-                    sb.append(u.getUnitType()).append(" at field ").append(u.getDeployedOn().getPos().x).append(":").append(u.getDeployedOn().getPos().y);
-
-                    sb.append(" - This unit can ");
+                    StringBuilder sb = new StringBuilder()
+                            .append("### Command phase – round ").append(roundIndex).append('\n')
+                            .append("Unit: ").append(u.getUnitType().name().toLowerCase())
+                            .append("  (id: ").append(u.getId()).append(")\n")
+                            .append("Current field: ").append(u.getDeployedOn().asPosString()).append('\n')
+                            .append('\n')
+                            .append("Legal actions this round:\n");
 
                     if (u.getUnitType() == UnitType.ARTILLERY) {
-                        sb.append("bombard up to 2 fields or");
+                        String legalBombardTargets = u.getTargetableFields().stream()
+                                .map(Field::asPosString)
+                                .collect(Collectors.joining(", "));
+                        sb.append("• bombard (range ≤ 2)  – targets: ").append(legalBombardTargets).append('\n');
                     }
                     if (u.getUnitType() == UnitType.HELICOPTER) {
-                        sb.append("bombard up to 1 field or ");
+                        String legalBombardTargets = u.getTargetableFields().stream()
+                                .map(Field::asPosString)
+                                .collect(Collectors.joining(", "));
+                        sb.append("• bombard (range ≤ 1)  – targets: ").append(legalBombardTargets).append('\n');
                     }
 
-                    sb.append("move 1 field or support an adjacent unit or fortify on this field.");
-
-                    sb.append("Answer with a JSON and nothing else.");
+                    String legalMoveHexes = u.getDeployedOn().getNeighbors().stream()
+                            .filter(f -> f.getUnit() == null)
+                            .map(Field::asPosString)
+                            .collect(Collectors.joining(", "));
+                    String legalAttackTargets = u.getDeployedOn().getNeighbors().stream()
+                            .filter(f -> f.getUnit() != null && f.getUnit().getPlayer() != player)
+                            .map(Field::asPosString)
+                            .collect(Collectors.joining(", "));
+                    String legalSupportTargets = u.getDeployedOn().getNeighbors().stream()
+                            .filter(f -> f.getUnit() != null && f.getUnit().getPlayer() == player)
+                            .map(Field::asPosString)
+                            .collect(Collectors.joining(", "));
+                    sb.append("• move  – empty adjacent fields: ").append(legalMoveHexes).append('\n')
+                            .append("• attack – enemy units in adjacent fields: ").append(legalAttackTargets).append('\n')
+                            .append("• support – adjacent friendlies: ").append(legalSupportTargets).append('\n')
+                            .append("• fortify – remain in place (+1 DEF)\n\n")
+                            .append("Respond with **only** this JSON object – no markdown, no comments:\n")
+                            .append("{\n")
+                            .append("  \"command\": \"<fortify | move | support | bombard>\",\n")
+                            .append("  \"target\" : \"<field or unitId or null>\"\n")
+                            .append("}");
 
                     log.debug("ChatGPT input: {}", sb);
 

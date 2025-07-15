@@ -12,50 +12,54 @@ import lombok.Setter;
 
 public class Field implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Getter
-	private String id;
+    @Getter
+    private String id;
 
-	private Point pos;
+    private Point pos;
 
-	private Set<Field> neighbors = new HashSet<>();
+    private Set<Field> neighbors = new HashSet<>();
 
-	@Getter
-	@Setter
-	private Structure structure;
+    @Getter
+    @Setter
+    private Structure structure;
 
-	@Getter
-	@Setter
-	private Unit unit;
+    @Getter
+    @Setter
+    private Unit unit;
 
-	public Field(int x, int y) {
-		this.pos = new Point(x, y);
-		this.id = x + ":" + y;
-	}
+    public Field(int x, int y) {
+        this.pos = new Point(x, y);
+        this.id = x + ":" + y;
+    }
 
-	public boolean isHighlighted(Player p) {
-		return p.getGame().getCurrentPhase().isHighlighted(this, p);
-	}
+    public boolean isHighlighted(Player p) {
+        return p.getGame().getCurrentPhase().isHighlighted(this, p);
+    }
 
-	public boolean isSelectable(Player player) {
-		return player.getGame().getCurrentPhase().isSelectable(this, player);
-	}
+    public boolean isSelectable(Player player) {
+        return player.getGame().getCurrentPhase().isSelectable(this, player);
+    }
 
-	public void calcNeighbors(Set<Field> fields) {
-		fields.stream().filter(f -> FieldUtil.adjacent(this, f)).forEach(f -> neighbors.add(f));
-	}
+    public void calcNeighbors(Set<Field> fields) {
+        fields.stream().filter(f -> FieldUtil.adjacent(this, f)).forEach(f -> neighbors.add(f));
+    }
 
-	public Point getPos() {
-		return new Point(pos);
-	}
+    public Point getPos() {
+        return new Point(pos);
+    }
 
-	public Set<Field> getNeighbors() {
-		return Collections.unmodifiableSet(this.neighbors);
-	}
+    public Set<Field> getNeighbors() {
+        return Collections.unmodifiableSet(this.neighbors);
+    }
 
-	@Override
-	public String toString() {
-		return "Field [id=" + id + ", structure=" + structure + ", unit=" + unit + "]";
-	}
+    @Override
+    public String toString() {
+        return "Field [id=" + id + ", structure=" + structure + ", unit=" + unit + "]";
+    }
+
+    public String asPosString() {
+        return pos.getX() + ":" + pos.getY();
+    }
 }

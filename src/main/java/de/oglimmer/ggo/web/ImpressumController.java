@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.web.action;
+package de.oglimmer.ggo.web;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @AllArgsConstructor
 @Controller
-public class CreateGameController extends BaseController {
+public class ImpressumController extends BaseController {
 
-	@GetMapping("/CreateGame")
+	@GetMapping("/Impressum")
 	public String show(Model model) {
 		addCommonAttributes(model);
-		return "createGame";
+		return "impressum";
 	}
 
 }

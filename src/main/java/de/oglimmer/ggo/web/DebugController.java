@@ -1,14 +1,14 @@
-package de.oglimmer.ggo.web.action;
+package de.oglimmer.ggo.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.websocket.WebSocketSessionCache;
 import de.oglimmer.ggo.websocket.WebSocketSessionCacheItem;
-import de.oglimmer.ggo.websocket.game.Game;
-import de.oglimmer.ggo.websocket.game.Games;
+import de.oglimmer.ggo.logic.Games;
 import de.oglimmer.ggo.db.GameNotification;
 import de.oglimmer.ggo.db.GameNotificationsDao;
 import de.oglimmer.ggo.logic.Player;
@@ -18,7 +18,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 

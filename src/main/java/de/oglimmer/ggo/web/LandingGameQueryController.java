@@ -1,8 +1,8 @@
-package de.oglimmer.ggo.web.action;
+package de.oglimmer.ggo.web;
 
 import java.util.Collection;
 
-import de.oglimmer.ggo.websocket.game.Games;
+import de.oglimmer.ggo.logic.Games;
 import de.oglimmer.ggo.logic.Game;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;

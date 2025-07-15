@@ -118,13 +118,22 @@ public class Unit implements Serializable {
 	private Set<Field> getMovableFields(CommandCenter cc) {
 		/*
 		 * A unit can move to all neighbors if no own unit has a FORTIFY or MOVE
-		 * on/to this field
+		 * on/to this field, and no own unit is providing SUPPORT from this field
 		 */
 		Set<Field> mf = new HashSet<>();
 		for (Field f : deployedOn.getNeighbors()) {
 			Set<Command> myCommandsForThisField = cc.getByTargetField(player, f);
 			boolean occupiedByOwnUnit = myCommandsForThisField.stream().filter(c -> c.getUnit() != this)
 					.anyMatch(c -> c.getCommandType().isMove() || c.getCommandType().isFortify());
+			
+			// Also check if there's a unit on this field that is providing support
+			if (!occupiedByOwnUnit && f.getUnit() != null && f.getUnit().getPlayer() == player && f.getUnit() != this) {
+				Command cmdForUnitOnField = cc.getByUnit(f.getUnit());
+				if (cmdForUnitOnField != null && cmdForUnitOnField.getCommandType().isSupport()) {
+					occupiedByOwnUnit = true;
+				}
+			}
+			
 			if (!occupiedByOwnUnit) {
 
 				Set<Command> supportCommands = getSupportingUnits(cc);

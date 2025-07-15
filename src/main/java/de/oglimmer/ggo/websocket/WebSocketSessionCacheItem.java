@@ -2,9 +2,10 @@ package de.oglimmer.ggo.websocket;
 
 import java.lang.ref.WeakReference;
 
+import de.oglimmer.ggo.logic.Player;
 import org.springframework.web.socket.WebSocketSession;
 
-import de.oglimmer.ggo.websocket.game.Player;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

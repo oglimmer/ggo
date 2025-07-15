@@ -1,6 +1,6 @@
-package de.oglimmer.ggo.web.action;
+package de.oglimmer.ggo.web;
 
-import de.oglimmer.ggo.websocket.game.Games;
+import de.oglimmer.ggo.logic.Games;
 import de.oglimmer.ggo.logic.Game;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

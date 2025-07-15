@@ -3,7 +3,7 @@ package de.oglimmer.ggo.logic.phase;
 import java.util.Collection;
 import java.util.Collections;
 
-import de.oglimmer.ggo.websocket.game.Phase;
+
 import de.oglimmer.ggo.logic.Field;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
@@ -15,7 +15,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-abstract public class BasePhase implements Phase {
+abstract public class BasePhase {
 
 	private static final long serialVersionUID = 1L;
 
@@ -23,10 +23,6 @@ abstract public class BasePhase implements Phase {
 	@NonNull
 	private Game game;
 
-	@Override
-	public void execCmd(de.oglimmer.ggo.websocket.game.Player player, String cmd, String param) {
-		execCmd((Player) player, cmd, param);
-	}
 
 	/**
 	 * Executes a client command
@@ -61,7 +57,6 @@ abstract public class BasePhase implements Phase {
 		p.notifyForAction();
 	}
 
-	@Override
 	final public void updateMessages() {
 		updateScoreMessages();
 		updateInfoMessages();
@@ -100,7 +95,6 @@ abstract public class BasePhase implements Phase {
 	protected void updateInfoMessage(Player player) {
 	}
 
-	@Override
 	final public void updateModalDialgs() {
 		getGame().getPlayers().forEach(p -> updateModalDialg(p));
 	}
@@ -111,7 +105,6 @@ abstract public class BasePhase implements Phase {
 	 * Must be idempotent
 	 * 
 	 * @param player
-	 * @param messages
 	 */
 	protected void updateModalDialg(Player player) {
 	}

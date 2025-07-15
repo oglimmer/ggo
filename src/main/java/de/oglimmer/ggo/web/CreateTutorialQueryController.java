@@ -1,9 +1,9 @@
-package de.oglimmer.ggo.web.action;
+package de.oglimmer.ggo.web;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import de.oglimmer.ggo.websocket.game.Games;
+import de.oglimmer.ggo.logic.Games;
 import de.oglimmer.ggo.logic.Game;
 import de.oglimmer.ggo.logic.Player;
 import de.oglimmer.ggo.logic.phase.TutorialDelegateBasePhase;

@@ -24,8 +24,8 @@ public class RandomName {
      * If you pass in i ≥ 0, it will seed the RNG for reproducible names;
      * if you pass in i < 0, it will use true randomness.
      */
-    public static String getName(int i) {
-        Random rng = (i >= 0) ? new Random(i) : RANDOM;
+    public static String getName() {
+        Random rng = RANDOM;
         String adjective = ADJECTIVES[rng.nextInt(ADJECTIVES.length)];
         String noun = NOUNS[rng.nextInt(NOUNS.length)];
         // If you want to suffix the number, uncomment the next line:

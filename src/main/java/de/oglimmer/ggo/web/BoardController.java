@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.web.action;
+package de.oglimmer.ggo.web;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;

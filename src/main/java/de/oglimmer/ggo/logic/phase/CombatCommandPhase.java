@@ -29,6 +29,7 @@ public class CombatCommandPhase extends BasePhase {
 
 	private static final long serialVersionUID = 1L;
 
+	@Getter
 	private CombatPhaseRoundCounter combatPhaseRoundCounter;
 
 	private Map<Player, State> states = new HashMap<>();

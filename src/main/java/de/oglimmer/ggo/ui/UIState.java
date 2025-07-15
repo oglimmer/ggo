@@ -1,4 +1,4 @@
-package de.oglimmer.ggo.websocket.game;
+package de.oglimmer.ggo.ui;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

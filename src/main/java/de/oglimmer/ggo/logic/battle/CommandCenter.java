@@ -2,6 +2,7 @@ package de.oglimmer.ggo.logic.battle;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -50,10 +51,48 @@ public class CommandCenter implements Serializable {
 	}
 
 	public void removeCommandForUnit(Unit u) {
-		for (Iterator<Map.Entry<Unit, Command>> it = commands.entrySet().iterator(); it.hasNext();) {
-			Map.Entry<Unit, Command> en = it.next();
-			if (en.getValue().getUnit() == u) {
-				it.remove();
+		removeCommandForUnitRecursive(u, new HashSet<>());
+	}
+	
+	private void removeCommandForUnitRecursive(Unit u, Set<Unit> processedUnits) {
+		// Prevent infinite recursion
+		if (processedUnits.contains(u)) {
+			return;
+		}
+		processedUnits.add(u);
+		
+		Command commandToRemove = commands.get(u);
+		
+		// If this was a MOVE command, we need to check for cascading cancellations
+		if (commandToRemove != null && commandToRemove.getCommandType().isMove()) {
+			Field fieldBeingVacated = commandToRemove.getUnit().getDeployedOn();
+			
+			// Remove the original command first
+			commands.remove(u);
+			
+			// Find other units that were planning to move into the field being vacated
+			Set<Unit> unitsToCancel = commands.entrySet().stream()
+					.filter(entry -> entry.getValue().getCommandType().isMove())
+					.filter(entry -> entry.getValue().getTargetField() == fieldBeingVacated)
+					.filter(entry -> entry.getValue().getUnit().getPlayer() == u.getPlayer()) // Only same player
+					.map(Map.Entry::getKey)
+					.collect(Collectors.toSet());
+			
+			// Recursively cancel those move commands
+			for (Unit unitToCancel : unitsToCancel) {
+				log.trace("Cascaded cancellation: Unit {} command canceled due to {} move cancellation", 
+						unitToCancel.getUnitType(), u.getUnitType());
+				removeCommandForUnitRecursive(unitToCancel, processedUnits);
+				// Set to FORTIFY after recursive cancellation
+				addCommand(unitToCancel, unitToCancel.getDeployedOn(), CommandType.FORTIFY);
+			}
+		} else {
+			// For non-MOVE commands, just remove the command normally
+			for (Iterator<Map.Entry<Unit, Command>> it = commands.entrySet().iterator(); it.hasNext();) {
+				Map.Entry<Unit, Command> en = it.next();
+				if (en.getValue().getUnit() == u) {
+					it.remove();
+				}
 			}
 		}
 	}

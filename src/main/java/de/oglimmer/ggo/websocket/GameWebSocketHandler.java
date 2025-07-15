@@ -2,6 +2,8 @@ package de.oglimmer.ggo.websocket;
 
 import java.util.Date;
 
+import de.oglimmer.ggo.logic.Game;
+import de.oglimmer.ggo.logic.Player;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -11,9 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.oglimmer.ggo.websocket.com.CommandMessage;
 import de.oglimmer.ggo.websocket.com.MessageQueue;
-import de.oglimmer.ggo.websocket.game.Game;
-import de.oglimmer.ggo.websocket.game.Games;
-import de.oglimmer.ggo.websocket.game.Player;
+import de.oglimmer.ggo.logic.Games;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

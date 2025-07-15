@@ -1,51 +1,32 @@
-package de.oglimmer.ggo.websocket.game;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+package de.oglimmer.ggo.logic;
 
 import de.oglimmer.ggo.websocket.WebSocketSessionCache;
 import de.oglimmer.ggo.websocket.WebSocketSessionCacheItem;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RequiredArgsConstructor
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Slf4j
-public class Games<T extends Game> {
+public class Games {
 
-	private static Games<? extends Game> INSTANCE;
+	private static Games INSTANCE = new Games();
 
-	public static <T extends Game> void setGames(Games<T> INSTANCE) {
-		assert Games.INSTANCE == null;
-		Games.INSTANCE = INSTANCE;
+	public static Games getGames() {
+		return INSTANCE;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T extends Game> Games<T> getGames() {
-		return (Games<T>) INSTANCE;
-	}
+	private Class<Game> gameClass = Game.class;
 
-	@NonNull
-	private Class<T> gameClass;
+	private Map<String, Game> games = new HashMap<>();
 
-	private Map<String, T> games = new HashMap<>();
-
-	public T getGameById(String gameId) {
+	public Game getGameById(String gameId) {
 		return games.get(gameId);
 	}
 
-	public T getGameByPlayerId(String playerId) {
-		Optional<T> findFirst = games.values().stream()
+	public Game getGameByPlayerId(String playerId) {
+		Optional<Game> findFirst = games.values().stream()
 				.filter(g -> g.getPlayers().stream().anyMatch(p -> p.getId().equals(playerId))).findFirst();
 		if (findFirst.isPresent()) {
 			return findFirst.get();
@@ -57,9 +38,9 @@ public class Games<T extends Game> {
 		games = new HashMap<>();
 	}
 
-	public T createGame() {
+	public Game createGame() {
 		try {
-			T newGame = gameClass.newInstance();
+			Game newGame = gameClass.newInstance();
 			games.put(newGame.getId(), newGame);
 			return newGame;
 		} catch (InstantiationException | IllegalAccessException e) {
@@ -68,11 +49,11 @@ public class Games<T extends Game> {
 		}
 	}
 
-	public Collection<T> getOpenGames() {
+	public Collection<Game> getOpenGames() {
 		return games.values().stream().filter(g -> g.getPlayers().size() != 2).collect(Collectors.toSet());
 	}
 
-	public Collection<T> getAllGames() {
+	public Collection<Game> getAllGames() {
 		return new ArrayList<>(games.values());
 	}
 
@@ -98,7 +79,7 @@ public class Games<T extends Game> {
 		try {
 			if (new File("/tmp/all-games.ser").exists()) {
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream("/tmp/all-games.ser"));
-				games = (Map<String, T>) ois.readObject();
+				games = (Map<String, Game>) ois.readObject();
 				ois.close();
 			}
 		} catch (IOException | ClassNotFoundException e) {
@@ -107,7 +88,7 @@ public class Games<T extends Game> {
 	}
 
 	public void removeGame(String gameId) {
-		T removedGame = games.remove(gameId);
+		Game removedGame = games.remove(gameId);
 		if (removedGame != null) {
 			Collection<? extends Player> players = removedGame.getPlayers();
 			WebSocketSessionCache.INSTANCE.getItems().stream().filter(i -> players.contains(i.getPlayer()))
