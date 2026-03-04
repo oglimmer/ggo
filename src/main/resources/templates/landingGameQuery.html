@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <th:block th:fragment="availableGames">
-    <div th:each="i : ${availableGames}">
+    <div th:each="i : ${availableGames}" class="game-list-item">
         <a th:href="@{/JoinGame(gameId=${i.id})}" class="btn btn-primary btn-lg">
-            Join <span th:text="${i.id}"></span> (Started <span th:text="${#dates.format(i.createdOn, 'dd.MM.yyyy HH:mm:ss')}"></span>)
+            Join game <span th:text="${i.id}"></span>
+            <span style="font-weight: 400; opacity: 0.8;">&middot; started <span th:text="${#dates.format(i.createdOn, 'dd.MM.yyyy HH:mm')}"></span></span>
         </a>
-        <br/><br/>
     </div>
 </th:block>
 

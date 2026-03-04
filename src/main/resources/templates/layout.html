@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title, content)">
 <head>
 	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title th:text="${title}">GridGameOne</title>
-	<link rel="stylesheet" th:href="@{/css/styles.css}" />	
 	<link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
-	<link rel="stylesheet" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap-theme.min.css}" />
+	<link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
 
@@ -18,27 +18,27 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">GridGameOne</a>
+          <a class="navbar-brand" th:href="@{/}">GridGameOne</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav navbar-right">
 				<li><a th:href="@{/Help}" target="_blank">Instructions</a></li>
 			</ul>
-        </div><!--/.navbar-collapse -->
+        </div>
       </div>
     </nav>
 
-    <div class="container">
+    <div class="container" style="padding-top: 8px;">
 		<div th:if="${message}" class="alert alert-info" th:text="${message}"></div>
-		
+
 		<th:block th:replace="${content}"></th:block>
 
       <hr>
 
       <footer>
-        <p>Created by <a href="http://oglimmer.de" target="_blank">oglimmer.de</a> - <span th:text="${longVersion}">??</span> - <a th:href="@{/Impressum}">Impressum/Kontakt/Datenschutz&nbsp;</a> </p>
+        <p>Created by <a href="http://oglimmer.de" target="_blank">oglimmer.de</a> &middot; <span th:text="${longVersion}">??</span> &middot; <a th:href="@{/Impressum}">Impressum / Privacy</a></p>
       </footer>
-    </div> <!-- /container -->
+    </div>
 
 </body>
 </html>
