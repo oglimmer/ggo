@@ -36,13 +36,16 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 			ctx.lineTo(cx - width / 2, cy + height / 4);
 			ctx.lineTo(cx - width / 2, cy - height / 4);
 			ctx.lineTo(cx, cy - height / 2);
-			ctx.fillStyle = "black";
+			ctx.fillStyle = "rgba(0, 229, 120, 0.25)";
 			ctx.fill();
-			ctx.strokeStyle = "white";
-			ctx.lineWidth = 1;
+			ctx.strokeStyle = "#00e578";
+			ctx.lineWidth = 2;
 			ctx.stroke();
 		}
 		
+		if(this.color === Constants.SIDE_GREEN) {
+			ctx.filter = "brightness(1.8) saturate(1.6)";
+		}
 		switch(this.unitType) {
 			case Constants.UNIT_TYPE_INFANTRY:
 				var img=document.getElementById("infantry_"+this.color);
@@ -68,7 +71,8 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 				var img=document.getElementById("city_"+this.color);
 				ctx.drawImage(img,cx-img.width*.5,cy - img.height*.5);
 				break;
-		}	
+		}
+		ctx.filter = "none";
 	};
 	
 	Unit.prototype.draw1 = function(ctx) {
@@ -82,10 +86,10 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 		if(this.command != null && this.command.commandType != null) {
 			if(this.command.commandType == "F") {
 				ctx.beginPath();
-				ctx.fillStyle = "white";
-				ctx.font = "400 20px Arial";
+				ctx.fillStyle = "#00e578";
+				ctx.font = "700 20px 'Rajdhani', sans-serif";
 				ctx.lineWidth = 3;
-				ctx.strokeStyle = 'black';
+				ctx.strokeStyle = 'rgba(0,0,0,0.8)';
 				ctx.strokeText(this.command.commandType,cx-2,cy+6);
 			} else {
 				var targetFieldId = this.command.x+":"+this.command.y;
@@ -93,13 +97,13 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 				var color;
 				switch(this.command.commandType) {
 				case "M":
-					color = "red";
+					color = "#ff3b3b";
 					break;
 				case 'B':
-					color = "green";
+					color = "#00e578";
 					break;
 				case 'S':
-					color = "yellow";
+					color = "#ffc107";
 					break;
 				}
 				drawArrow(ctx, cx, cy, field.realX(), field.realY(), color, false);
@@ -122,13 +126,13 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 				var color;
 				switch(this.command.commandType) {
 				case "M":
-					color = "red";
+					color = "#ff3b3b";
 					break;
 				case 'B':
-					color = "green";
+					color = "#00e578";
 					break;
 				case 'S':
-					color = "yellow";
+					color = "#ffc107";
 					break;
 				}
 				drawArrow(ctx, cx, cy, field.realX(), field.realY(), color, true);
@@ -161,16 +165,16 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 	        ctx.lineTo(tox, toy);
 	        ctx.strokeStyle = color;
 	        switch(color) {
-	        case 'red':
+	        case '#ff3b3b':
 	        	ctx.lineWidth = 7;
 	        	break;
-	        case 'green':
+	        case '#00e578':
 	        	ctx.lineWidth = 3;
 	        	break;
-	        case 'yello':
+	        case '#ffc107':
 	        	ctx.lineWidth = 5;
 	        	break;
-	        }	        
+	        }
 	        ctx.stroke();
 	        
         }
@@ -188,7 +192,7 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
         ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
 
         //draws the paths created above
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = "rgba(0,0,0,0.6)";
         ctx.lineWidth = 7;
         ctx.stroke();
         ctx.fillStyle = color;

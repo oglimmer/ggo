@@ -52,15 +52,15 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData', 'app/CursorUtil'
 		}
 
 		ctx.beginPath();
-		ctx.fillStyle = "black";
+		ctx.fillStyle = "rgba(7, 11, 10, 0.95)";
 		ctx.fillRect(latestCur.x, latestCur.y, this.width, this.height);
-		ctx.strokeStyle = "white";
-		ctx.lineWidth = 2;
+		ctx.strokeStyle = "#00e578";
+		ctx.lineWidth = 1;
 		ctx.strokeRect(latestCur.x, latestCur.y, this.width, this.height);
-		
+
 		var y = latestCur.y+16;
-		ctx.font = "12px Arial";
-		ctx.fillStyle = "white";
+		ctx.font = "600 12px 'Rajdhani', sans-serif";
+		ctx.fillStyle = "#d4a017";
 		ctx.fillText(this.title, latestCur.x+3, y);
 		y += this.rowHeight;
 		var thiz = this;

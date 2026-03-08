@@ -15,7 +15,7 @@
     </div>
 
     <div th:if="${player != null}" class="rejoin-banner">
-        <span style="color: #1e40af; font-weight: 500;">You have an active game.</span>
+        <span style="color: #d4a017; font-weight: 500; font-family: 'Share Tech Mono', monospace; text-transform: uppercase; letter-spacing: 0.05em;">Active mission detected</span>
         <a class="btn btn-primary" th:href="@{/Board(playerId=${player.id})}">
             Re-join game <span th:text="${game.id}">??</span> as <span th:text="${player.side}">??</span>
         </a>

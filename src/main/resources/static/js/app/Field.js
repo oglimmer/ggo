@@ -49,25 +49,23 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 		ctx.lineTo(cx - width / 2, cy - height / 4);
 		ctx.lineTo(cx, cy - height / 2);
 		if (this.highlight) {
-			ctx.fillStyle = "#889988";
+			ctx.fillStyle = "#1a2a30";
 		} else {
-			ctx.fillStyle = "#c2d6d6";
+			ctx.fillStyle = "#111b20";
 		}
 		ctx.fill();
 
-		if (true) {
-			ctx.strokeStyle = "#eeeeee";
-			ctx.lineWidth = 1;
-			ctx.stroke();
-		}
+		ctx.strokeStyle = "rgba(0, 229, 120, 0.15)";
+		ctx.lineWidth = 1;
+		ctx.stroke();
 		
 		if(showCoordinates) {
 			ctx.save();
 			ctx.translate(cx-.15*Constants.size.width,cy-.25*Constants.size.height);
 			ctx.rotate(-Math.PI/7);
 			ctx.textAlign = "center";
-			ctx.fillStyle = "#222222";
-			ctx.font = ""+parseInt(.133*Constants.size.width)+"px Arial";
+			ctx.fillStyle = "rgba(0, 229, 120, 0.3)";
+			ctx.font = ""+parseInt(.133*Constants.size.width)+"px 'Share Tech Mono', monospace";
 			ctx.fillText(this.x+":"+this.y,0,0);
 			ctx.restore();
 		}		 

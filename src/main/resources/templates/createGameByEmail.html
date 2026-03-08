@@ -4,7 +4,7 @@
 
     <div class="jumbotron">
         <h3>Play by Email</h3>
-        <p style="color: #6b7280; margin-bottom: 24px;">
+        <p style="color: #7a9b8a; margin-bottom: 24px; font-family: 'Share Tech Mono', monospace; font-size: 0.85rem;">
             We won't store your email addresses permanently. As soon as the game ends, your personal email address is removed from memory.
         </p>
 
@@ -26,14 +26,14 @@
                 <span th:if="${#fields.hasErrors('email2')}" th:errors="*{email2}" class="text-danger"></span>
                 <div style="margin-top: 8px;">
                     <input th:field="*{searchForOne}" type="checkbox" id="searchForOne" />
-                    <label for="searchForOne" style="font-weight: 400; color: #6b7280; font-size: 0.85rem;">
+                    <label for="searchForOne" style="font-weight: 400; color: #4a6a58; font-size: 0.8rem; text-transform: none; letter-spacing: 0;">
                         I don't have an opponent, use player's database (no longer supported due to GDPR)
                     </label>
                 </div>
             </div>
-            <div style="display: flex; gap: 10px; margin-top: 24px;">
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
                 <button type="submit" class="btn btn-primary">Create Game</button>
-                <a th:href="@{/}" class="btn btn-primary" style="background-color: #6b7280 !important;">Cancel</a>
+                <a th:href="@{/}" class="btn btn-primary" style="background-color: rgba(74, 106, 88, 0.15) !important; border-color: #4a6a58 !important; color: #7a9b8a !important;">Cancel</a>
             </div>
         </form>
     </div>

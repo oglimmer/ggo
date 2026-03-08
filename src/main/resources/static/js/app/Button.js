@@ -31,24 +31,30 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 		this.y = y;
 		
 		ctx.beginPath();
+		ctx.fillStyle = "rgba(13, 21, 18, 0.9)";
+		ctx.fillRect(x, y, this.getWidth(), this.getHeight());
 		ctx.lineWidth = 1;
-		ctx.strokeStyle = "black";
-		ctx.fillStyle = "black";
-		ctx.rect(x, y, this.getWidth(), this.getHeight());
-		ctx.stroke();
+		ctx.strokeStyle = "rgba(0, 229, 120, 0.4)";
+		ctx.strokeRect(x, y, this.getWidth(), this.getHeight());
 		
-		if(typeof this.graphic !== 'undefined' && this.graphic != null) {			
+		if(typeof this.graphic !== 'undefined' && this.graphic != null) {
 			var img=document.getElementById(this.graphic+"_"+globalData.model.myColor);
 			if(typeof img === 'undefined' || img == null) {
 				console.log("img = " + img + ", graphic="+ this.graphic+", globalData.model.myColor="+globalData.model.myColor);
 				console.log(this.graphic);
 			} else {
+				if(globalData.model.myColor === 'green') {
+					ctx.filter = "brightness(1.8) saturate(1.6)";
+				}
 				ctx.drawImage(img,this.x,this.y);
+				ctx.filter = "none";
 			}
-			ctx.font = ""+parseInt(0.167*Constants.size.width)+"px Arial";
+			ctx.font = ""+parseInt(0.167*Constants.size.width)+"px 'Rajdhani', sans-serif";
+			ctx.fillStyle = "#00e578";
 			ctx.fillText(this.text,x+.5*Constants.size.width,y+.767*Constants.size.height);
 		} else {
-			ctx.font = ""+parseInt(0.167*Constants.size.width)+"px Arial";
+			ctx.font = "600 "+parseInt(0.167*Constants.size.width)+"px 'Rajdhani', sans-serif";
+			ctx.fillStyle = "#00e578";
 			ctx.fillText(this.text,x+0.033*Constants.size.width,y+.2*Constants.size.height);
 		}
 	};

@@ -86,7 +86,8 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 	}
 
 	/*public*/ Board.prototype.draw = function() {		
-		this.ctxBoard.clearRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
+		this.ctxBoard.fillStyle = "#070b0a";
+		this.ctxBoard.fillRect(0, 0, this.ctxBoard.canvas.width, this.ctxBoard.canvas.height);
 		this.drawFields();
 		this.drawUnits();
 		this.drawHand();
@@ -118,8 +119,11 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 	}
 	/*private*/ Board.prototype.drawHand = function() {
 		this.ctxBoard.beginPath();
-		this.ctxBoard.fillStyle = "#dddddd";
+		this.ctxBoard.fillStyle = "rgba(13, 21, 18, 0.9)";
 		this.ctxBoard.fillRect(0, Constants.size.height*10*.8, Constants.size.width*10.5, .95*Constants.size.height);
+		this.ctxBoard.strokeStyle = "rgba(0, 229, 120, 0.2)";
+		this.ctxBoard.lineWidth = 1;
+		this.ctxBoard.strokeRect(0, Constants.size.height*10*.8, Constants.size.width*10.5, .95*Constants.size.height);
 		var x = 3;
 		var y = Constants.size.height*10*.8+5;
 		for ( var f in globalData.model.boardState.idToHanditems) {
@@ -129,8 +133,8 @@ define(['jquery', 'app/Constants', 'app/Communication', 'app/GlobalData', 'app/C
 		}
 		if(x == 3) {
 			this.ctxBoard.beginPath();
-			this.ctxBoard.font = ""+parseInt(.267*Constants.size.height)+"px Arial";
-			this.ctxBoard.fillStyle = "black";
+			this.ctxBoard.font = ""+parseInt(.267*Constants.size.height)+"px 'Share Tech Mono', monospace";
+			this.ctxBoard.fillStyle = "rgba(0, 229, 120, 0.4)";
 			this.ctxBoard.fillText("No units at hand.",x,y + (.5*Constants.size.height));
 		}
 

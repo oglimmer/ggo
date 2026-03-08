@@ -41,10 +41,13 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 		ctx.beginPath();
 		
 		if(this.selected) {
-			ctx.fillStyle = "black";
+			ctx.fillStyle = "rgba(0, 229, 120, 0.25)";
 			ctx.fillRect(this.x,this.y,this.width,this.height);
 		}
 		
+		if(globalData.model.myColor === Constants.SIDE_GREEN) {
+			ctx.filter = "brightness(1.8) saturate(1.6)";
+		}
 		switch(this.unitType) {
 			case Constants.UNIT_TYPE_INFANTRY:
 				var img=document.getElementById("infantry_"+globalData.model.myColor);
@@ -67,8 +70,9 @@ define(['app/Constants', 'app/Communication', 'app/GlobalData'], function(Consta
 				ctx.drawImage(img,this.x,this.y);
 				break;
 		}
+		ctx.filter = "none";
 		ctx.lineWidth = 1;
-		ctx.strokeStyle = "black";
+		ctx.strokeStyle = "rgba(0, 229, 120, 0.3)";
 		ctx.rect(this.x,this.y,this.width,this.height);
 		ctx.stroke();
 		
